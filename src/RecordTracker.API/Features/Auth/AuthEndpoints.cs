@@ -1,0 +1,21 @@
+﻿using RecordTracker.API.Common;
+
+namespace RecordTracker.API.Features.Auth;
+
+public class AuthEndpoints : IEndpointDefinition
+{
+    public void RegisterEndpoints(IEndpointRouteBuilder app)
+    {
+        var group = app.MapGroup("/api/auth");
+
+        group.MapPost("/register", async (CreateUserRequest request, CreateUserHandler handler) =>
+        {
+            return await handler.HandleAsync(request);
+        });
+
+        group.MapPost("/login", async (LoginUserRequest request, LoginUserHandler handler) =>
+        {
+            return await handler.HandleAsync(request);
+        });
+    }
+}
