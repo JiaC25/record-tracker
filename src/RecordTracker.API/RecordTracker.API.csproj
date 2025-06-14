@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RecordTracker.Application\RecordTracker.Application.csproj" />
     <ProjectReference Include="..\RecordTracker.Infrastructure\RecordTracker.Infrastructure.csproj" />
   </ItemGroup>
 
