@@ -9,10 +9,10 @@ public class RecordType
     public string? Description { get; set; }
     
     // FK
-    public Guid? CreatedByUserId { get; set; }
+    public Guid CreatedByUserId { get; set; }
 
     // Navigation
-    public User? CreatedByUser {  get; set; }
+    public User CreatedByUser { get; set; } = default!;
     public ICollection<RecordField> RecordFields { get; set; } = new List<RecordField>();
     public ICollection<RecordItem> RecordItems { get; set; } = new List<RecordItem>();
 }

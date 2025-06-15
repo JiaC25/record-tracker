@@ -49,7 +49,7 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("RecordTypeId");
 
-                    b.ToTable("RecordField");
+                    b.ToTable("RecordField", (string)null);
                 });
 
             modelBuilder.Entity("RecordTracker.Infrastructure.Entities.RecordItem", b =>
@@ -73,7 +73,7 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("RecordTypeId");
 
-                    b.ToTable("RecordItem");
+                    b.ToTable("RecordItem", (string)null);
                 });
 
             modelBuilder.Entity("RecordTracker.Infrastructure.Entities.RecordType", b =>
@@ -101,7 +101,7 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CreatedByUserId");
 
-                    b.ToTable("RecordType");
+                    b.ToTable("RecordType", (string)null);
                 });
 
             modelBuilder.Entity("RecordTracker.Infrastructure.Entities.RecordValue", b =>
@@ -126,7 +126,7 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("RecordItemId");
 
-                    b.ToTable("RecordValue");
+                    b.ToTable("RecordValue", (string)null);
                 });
 
             modelBuilder.Entity("RecordTracker.Infrastructure.Entities.User", b =>
@@ -153,7 +153,7 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.ToTable("User", (string)null);
                 });
 
             modelBuilder.Entity("RecordTracker.Infrastructure.Entities.RecordField", b =>

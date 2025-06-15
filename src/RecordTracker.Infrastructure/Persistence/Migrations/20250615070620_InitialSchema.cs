@@ -6,11 +6,25 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RecordTracker.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialRecordModels : Migration
+    public partial class InitialSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "User",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    PasswordHash = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_User", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "RecordType",
                 columns: table => new
@@ -25,9 +39,9 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_RecordType", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RecordType_Users_CreatedByUserId",
+                        name: "FK_RecordType_User_CreatedByUserId",
                         column: x => x.CreatedByUserId,
-                        principalTable: "Users",
+                        principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
                 });
@@ -73,9 +87,9 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_RecordItem_Users_CreatedByUserId",
+                        name: "FK_RecordItem_User_CreatedByUserId",
                         column: x => x.CreatedByUserId,
-                        principalTable: "Users",
+                        principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
                 });
@@ -135,6 +149,12 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
                 name: "IX_RecordValue_RecordItemId",
                 table: "RecordValue",
                 column: "RecordItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_Email",
+                table: "User",
+                column: "Email",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -151,6 +171,9 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "RecordType");
+
+            migrationBuilder.DropTable(
+                name: "User");
         }
     }
 }

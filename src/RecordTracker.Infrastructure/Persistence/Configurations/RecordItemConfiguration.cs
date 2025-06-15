@@ -9,6 +9,8 @@ public class RecordItemConfiguration : IEntityTypeConfiguration<RecordItem>
 {
     public void Configure(EntityTypeBuilder<RecordItem> builder)
     {
+        builder.ToTable("RecordItem");
+
         builder.HasKey(x => x.Id);
         
         builder.Property(x => x.CreatedAt)
@@ -24,7 +26,7 @@ public class RecordItemConfiguration : IEntityTypeConfiguration<RecordItem>
         builder.HasOne(x => x.CreatedByUser) // TODO: Add RecordItems collection nav to User model and move OnDelete config there
             .WithMany()
             .HasForeignKey(x => x.CreatedByUserId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(x => x.RecordType)
             .WithMany(x => x.RecordItems)

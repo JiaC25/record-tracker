@@ -8,6 +8,8 @@ public class RecordFieldConfiguration : IEntityTypeConfiguration<RecordField>
 {
     public void Configure(EntityTypeBuilder<RecordField> builder)
     {
+        builder.ToTable("RecordField");
+
         builder.HasKey(x => x.Id);
         
         builder.Property(x => x.Name)

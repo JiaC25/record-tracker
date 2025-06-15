@@ -17,7 +17,7 @@ public class UserRepository : IUserRepository
     #region Create
     public async Task AddAsync(User user, CancellationToken ct = default)
     {
-        await _dbContext.Users.AddAsync(user, ct);
+        await _dbContext.User.AddAsync(user, ct);
         await _dbContext.SaveChangesAsync(ct);
     }
     #endregion
@@ -25,12 +25,12 @@ public class UserRepository : IUserRepository
     #region Read
     public async Task<User?> GetByEmailAsync(string email, CancellationToken ct = default)
     {
-        return await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, ct);
+        return await _dbContext.User.FirstOrDefaultAsync(u => u.Email == email, ct);
     }
 
     public async Task<bool> IsEmailUniqueAsync(string email, CancellationToken ct = default)
     {
-        return !await _dbContext.Users.AnyAsync(u => u.Email == email, ct);
+        return !await _dbContext.User.AnyAsync(u => u.Email == email, ct);
     }
     #endregion
 }

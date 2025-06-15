@@ -14,5 +14,10 @@ public class RecordTypesEndpoints : IEndpointDefinition
         {
             return await handler.HandleAsync(request);
         });
+
+        group.MapGet("/", async (GetAllUserRecordTypesHandler handler) =>
+        {
+            return await handler.HandleAsync();
+        });
     }
 }

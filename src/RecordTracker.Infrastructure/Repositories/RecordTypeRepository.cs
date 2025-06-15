@@ -1,4 +1,5 @@
-﻿using RecordTracker.Infrastructure.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using RecordTracker.Infrastructure.Entities;
 using RecordTracker.Infrastructure.Persistence;
 using RecordTracker.Infrastructure.Repositories.Interfaces;
 
@@ -16,12 +17,19 @@ public class RecordTypeRepository : IRecordTypeRepository
     #region Create
     public async Task AddAsync(RecordType recordType, CancellationToken ct = default)
     {
-        await _dbContext.Set<RecordType>().AddAsync(recordType, ct);
+        await _dbContext.RecordType.AddAsync(recordType, ct);
         await _dbContext.SaveChangesAsync(ct);
     }
     #endregion
 
     #region Read
+    public async Task<List<RecordType>> GetAllByUserIdAsync(Guid userId, CancellationToken ct = default)
+    {
+        return await _dbContext.RecordType
+            .Where(rt => rt.CreatedByUserId == userId)
+            .OrderByDescending(rt => rt.CreatedAt)
+            .ToListAsync(ct);
+    }
 
     #endregion
 }

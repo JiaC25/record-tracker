@@ -7,10 +7,10 @@ public class RecordItem
     
     // FK
     public Guid RecordTypeId { get; set; }
-    public Guid? CreatedByUserId { get; set; }
+    public Guid CreatedByUserId { get; set; }
 
     // Navigation
-    public User? CreatedByUser {  get; set; }
+    public User CreatedByUser {  get; set; } = default!;
     public RecordType RecordType { get; set; } = default!;
     public ICollection<RecordValue> RecordValues { get; set; } = new List<RecordValue>();
 }

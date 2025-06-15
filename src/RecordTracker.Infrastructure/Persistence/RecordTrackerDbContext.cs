@@ -7,7 +7,11 @@ public class RecordTrackerDbContext : DbContext
 {
     public RecordTrackerDbContext(DbContextOptions<RecordTrackerDbContext> options) : base(options) { }
 
-    public DbSet<User> Users => Set<User>();
+    public DbSet<User> User => Set<User>();
+    public DbSet<RecordType> RecordType => Set<RecordType>();
+    public DbSet<RecordField> RecordField => Set<RecordField>();
+    public DbSet<RecordItem> RecordItem => Set<RecordItem>();
+    public DbSet<RecordValue> RecordValue => Set<RecordValue>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

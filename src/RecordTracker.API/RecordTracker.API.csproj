@@ -25,8 +25,4 @@
     <ProjectReference Include="..\RecordTracker.Infrastructure\RecordTracker.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\Users\" />
-  </ItemGroup>
-
 </Project>

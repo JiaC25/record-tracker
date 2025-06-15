@@ -8,6 +8,8 @@ public class RecordValueConfiguration : IEntityTypeConfiguration<RecordValue>
 {
     public void Configure(EntityTypeBuilder<RecordValue> builder)
     {
+        builder.ToTable("RecordValue");
+
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Value)

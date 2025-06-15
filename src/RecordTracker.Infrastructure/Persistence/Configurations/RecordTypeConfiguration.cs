@@ -8,6 +8,8 @@ public class RecordTypeConfiguration : IEntityTypeConfiguration<RecordType>
 {
     public void Configure(EntityTypeBuilder<RecordType> builder)
     {
+        builder.ToTable("RecordType");
+
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.CreatedAt)
@@ -27,7 +29,7 @@ public class RecordTypeConfiguration : IEntityTypeConfiguration<RecordType>
         builder.HasOne(x => x.CreatedByUser) // TODO: Add RecordTypes collection nav to User model and move OnDelete config there
             .WithMany()
             .HasForeignKey(x => x.CreatedByUserId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(x => x.RecordFields)
             .WithOne(x => x.RecordType)

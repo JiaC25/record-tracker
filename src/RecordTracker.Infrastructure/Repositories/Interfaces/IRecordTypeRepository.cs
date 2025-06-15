@@ -9,6 +9,6 @@ public interface IRecordTypeRepository
     #endregion
 
     #region Read
-
+    Task<List<RecordType>> GetAllByUserIdAsync(Guid userId, CancellationToken ct = default);
     #endregion
 }
