@@ -1,40 +1,28 @@
 # Record Tracker
 
-A personal highly customizable record tracking app built with **ASP.NET Core** and **Next.js**, using **PostgreSQL** for data storage.
-
-
-This monorepo contains:
-
-- [`/backend`](./backend) — ASP.NET Core 8 API
-- [`/frontend`](./frontend) — Next.js app
-
----
+A personal record tracking app built with ASP.NET Core and PostgreSQL.
 
 ## Features (Planned)
 - Custom record types (e.g. grocery spending, meals spending, etc.)
 - Dynamic fields per record type
 - Record entry and data visualization
 - User accounts and authentication
-- More...
-
----
 
 ## Tech Stack
-- ASP.NET Core 8 with EF Core + PostgreSQL
-- React (Next.js) frontend
+- ASP.NET Core 8
+- EF Core + PostgreSQL
+- FluentValidation, AutoMapper
+- React (Next.js) frontend [planned]
 - Docker + CI/CD [planned]
 
 ## Getting Started
 
-### Prerequisites
+### 🔧 Prerequisites
 - [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-- [Node.js 18+](https://nodejs.org/) and `npm`
-- [PostgreSQL 15+](https://www.postgresql.org/download/) (with pgAdmin optional)
+- [PostgreSQL 17+](https://www.postgresql.org/download/) (with pgAdmin optional)
+- [Visual Studio 2022+](https://visualstudio.microsoft.com/) with **ASP.NET and web development** workload
 
----
-
-### Backend Setup (`/backend`)
-
+### 🛠 Setup (Local Development)
 1. Clone the repository:
    ```bash
    git clone https://github.com/your-username/record-tracker.git
@@ -60,17 +48,6 @@ This monorepo contains:
 	   ```powershell
 	   Update-Database
 	   ```
-
----
-
-### Frontend Setup (/frontend)
-
-1. From the project root:
-	```bash
-	cd frontend
-	npm install
-	npm run dev
-	```
 
 ## License
 _TODO: Add a license if needed_
