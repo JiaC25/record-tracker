@@ -31,7 +31,7 @@ A personal record tracking app built with ASP.NET Core and PostgreSQL.
 
 2. Setup PostgreSQL:
 	- Set a password for the `postgres` user (default)
-	- Password should match the `ConnectionStrings:DefaultConnection` in `appsettings.Development.json`
+	- Password should match the `ConnectionStrings:DefaultConnection` in `appsettings.json`
 
 3. Apply EF Core migrations:
 	- Open the solution `RecordTracker.sln` in Visual Studio
