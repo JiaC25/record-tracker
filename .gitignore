@@ -1,17 +1,39 @@
-# Build results
-bin/
-obj/
+# === FRONTEND (Next.js) ===
+/frontend/.next/
+/frontend/node_modules/
+/frontend/out/
+/frontend/.vercel
+/frontend/.env*
+/frontend/build
+/frontend/.pnp
+/frontend/pnpm-lock.yaml
+/frontend/yarn.lock
+/frontend/package-lock.json
+/frontend/*.tsbuildinfo
+/frontend/next-env.d.ts
 
-# Visual Studio files
-.vs/
+# === FRONTEND logs/debug/testing ===
+/frontend/coverage
+/frontend/npm-debug.log*
+/frontend/yarn-debug.log*
+/frontend/yarn-error.log*
+/frontend/pnpm-debug.log*
+
+# === BACKEND (ASP.NET Core) ===
+/backend/**/bin/
+/backend/**/obj/
+/backend/**/.vs
+/backend/**/.env*
+
+# === IDE ===
 *.user
 *.suo
-
-# Rider files
 .idea/
 
-# Other
+# === Misc ===
 *.log
 *.db
 *.sqlite
-.env
+.DS_Store
+Thumbs.db
+*.pem
