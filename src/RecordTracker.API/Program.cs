@@ -12,6 +12,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 
+// Jwt Configs (from appsettings.json)
+builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("Jwt"));
+
 // Configure Auth
 var jwtSecretKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Missing JWT secret");
 builder.Services.AddAuthorization();
@@ -28,6 +31,7 @@ builder.Services.AddAuthentication("Bearer")
         };
     });
 
+// Allow input of enums as strings in JSON
 builder.Services.Configure<JsonOptions>(options =>
 {
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());

@@ -1,4 +1,6 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using RecordTracker.API.Configuration;
 using RecordTracker.API.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -8,19 +10,20 @@ namespace RecordTracker.API.Services;
 
 public class JwtTokenService : IJwtTokenService
 {
-    private readonly IConfiguration _configuration;
+    private readonly JwtConfig _jwtConfig;
 
-    public JwtTokenService(IConfiguration configuration)
+    public JwtTokenService(IOptions<JwtConfig> jwtConfig)
     {
-        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        _jwtConfig = jwtConfig?.Value ?? throw new ArgumentNullException(nameof(jwtConfig));
     }
 
     public string GenerateToken(Guid userId, string email)
     {
+        if (string.IsNullOrWhiteSpace(_jwtConfig.Key))
+            throw new InvalidOperationException("Missing JWT Key");
+
         // Secret key used to sign the token
-        var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]
-            ?? throw new InvalidOperationException("Missing JWT Key")));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.Key));
 
         // Sign the token with HMAC SHA256
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
