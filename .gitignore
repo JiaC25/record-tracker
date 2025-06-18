@@ -1,17 +1,30 @@
-# Build results
-bin/
-obj/
+# ========== FRONTEND (Next.js) ==========
+/frontend/.next/
+/frontend/node_modules/
+/frontend/.env
+/frontend/.env.local
+/frontend/.env.development
+/frontend/.env.production
+/frontend/.env.test
 
-# Visual Studio files
-.vs/
+# ========== BACKEND (ASP.NET Core) ==========
+/backend/bin/
+/backend/obj/
+/backend/.vs/
+/backend/.env
+
+# Visual Studio settings
 *.user
 *.suo
 
-# Rider files
+# Rider settings
 .idea/
 
-# Other
+# ========== COMMON ==========
 *.log
 *.db
 *.sqlite
-.env
+
+# OS junk
+.DS_Store
+Thumbs.db

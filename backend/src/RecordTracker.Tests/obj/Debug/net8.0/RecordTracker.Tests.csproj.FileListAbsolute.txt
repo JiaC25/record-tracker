@@ -1,0 +1,14 @@
+E:\.NET Projects\RecordTracker\RecordTracker.Tests\bin\Debug\net8.0\TestData\CreateRecordType_Crypto.json
+E:\.NET Projects\RecordTracker\RecordTracker.Tests\bin\Debug\net8.0\TestData\CreateRecordType_Grocery.json
+E:\.NET Projects\RecordTracker\RecordTracker.Tests\bin\Debug\net8.0\RecordTracker.Tests.deps.json
+E:\.NET Projects\RecordTracker\RecordTracker.Tests\bin\Debug\net8.0\RecordTracker.Tests.dll
+E:\.NET Projects\RecordTracker\RecordTracker.Tests\bin\Debug\net8.0\RecordTracker.Tests.pdb
+E:\.NET Projects\RecordTracker\RecordTracker.Tests\obj\Debug\net8.0\RecordTracker.Tests.GeneratedMSBuildEditorConfig.editorconfig
+E:\.NET Projects\RecordTracker\RecordTracker.Tests\obj\Debug\net8.0\RecordTracker.Tests.AssemblyInfoInputs.cache
+E:\.NET Projects\RecordTracker\RecordTracker.Tests\obj\Debug\net8.0\RecordTracker.Tests.AssemblyInfo.cs
+E:\.NET Projects\RecordTracker\RecordTracker.Tests\obj\Debug\net8.0\RecordTracker.Tests.csproj.CoreCompileInputs.cache
+E:\.NET Projects\RecordTracker\RecordTracker.Tests\obj\Debug\net8.0\RecordTracker.Tests.sourcelink.json
+E:\.NET Projects\RecordTracker\RecordTracker.Tests\obj\Debug\net8.0\RecordTracker.Tests.dll
+E:\.NET Projects\RecordTracker\RecordTracker.Tests\obj\Debug\net8.0\refint\RecordTracker.Tests.dll
+E:\.NET Projects\RecordTracker\RecordTracker.Tests\obj\Debug\net8.0\RecordTracker.Tests.pdb
+E:\.NET Projects\RecordTracker\RecordTracker.Tests\obj\Debug\net8.0\ref\RecordTracker.Tests.dll

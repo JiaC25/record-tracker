@@ -1,6 +1,0 @@
-@RecordTracker.API_HostAddress = http://localhost:5248
-
-GET {{RecordTracker.API_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
