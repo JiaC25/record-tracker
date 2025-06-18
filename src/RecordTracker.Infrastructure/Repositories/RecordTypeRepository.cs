@@ -23,7 +23,7 @@ public class RecordTypeRepository : IRecordTypeRepository
     #endregion
 
     #region Read
-    public async Task<List<RecordType>> GetAllByUserIdAsync(Guid userId, CancellationToken ct = default)
+    public async Task<List<RecordType>> GetAllAsync(Guid userId, CancellationToken ct = default)
     {
         return await _dbContext.RecordType
             .Where(rt => rt.CreatedByUserId == userId)
@@ -31,5 +31,27 @@ public class RecordTypeRepository : IRecordTypeRepository
             .ToListAsync(ct);
     }
 
+    public async Task<RecordType?> GetByIdAsync(Guid id, Guid userId, CancellationToken ct = default)
+    {
+        return await _dbContext.RecordType
+            .Where(rt => rt.Id == id && rt.CreatedByUserId == userId)
+            .FirstOrDefaultAsync(ct);
+    }
+    public async Task<RecordType?> GetByIdWithFieldsAsync(Guid id, Guid userId, CancellationToken ct = default)
+    {
+        return await _dbContext.RecordType
+            .Where(rt => rt.Id == id && rt.CreatedByUserId == userId)
+            .Include(rt => rt.RecordFields)
+            .FirstOrDefaultAsync(ct);
+    }
+    public async Task<RecordType?> GetByIdFullAsync(Guid id, Guid userId, CancellationToken ct = default)
+    {
+        return await _dbContext.RecordType
+            .Where(rt => rt.Id == id && rt.CreatedByUserId == userId)
+            .Include(rt => rt.RecordFields)
+            .Include(rt => rt.RecordItems)
+                .ThenInclude(ri => ri.RecordValues)
+            .FirstOrDefaultAsync(ct);
+    }
     #endregion
 }

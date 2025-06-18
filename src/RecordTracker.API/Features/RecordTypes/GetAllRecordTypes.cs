@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using RecordTracker.API.Features.RecordTypes.Dtos;
 using RecordTracker.API.Services.Interfaces;
 using RecordTracker.Infrastructure.Repositories.Interfaces;
 
@@ -24,7 +25,7 @@ public class GetAllUserRecordTypesHandler
     {
         var userId = _currentUserService.GetUserId();
 
-        var recordTypes = await _recordTypeRepository.GetAllByUserIdAsync(userId, ct);
+        var recordTypes = await _recordTypeRepository.GetAllAsync(userId, ct);
 
         var recordTypeDtos = _mapper.Map<List<RecordTypeDto>>(recordTypes);
 

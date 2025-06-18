@@ -9,4 +9,5 @@ public class User
     public string PasswordHash { get; set; } = default!;
 
     public bool IsDeactivated { get; set; } = false;
+    public DateTime? DeactivatedAt { get; set; }
 }

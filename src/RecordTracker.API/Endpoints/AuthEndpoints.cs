@@ -1,6 +1,7 @@
 ﻿using RecordTracker.API.Common;
+using RecordTracker.API.Features.Auth;
 
-namespace RecordTracker.API.Features.Auth;
+namespace RecordTracker.API.Endpoints;
 
 public class AuthEndpoints : IEndpointDefinition
 {

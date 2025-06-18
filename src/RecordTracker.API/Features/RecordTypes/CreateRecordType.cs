@@ -1,12 +1,20 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using RecordTracker.API.Features.RecordFields;
+using RecordTracker.API.Features.RecordFields.Dtos;
+using RecordTracker.API.Features.RecordTypes.Dtos;
 using RecordTracker.API.Services.Interfaces;
 using RecordTracker.Infrastructure.Entities;
 using RecordTracker.Infrastructure.Repositories.Interfaces;
 
 namespace RecordTracker.API.Features.RecordTypes
 {
-    public record CreateRecordTypeRequest(string Name, string? Description);
+    public record CreateRecordTypeRequest
+    {
+        public string Name { get; init; } = default!;
+        public string? Description { get; init; }
+        public List<CreateRecordFieldDto> RecordFields { get; init; } = [];
+    }
 
     public class CreateRecordTypeValidator : AbstractValidator<CreateRecordTypeRequest>
     {
@@ -18,6 +26,9 @@ namespace RecordTracker.API.Features.RecordTypes
 
             RuleFor(x => x.Description)
                 .MaximumLength(500);
+
+            RuleForEach(x => x.RecordFields)
+                .SetValidator(new CreateRecordFieldValidator());
         }
     }
 
@@ -40,9 +51,9 @@ namespace RecordTracker.API.Features.RecordTypes
             _mapper = mapper;
         }
 
-        public async Task<IResult> HandleAsync(CreateRecordTypeRequest request)
+        public async Task<IResult> HandleAsync(CreateRecordTypeRequest request, CancellationToken ct = default)
         {
-            var validationResult = await _validator.ValidateAsync(request);
+            var validationResult = await _validator.ValidateAsync(request, ct);
             if (!validationResult.IsValid)
                 return Results.ValidationProblem(validationResult.ToDictionary());
 
@@ -55,11 +66,12 @@ namespace RecordTracker.API.Features.RecordTypes
                 Description = request.Description,
                 CreatedAt = DateTime.UtcNow,
                 CreatedByUserId = userId,
+                RecordFields = _mapper.Map<List<RecordField>>(request.RecordFields)
             };
 
-            await _recordTypeRepository.AddAsync(recordType);
+            await _recordTypeRepository.AddAsync(recordType, ct);
 
-            var dto = _mapper.Map<RecordTypeDto>(recordType);
+            var dto = _mapper.Map<RecordTypeSummaryDto>(recordType);
 
             return Results.Created($"/api/recordtypes/{dto.Id}", dto);
         }

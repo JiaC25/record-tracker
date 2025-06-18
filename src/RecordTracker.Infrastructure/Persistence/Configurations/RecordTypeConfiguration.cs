@@ -30,6 +30,11 @@ public class RecordTypeConfiguration : IEntityTypeConfiguration<RecordType>
             .WithMany()
             .HasForeignKey(x => x.CreatedByUserId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasOne(x => x.DeletedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.DeletedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(x => x.RecordFields)
             .WithOne(x => x.RecordType)
@@ -40,5 +45,8 @@ public class RecordTypeConfiguration : IEntityTypeConfiguration<RecordType>
             .WithOne(x => x.RecordType)
             .HasForeignKey(x => x.RecordTypeId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // Global filter to exclude soft-deleted records
+        builder.HasQueryFilter(x => !x.IsDeleted);
     }
 }

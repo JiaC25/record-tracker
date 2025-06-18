@@ -11,8 +11,14 @@ public class RecordType
     // FK
     public Guid CreatedByUserId { get; set; }
 
+    // Soft Delete
+    public bool IsDeleted { get; set; } = false;
+    public DateTime? DeletedAt { get; set; }
+    public Guid? DeletedByUserId { get; set; }
+
     // Navigation
     public User CreatedByUser { get; set; } = default!;
-    public ICollection<RecordField> RecordFields { get; set; } = new List<RecordField>();
-    public ICollection<RecordItem> RecordItems { get; set; } = new List<RecordItem>();
+    public User? DeletedByUser { get; set; }
+    public ICollection<RecordField> RecordFields { get; set; } = [];
+    public ICollection<RecordItem> RecordItems { get; set; } = [];
 }

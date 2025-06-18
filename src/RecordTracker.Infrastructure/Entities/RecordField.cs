@@ -10,7 +10,10 @@ public class RecordField
 
     // FK
     public Guid RecordTypeId { get; set; }
-    
+
+    // Soft Delete
+    public bool IsDeleted { get; set; } = false;
+
     // Navigation
     public RecordType RecordType { get; set; } = default!;
     public ICollection<RecordValue> RecordValues { get; set; } = new List<RecordValue>();

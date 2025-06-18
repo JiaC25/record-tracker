@@ -28,6 +28,11 @@ public class RecordItemConfiguration : IEntityTypeConfiguration<RecordItem>
             .HasForeignKey(x => x.CreatedByUserId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.HasOne(x => x.DeletedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.DeletedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasOne(x => x.RecordType)
             .WithMany(x => x.RecordItems)
             .HasForeignKey(x => x.RecordTypeId);
@@ -36,5 +41,8 @@ public class RecordItemConfiguration : IEntityTypeConfiguration<RecordItem>
             .WithOne(x => x.RecordItem)
             .HasForeignKey(x => x.RecordItemId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // Global filter to exclude soft-deleted records
+        builder.HasQueryFilter(x => !x.IsDeleted);
     }
 }
