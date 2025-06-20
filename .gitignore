@@ -29,6 +29,8 @@
 *.user
 *.suo
 .idea/
+.vscode/
+*.code-workspace
 
 # === Misc ===
 *.log
