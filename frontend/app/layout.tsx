@@ -22,8 +22,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex items-center justify-between bg-accent text-accent-foreground">
-            <h1 className="text-3xl font-bold py-3 pl-5">GenTracker</h1>
+          <div className="flex items-center justify-between bg-secondary text-secondary-foreground">
+            <h1 className="text-2xl font-bold py-3 pl-5">GenTracker</h1>
             <div className="mr-10"><ThemeToggle /></div>
           </div>
           {children}
