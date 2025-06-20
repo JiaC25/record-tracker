@@ -10,7 +10,19 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...compat.extends(
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "next/core-web-vitals",
+    "next/typescript"
+  ),
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    rules: {
+      "quotes" : ["warn", "single"] // Enforce single quotes for strings
+    }
+  }
 ];
 
 export default eslintConfig;

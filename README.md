@@ -72,6 +72,12 @@ This monorepo contains:
 	npm run dev
 	```
 
+2. Run Eslint:
+	```
+	cd frontend
+	npm run lint
+	npm run lint:fix
+	```
 ## License
 _TODO: Add a license if needed_
 
