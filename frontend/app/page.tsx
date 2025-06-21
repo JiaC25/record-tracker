@@ -1,4 +1,4 @@
-export default function Home() {
+export const Home = () => {
   return (
     <main>
       <div className="text-xl p-10">
