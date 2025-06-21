@@ -1,7 +1,9 @@
 import { ThemeProvider } from '@/components/theme-provider';
 import { ThemeToggle } from '@/components/theme-toggle';
 import UserStatus from '@/components/user-status';
+import { NotebookPen } from 'lucide-react';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -23,10 +25,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex items-center justify-between px-4 py-2 border-b">
-            <h1 className="text-xl font-semibold">
-              <span className="text-primary">Gen</span>
-              <span>Tracker</span>
+          <div className="flex items-center justify-between px-4 py-3 border-b">
+            <h1 className="text-2xl font-semibold">
+              <Link href="/" className='flex items-center'>
+                <NotebookPen className="mx-1 text-primary" />
+                <span className="text-primary">Gen</span>
+                <span>Tracker</span>
+              </Link>
             </h1>
             <div className="flex items-center space-x-4 mr-5">
               <ThemeToggle />

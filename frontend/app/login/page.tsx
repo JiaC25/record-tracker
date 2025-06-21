@@ -57,7 +57,7 @@ const LoginPage = () => {
     }
 
     return (
-        <div className='max-w-sm mx-auto mt-20 space-y-4'>
+        <div className='max-w-sm mx-auto mt-20'>
             <Card className="w-full max-w-sm">
                 <CardHeader>
                     <CardTitle>Login</CardTitle>
@@ -83,7 +83,7 @@ const LoginPage = () => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
-                            <Button type="submit" className='w-full' disabled={isLoading}>
+                            <Button type="submit" className="w-full" disabled={isLoading}>
                                 {isLoading ? (
                                     <span className="flex items-center gap-2">
                                         <Loader2Icon className="animate-spin" />
