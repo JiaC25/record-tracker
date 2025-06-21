@@ -31,8 +31,8 @@ public class JwtTokenService : IJwtTokenService
         // Claims = key-value pairs embedded in the token (who is this user?)
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-            new Claim(ClaimTypes.Email, email)
+            new Claim("userId", userId.ToString()),
+            new Claim("email", email)
         };
 
         // Construct the token object

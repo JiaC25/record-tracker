@@ -2,7 +2,7 @@ export const Home = () => {
   return (
     <main>
       <div className="text-xl p-10">
-        Test Content
+        Main Page
       </div>
     </main>
   );
