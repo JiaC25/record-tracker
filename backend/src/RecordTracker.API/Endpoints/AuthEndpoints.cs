@@ -9,7 +9,7 @@ public class AuthEndpoints : IEndpointDefinition
     {
         var group = app.MapGroup("/api/auth");
 
-        group.MapPost("/register", async (CreateUserRequest request, CreateUserHandler handler) =>
+        group.MapPost("/signup", async (CreateUserRequest request, CreateUserHandler handler) =>
         {
             return await handler.HandleAsync(request);
         });
