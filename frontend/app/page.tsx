@@ -1,8 +1,8 @@
 export const Home = () => {
   return (
     <main>
-      <div className="text-xl p-10">
-        Test Content
+      <div className="text-2xl py-5 px-15">
+        Main Page
       </div>
     </main>
   );
