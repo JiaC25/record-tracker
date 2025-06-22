@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { signupUser } from '@/lib/api/userApi';
 import { useAuthRedirect } from '@/lib/useAuthRedirect';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -34,13 +35,7 @@ const SignupPage = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
-            });
+            const response = await signupUser(email, password);
 
             if (!response.ok) {
                 console.error('Signup failed:', response);
