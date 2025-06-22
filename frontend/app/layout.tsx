@@ -1,5 +1,6 @@
 import AppHeader from '@/components/app-header';
 import { ThemeProvider } from '@/components/app-theme/theme-provider';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import type { Metadata } from 'next';
 import './globals.css';
 
@@ -15,17 +16,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className='min-h-screen'>
+      <body className="min-h-screen overflow-hidden">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
+          {/* Global top bar for all pages */}
           <AppHeader />
-          <main className="px-4 py-6">
+          {/* Main page content */}
+          <ScrollArea>
             {children}
-          </main>
+          </ScrollArea>
         </ThemeProvider>
       </body>
     </html>
