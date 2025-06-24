@@ -18,7 +18,7 @@ public class CurrentUserService : ICurrentUserService
 
         if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
         {
-            throw new UnauthorizedAccessException($"{CustomClaimTypes.UserId} is not available in the current context. User is not authenticated.");
+            throw new UnauthorizedAccessException($"{CustomClaimTypes.UserId} is not available in the current context or the user is not authenticated.");
         }
 
         return userId;
