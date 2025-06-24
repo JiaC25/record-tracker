@@ -41,14 +41,6 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  --font-sm: '0.750rem';
-  --font-base: '1rem';
-  --font-xl: '1.333rem';
-  --font-2xl: '1.777rem';
-  --font-3xl: '2.369rem';
-  --font-4xl: '3.158rem';
-  --font-5xl: '4.210rem';
-
   --font-main: 'Noto Sans Mende Kikakui', 'sans-serif';
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -134,16 +126,4 @@
   body {
     @apply bg-background text-foreground;
   }
-}
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-
-  }
-  body {
-    @apply bg-background text-foreground;
-
-  }
-
 }

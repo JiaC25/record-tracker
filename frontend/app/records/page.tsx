@@ -4,10 +4,15 @@ import RecordsSidebar from '@/components/records/records-sidebar'
 const RecordsPage = () => {
   return (
     <SidebarLayout sidebar={<RecordsSidebar />}>
+
+        {/* Content area for selected record (edit/add/view all record items etc) */}
         <div className="p-5">
-            <p className="text-sm">
-                This is the records page where you can view and manage your records.
-            </p>
+            <div className="text-sm">
+                <h1>Record content area.</h1>
+                {/* <RecordTypeForm/> for adding or editing record */}
+                {/* <RecordItemForm/> for adding record item */}
+                {/* <RecordView/> for rendering info of a record including record items */}
+            </div>
         </div>
     </SidebarLayout>
   )
