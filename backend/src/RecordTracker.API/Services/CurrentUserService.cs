@@ -14,11 +14,11 @@ public class CurrentUserService : ICurrentUserService
 
     public Guid GetUserId()
     {
-        var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier);
+        var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(CustomClaimTypes.UserId);
 
         if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
         {
-            throw new UnauthorizedAccessException("User ID is not available in the current context.");
+            throw new UnauthorizedAccessException($"{CustomClaimTypes.UserId} is not available in the current context. User is not authenticated.");
         }
 
         return userId;

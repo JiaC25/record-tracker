@@ -1,6 +1,18 @@
-@RecordTracker.API_HostAddress = http://localhost:5248
+@API_HostAddress = http://localhost:5000/api
+@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMTQ3NTcwZS1hZjA1LTQ2MWYtYjhiNS00OThmN2VjMTFjMzQiLCJlbWFpbCI6InZpbmNlbnQudGFuZ0BnbWFpbC5jb20iLCJleHAiOjE3NTEzODIxMTd9.RZUvSq7s0gt69leLRecMhZonV0VLWQ1_j_SYm9yNJVk
 
-GET {{RecordTracker.API_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{API_HostAddress}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "vincent.tang@gmail.com",
+  "password": "12345678"
+}
 
 ###
+GET {{API_HostAddress}}/recordtypes
+Authorization: {{token}}
+
+###
+
+
