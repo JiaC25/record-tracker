@@ -1,6 +1,22 @@
-@RecordTracker.API_HostAddress = http://localhost:5248
+@env = dev
+@API_HostAddress = http://localhost:5000/api
+@get_email = {{email}}
+@get_password = {{password}}
 
-GET {{RecordTracker.API_HostAddress}}/weatherforecast/
-Accept: application/json
+# @name loginRequest
+POST {{API_HostAddress}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{get_email}}",
+  "password": "{{get_password}}"
+}
 
 ###
+@accessToken = {{loginRequest.response.body.token}}
+GET {{API_HostAddress}}/recordtypes
+Authorization: {{token}}
+
+###
+
+

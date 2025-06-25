@@ -8,6 +8,12 @@ using System.Text;
 
 namespace RecordTracker.API.Services;
 
+static class CustomClaimTypes
+{
+    public const string UserId = "userId";
+    public const string Email = "email";
+}
+
 public class JwtTokenService : IJwtTokenService
 {
     private readonly JwtConfig _jwtConfig;
@@ -31,8 +37,8 @@ public class JwtTokenService : IJwtTokenService
         // Claims = key-value pairs embedded in the token (who is this user?)
         var claims = new List<Claim>
         {
-            new Claim("userId", userId.ToString()),
-            new Claim("email", email)
+            new Claim(CustomClaimTypes.UserId, userId.ToString()),
+            new Claim(CustomClaimTypes.Email, email)
         };
 
         // Construct the token object
