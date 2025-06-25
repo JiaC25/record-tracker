@@ -1,8 +1,8 @@
 'use client'
 
-import ThemeToggleInline from '@/components/app-theme/theme-toggle-inline';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuthStore } from '@/lib/store/authStore';
+import { User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -41,7 +41,7 @@ const UserStatus = () => {
                 <Button variant="outline" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
                         <AvatarImage src="" alt="User" />
-                        <AvatarFallback>{userEmail ? userEmail.charAt(0).toUpperCase() : 'U'}</AvatarFallback>
+                        <AvatarFallback>{userEmail ? userEmail.charAt(0).toUpperCase() : <User/>}</AvatarFallback>
                     </Avatar>
                 </Button>
             </DropdownMenuTrigger>
@@ -50,12 +50,12 @@ const UserStatus = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="text-xs">Profile</DropdownMenuItem>
                 <DropdownMenuItem className="text-xs">Settings</DropdownMenuItem>
-                <DropdownMenuItem
+                {/* <DropdownMenuItem
                     onSelect={(e) => e.preventDefault()}
                     className="flex justify-between p-2 focus:bg-transparent text-xs"
                 >
                     Appearance <ThemeToggleInline />
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="flex justify-center text-xs">
                     Log out
