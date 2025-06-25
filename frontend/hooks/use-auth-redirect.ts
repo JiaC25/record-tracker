@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 /**
  * Redirects authenticated users away from auth pages
  * @param redirectTo Optional path to redirect the user to (default: '/')
+ * @returns boolean indicating if redirect will happen
  */
 export const useAuthRedirect = (redirectTo: string = '/') => {
     const router = useRouter();
