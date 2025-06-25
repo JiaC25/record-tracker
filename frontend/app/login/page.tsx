@@ -3,21 +3,45 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 import { loginUser } from '@/lib/api/userApi';
-import { useAuthRedirect } from '@/lib/useAuthRedirect';
+import { useAuthRedirect } from '@/lib/hooks/useAuthRedirect';
+import { useAuthStore } from '@/lib/store/authStore';
 import { Loader2Icon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-// Todo: Currently if the user is already logged in and they try to access the login page, they will be redirected to the home page. However the LoginPage UI will be shown briefly before the redirect happens. This can be improved by checking the authentication state before rendering the page.
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
+    const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+    const isHydrated = useAuthStore((state) => state.isHydrated);
+    const { setToken } = useAuthStore();
+
     const router = useRouter();
 
-    useAuthRedirect(); // Redirect if already logged in
+    const willRedirect = useAuthRedirect(); // Redirect if already logged in
+
+    // Show loading state while checking auth status
+    if (!isHydrated || (isHydrated && isLoggedIn && willRedirect)) {
+        return (
+            <div className="max-w-sm mx-auto mt-20 p-4">
+                <Card className="w-full max-w-sm">
+                    <CardHeader>
+                        <Skeleton className="h-6 w-20 mb-2" />
+                        <Skeleton className="h-4 w-full" />
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <Skeleton className="h-9 w-full" />
+                        <Skeleton className="h-9 w-full" />
+                        <Skeleton className="h-9 w-full" />
+                    </CardContent>
+                </Card>
+            </div>
+        )
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -37,10 +61,7 @@ const LoginPage = () => {
             }
 
             const data = await response.json();
-            localStorage.setItem('token', data.token); // Store the token in localStorage
-
-            // Todo: set the user data in a global state or context
-            window.dispatchEvent(new Event('authChanged'));
+            setToken(data.token);
 
             router.push('/'); // Redirect to the home page after successful login
         } catch (error) {
