@@ -13,7 +13,7 @@ public static class SwaggerConfiguration
     /// Launch url - http://localhost:5000/swagger/index.html
     public static IServiceCollection AddSwaggerGen(this IServiceCollection services)
     {
-        services.AddSwaggerGen(options =>
+        return services.AddSwaggerGen(options =>
         {
             // Describe JWT authentication token scheme
             options.AddSecurityDefinition(JwtAuthenticationService.BEARER,
@@ -43,6 +43,5 @@ public static class SwaggerConfiguration
                 }
             });
         });
-        return services;
     }
 }
