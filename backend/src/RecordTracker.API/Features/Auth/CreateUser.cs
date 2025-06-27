@@ -1,10 +1,13 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using RecordTracker.API.Configuration;
 using RecordTracker.Infrastructure.Entities;
 using RecordTracker.Infrastructure.Repositories.Interfaces;
 
 namespace RecordTracker.API.Features.Auth;
 
+public record CreateUserResponse(Guid Id, string Email);
 public record CreateUserRequest(string Email, string Password);
 
 public class CreateUserValidator : AbstractValidator<CreateUserRequest>
@@ -30,18 +33,19 @@ public class CreateUserHandler
     private readonly IValidator<CreateUserRequest> _validator;
     private readonly IUserRepository _userRepository;
 
-    public CreateUserHandler(IValidator<CreateUserRequest> validator,
+    public CreateUserHandler(
+        IValidator<CreateUserRequest> validator,
         IUserRepository userRepository)
     {
         _validator = validator;
         _userRepository = userRepository;
     }
 
-    public async Task<IResult> HandleAsync(CreateUserRequest request)
+    public async Task<Results<Created<CreateUserResponse>, ValidationProblem>> HandleAsync(CreateUserRequest request)
     {
         var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid)
-            return Results.ValidationProblem(validationResult.ToDictionary());
+            return TypedResults.ValidationProblem(validationResult.ToDictionary());
 
         var user = new User
         {
@@ -52,6 +56,28 @@ public class CreateUserHandler
 
         await _userRepository.AddAsync(user);
 
-        return Results.Created($"/api/users/{user.Id}", new { user.Id, user.Email });
+        return TypedResults.Created($"/api/users/{user.Id}", new CreateUserResponse(user.Id, user.Email));
+    }
+}
+
+public static class CreateUserApiDocumentation
+{
+    public static RouteHandlerBuilder ProduceCreateUserApiDocumentation(this RouteHandlerBuilder builder)
+    {
+        // This method can be used to produce API documentation if needed.
+        return SwaggerConfiguration.ProduceValidationProblemsApiDocumentation(
+            builder,
+            StatusCodes.Status400BadRequest,
+            new Microsoft.OpenApi.Any.OpenApiObject
+            {
+                ["Email"] = new Microsoft.OpenApi.Any.OpenApiArray
+                        {
+                            new Microsoft.OpenApi.Any.OpenApiString(""),
+                        },
+                ["Password"] = new Microsoft.OpenApi.Any.OpenApiArray
+                        {
+                            new Microsoft.OpenApi.Any.OpenApiString("")
+                        }
+            });
     }
 }

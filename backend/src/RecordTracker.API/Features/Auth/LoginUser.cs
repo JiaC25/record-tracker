@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using RecordTracker.API.Configuration;
 using RecordTracker.API.Services.Interfaces;
 using RecordTracker.Infrastructure.Entities;
 using RecordTracker.Infrastructure.Repositories.Interfaces;
@@ -7,13 +9,18 @@ using RecordTracker.Infrastructure.Repositories.Interfaces;
 namespace RecordTracker.API.Features.Auth;
 
 public record LoginUserRequest(string Email, string Password);
+public record LoginUserResponse(string Token);
 
 public class LoginUserValidator : AbstractValidator<LoginUserRequest>
 {
     public LoginUserValidator()
     {
-        RuleFor(x => x.Email).NotEmpty().EmailAddress();
-        RuleFor(x => x.Password).NotEmpty();
+        RuleFor(x => x.Email)
+            .NotEmpty()
+            .EmailAddress();
+
+        RuleFor(x => x.Password)
+            .NotEmpty();
     }
 }
 
@@ -24,7 +31,8 @@ public class LoginUserHandler
     private readonly IConfiguration _configuration;
     private readonly IJwtTokenService _jwtTokenService;
 
-    public LoginUserHandler(IValidator<LoginUserRequest> validator,
+    public LoginUserHandler(
+        IValidator<LoginUserRequest> validator,
         IUserRepository userRepository,
         IConfiguration configuration,
         IJwtTokenService jwtTokenService)
@@ -35,23 +43,45 @@ public class LoginUserHandler
         _jwtTokenService = jwtTokenService;
     }
 
-    public async Task<IResult> HandleAsync(LoginUserRequest request)
+    public async Task<Results<Ok<LoginUserResponse>, NotFound, UnauthorizedHttpResult, ValidationProblem>> HandleAsync(LoginUserRequest request)
     {
         var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid)
-            return Results.ValidationProblem(validationResult.ToDictionary());
+            return TypedResults.ValidationProblem(validationResult.ToDictionary());
 
         var user = await _userRepository.GetByEmailAsync(request.Email);
         if (user == null)
-            return Results.Unauthorized();
+            return TypedResults.NotFound();
 
         var hasher = new PasswordHasher<User>();
         var result = hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
         if (result != PasswordVerificationResult.Success)
-            return Results.Unauthorized();
+            return TypedResults.Unauthorized();
 
         var token = _jwtTokenService.GenerateToken(user.Id, user.Email);
 
-        return Results.Ok(new { token });
+        return TypedResults.Ok(new LoginUserResponse(token));
+    }
+}
+
+public static class LoginUserApiDocumentation
+{
+    public static RouteHandlerBuilder ProduceLoginUserApiDocumentation(this RouteHandlerBuilder builder)
+    {
+        // This method can be used to produce API documentation for the login endpoint.
+        return SwaggerConfiguration.ProduceValidationProblemsApiDocumentation(
+            builder,
+            StatusCodes.Status400BadRequest,
+            new Microsoft.OpenApi.Any.OpenApiObject
+            {
+                ["Email"] = new Microsoft.OpenApi.Any.OpenApiArray
+                {
+                    new Microsoft.OpenApi.Any.OpenApiString("")
+                },
+                ["Password"] = new Microsoft.OpenApi.Any.OpenApiArray
+                {
+                    new Microsoft.OpenApi.Any.OpenApiString("")
+                }
+            });
     }
 }
