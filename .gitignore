@@ -24,7 +24,6 @@
 /backend/**/obj/
 /backend/**/.vs
 /backend/**/.env*
-/backend/**/RecordTracker.API.http
 
 # === IDE ===
 *.user
