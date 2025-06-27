@@ -1,24 +1,21 @@
 using Microsoft.AspNetCore.Http.Json;
-using Microsoft.OpenApi.Models;
 using RecordTracker.API.Common;
 using RecordTracker.API.Configuration;
+using RecordTracker.API.Configuration.CorsPolicy;
 using RecordTracker.Infrastructure.Configuration;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Allow CORS for frontend development
-builder.Services.AddCors(options =>
+builder.Services.AddCorsPolicy(new CorsPolicyConfig
 {
-    options.AddPolicy("AllowFrontendDev", policy =>
-    {
-        policy.WithOrigins("http://localhost:3000")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
+    Origin = "http://localhost:3000" // Adjust this to your frontend's URL
 });
 
+// Add DB Infrastructure services
 builder.Services.AddInfrastructureServices(builder.Configuration);
+// Dependency injection for application services
 builder.Services.AddApplicationServices();
 
 // Set up JWT authentication
@@ -32,33 +29,8 @@ builder.Services.Configure<JsonOptions>(options =>
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.AddSecurityDefinition(JwtAuthenticationService.BEARER, new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = JwtAuthenticationService.BEARER,
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Enter 'Bearer {token}'"
-    });
-
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Id = JwtAuthenticationService.BEARER,
-                    Type = ReferenceType.SecurityScheme
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
-});
+// /swagger/index.html
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -70,9 +42,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowFrontendDev");
-
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
 

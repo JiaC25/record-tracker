@@ -1,5 +1,6 @@
 ﻿namespace RecordTracker.API.Common;
 
+// This class is responsible for mapping all feature endpoints defined in RecordTracker.API/Endpoints
 public static class EndpointMappingExtensions
 {
     public static void MapAllFeatureEndpoints(this IEndpointRouteBuilder app)
