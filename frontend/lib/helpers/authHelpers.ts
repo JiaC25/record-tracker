@@ -19,23 +19,12 @@ export const parseJwt = (token: string): JwtPayload | null => {
                 .join('')
         );
 
-        const parsed = JSON.parse(jsonPayload);
-
-        // Validate all required claim fields exist and are strings
-        for (const key of Object.keys(CustomClaimTypes) as Array<keyof JwtPayload>) {
-            const claimKey = CustomClaimTypes[key];
-            if (typeof parsed[claimKey] !== 'string') {
-                return null;
-            }
+        const parsed = JSON.parse(jsonPayload) as JwtPayload;
+        if (!parsed.userId || !parsed.email) {
+            return null;
         }
-
-        // Build strongly typed JwtPayload object
-        const result: JwtPayload = {
-            userId: parsed[CustomClaimTypes.userId],
-            email: parsed[CustomClaimTypes.email],
-        };
-
-        return result;
+        
+        return parsed;
     } catch {
         return null;
     }
