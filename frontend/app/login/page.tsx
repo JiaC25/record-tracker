@@ -74,7 +74,7 @@ const LoginPage = () => {
 
     return (
         <div className='max-w-sm mx-auto mt-20'>
-            <Card className="w-full max-w-sm">
+            <Card className="mx-2">
                 <CardHeader>
                     <CardTitle>Login</CardTitle>
                     <CardDescription>Enter your email below to login to your account</CardDescription>

@@ -76,7 +76,7 @@ const SignupPage = () => {
 
     return (
         <div className="max-w-sm mx-auto mt-20">
-            <Card className='w-full max-w-sm'>
+            <Card className='mx-2'>
                 <CardHeader>
                     <CardTitle>Signup</CardTitle>
                 </CardHeader>
@@ -112,6 +112,9 @@ const SignupPage = () => {
                                         Signing Up
                                     </span>
                                 ) : 'Sign Up'}
+                            </Button>
+                            <Button type="button" variant="link" className="w-full" onClick={() => router.push('/login')}>
+                                <span className='text-sm'>Already signed up? Log In</span>
                             </Button>
                         </fieldset>
                     </form>
