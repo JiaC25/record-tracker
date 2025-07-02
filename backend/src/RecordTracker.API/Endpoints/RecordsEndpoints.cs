@@ -1,25 +1,26 @@
 ﻿using RecordTracker.API.Common;
-using RecordTracker.API.Features.RecordTypes;
+using RecordTracker.API.Features.Records;
+using RecordTracker.API.Features.Records;
 
 namespace RecordTracker.API.Endpoints;
 
-public class RecordTypesEndpoints : IEndpointDefinition
+public class RecordsEndpoints : IEndpointDefinition
 {
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/recordtypes").WithTags("RecordTypes");
+        var group = app.MapGroup("/api/records").WithTags("Records");
 
         #region Get
         group.MapGet("/", async (
-            GetAllUserRecordTypesHandler handler,
+            GetAllUserRecordsHandler handler,
             CancellationToken ct) =>
         {
             return await handler.HandleAsync(ct);
         });
 
         group.MapGet("/{id:guid}", async (
-            [AsParameters] GetRecordTypeByIdRequest request,
-            GetRecordTypeByIdHandler handler,
+            [AsParameters] GetRecordByIdRequest request,
+            GetRecordByIdHandler handler,
             CancellationToken ct) =>
         {
             return await handler.HandleAsync(request, ct);
@@ -28,8 +29,8 @@ public class RecordTypesEndpoints : IEndpointDefinition
 
         #region Post
         group.MapPost("/", async (
-            CreateRecordTypeRequest request,
-            CreateRecordTypeHandler handler,
+            CreateRecordRequest request,
+            CreateRecordHandler handler,
             CancellationToken ct) =>
         {
             return await handler.HandleAsync(request, ct);
@@ -38,8 +39,8 @@ public class RecordTypesEndpoints : IEndpointDefinition
 
         #region Delete
         group.MapDelete("/{id:guid}", async (
-            [AsParameters] DeleteRecordTypeRequest request,
-            DeleteRecordTypeHandler handler,
+            [AsParameters] DeleteRecordRequest request,
+            DeleteRecordHandler handler,
             CancellationToken ct) =>
         {
             return await handler.HandleAsync(request, ct);

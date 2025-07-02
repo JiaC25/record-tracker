@@ -2,23 +2,23 @@
 using FluentValidation;
 using RecordTracker.API.Features.RecordFields;
 using RecordTracker.API.Features.RecordFields.Dtos;
-using RecordTracker.API.Features.RecordTypes.Dtos;
+using RecordTracker.API.Features.Records.Dtos;
 using RecordTracker.API.Services.Interfaces;
 using RecordTracker.Infrastructure.Entities;
 using RecordTracker.Infrastructure.Repositories.Interfaces;
 
-namespace RecordTracker.API.Features.RecordTypes
+namespace RecordTracker.API.Features.Records
 {
-    public record CreateRecordTypeRequest
+    public record CreateRecordRequest
     {
         public string Name { get; init; } = default!;
         public string? Description { get; init; }
         public List<CreateRecordFieldDto> RecordFields { get; init; } = [];
     }
 
-    public class CreateRecordTypeValidator : AbstractValidator<CreateRecordTypeRequest>
+    public class CreateRecordValidator : AbstractValidator<CreateRecordRequest>
     {
-        public CreateRecordTypeValidator()
+        public CreateRecordValidator()
         {
             RuleFor(x => x.Name)
                 .NotEmpty()
@@ -32,26 +32,26 @@ namespace RecordTracker.API.Features.RecordTypes
         }
     }
 
-    public class CreateRecordTypeHandler
+    public class CreateRecordHandler
     {
-        private readonly IValidator<CreateRecordTypeRequest> _validator;
-        private readonly IRecordTypeRepository _recordTypeRepository;
+        private readonly IValidator<CreateRecordRequest> _validator;
+        private readonly IRecordRepository _recordRepository;
         private readonly ICurrentUserService _currentUserService;
         private readonly IMapper _mapper;
 
-        public CreateRecordTypeHandler(
-            IValidator<CreateRecordTypeRequest> validator,
-            IRecordTypeRepository recordTypeRepository,
+        public CreateRecordHandler(
+            IValidator<CreateRecordRequest> validator,
+            IRecordRepository recordRepository,
             ICurrentUserService currentUserService,
             IMapper mapper)
         {
             _validator = validator;
-            _recordTypeRepository = recordTypeRepository;
+            _recordRepository = recordRepository;
             _currentUserService = currentUserService;
             _mapper = mapper;
         }
 
-        public async Task<IResult> HandleAsync(CreateRecordTypeRequest request, CancellationToken ct = default)
+        public async Task<IResult> HandleAsync(CreateRecordRequest request, CancellationToken ct = default)
         {
             var validationResult = await _validator.ValidateAsync(request, ct);
             if (!validationResult.IsValid)
@@ -59,7 +59,7 @@ namespace RecordTracker.API.Features.RecordTypes
 
             var userId = _currentUserService.GetUserId();
             
-            var recordType = new RecordType
+            var record = new Record
             {
                 Id = Guid.NewGuid(),
                 Name = request.Name,
@@ -69,11 +69,11 @@ namespace RecordTracker.API.Features.RecordTypes
                 RecordFields = _mapper.Map<List<RecordField>>(request.RecordFields)
             };
 
-            await _recordTypeRepository.AddAsync(recordType, ct);
+            await _recordRepository.AddAsync(record, ct);
 
-            var dto = _mapper.Map<RecordTypeSummaryDto>(recordType);
+            var dto = _mapper.Map<RecordSummaryDto>(record);
 
-            return Results.Created($"/api/recordtypes/{dto.Id}", dto);
+            return Results.Created($"/api/records/{dto.Id}", dto);
         }
     }
 }

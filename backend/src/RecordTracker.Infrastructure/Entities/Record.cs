@@ -1,6 +1,6 @@
 ﻿namespace RecordTracker.Infrastructure.Entities;
 
-public class RecordType
+public class Record
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

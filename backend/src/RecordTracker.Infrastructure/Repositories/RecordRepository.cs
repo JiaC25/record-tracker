@@ -5,48 +5,49 @@ using RecordTracker.Infrastructure.Repositories.Interfaces;
 
 namespace RecordTracker.Infrastructure.Repositories;
 
-public class RecordTypeRepository : IRecordTypeRepository
+public class RecordRepository : IRecordRepository
 {
     private readonly RecordTrackerDbContext _dbContext;
 
-    public RecordTypeRepository(RecordTrackerDbContext dbContext)
+    public RecordRepository(RecordTrackerDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
     #region Create
-    public async Task AddAsync(RecordType recordType, CancellationToken ct = default)
+    public async Task AddAsync(Record record, CancellationToken ct = default)
     {
-        await _dbContext.RecordType.AddAsync(recordType, ct);
+        await _dbContext.Record.AddAsync(record, ct);
         await _dbContext.SaveChangesAsync(ct);
     }
     #endregion
 
     #region Read
-    public async Task<List<RecordType>> GetAllAsync(Guid userId, CancellationToken ct = default)
+    public async Task<List<Record>> GetAllWithFieldsAsync(Guid userId, CancellationToken ct = default)
     {
-        return await _dbContext.RecordType
+        return await _dbContext.Record
             .Where(rt => rt.CreatedByUserId == userId)
+            .Include(rt => rt.RecordFields)
             .OrderByDescending(rt => rt.CreatedAt)
             .ToListAsync(ct);
     }
 
-    public async Task<RecordType?> GetByIdAsync(Guid id, Guid userId, CancellationToken ct = default)
+    public async Task<Record?> GetByIdAsync(Guid id, Guid userId, CancellationToken ct = default)
     {
-        return await _dbContext.RecordType
+        return await _dbContext.Record
             .Where(rt => rt.Id == id && rt.CreatedByUserId == userId)
             .FirstOrDefaultAsync(ct);
     }
-    public async Task<RecordType?> GetByIdWithFieldsAsync(Guid id, Guid userId, CancellationToken ct = default)
+    public async Task<Record?> GetByIdWithFieldsAsync(Guid id, Guid userId, CancellationToken ct = default)
     {
-        return await _dbContext.RecordType
+        return await _dbContext.Record
             .Where(rt => rt.Id == id && rt.CreatedByUserId == userId)
             .Include(rt => rt.RecordFields)
             .FirstOrDefaultAsync(ct);
     }
-    public async Task<RecordType?> GetByIdFullAsync(Guid id, Guid userId, CancellationToken ct = default)
+    public async Task<Record?> GetByIdFullAsync(Guid id, Guid userId, CancellationToken ct = default)
     {
-        return await _dbContext.RecordType
+        return await _dbContext.Record
             .Where(rt => rt.Id == id && rt.CreatedByUserId == userId)
             .Include(rt => rt.RecordFields)
             .Include(rt => rt.RecordItems)

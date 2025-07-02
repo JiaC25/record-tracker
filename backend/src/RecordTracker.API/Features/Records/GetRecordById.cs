@@ -1,16 +1,16 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using RecordTracker.API.Features.RecordTypes.Dtos;
+using RecordTracker.API.Features.Records.Dtos;
 using RecordTracker.API.Services.Interfaces;
 using RecordTracker.Infrastructure.Repositories.Interfaces;
 
-namespace RecordTracker.API.Features.RecordTypes;
+namespace RecordTracker.API.Features.Records;
 
-public record GetRecordTypeByIdRequest(Guid Id);
+public record GetRecordByIdRequest(Guid Id);
 
-public class GetRecordTypeByIdValidator : AbstractValidator<GetRecordTypeByIdRequest>
+public class GetRecordByIdValidator : AbstractValidator<GetRecordByIdRequest>
 {
-    public GetRecordTypeByIdValidator()
+    public GetRecordByIdValidator()
     {
         RuleFor(x => x.Id)
             .NotEmpty()
@@ -18,26 +18,26 @@ public class GetRecordTypeByIdValidator : AbstractValidator<GetRecordTypeByIdReq
     }
 }
 
-public class GetRecordTypeByIdHandler
+public class GetRecordByIdHandler
 {
-    private readonly IValidator<GetRecordTypeByIdRequest> _validator;
+    private readonly IValidator<GetRecordByIdRequest> _validator;
     private readonly IMapper _mapper;
     private readonly ICurrentUserService _currentUserService;
-    private readonly IRecordTypeRepository _recordTypeRepository;
+    private readonly IRecordRepository _recordRepository;
 
-    public GetRecordTypeByIdHandler(
-        IValidator<GetRecordTypeByIdRequest> validator,
+    public GetRecordByIdHandler(
+        IValidator<GetRecordByIdRequest> validator,
         IMapper mapper,
         ICurrentUserService currentUserService,
-        IRecordTypeRepository recordTypeRepository)
+        IRecordRepository recordRepository)
     {
         _validator = validator;
         _mapper = mapper;
         _currentUserService = currentUserService;
-        _recordTypeRepository = recordTypeRepository;
+        _recordRepository = recordRepository;
     }
 
-    public async Task<IResult> HandleAsync(GetRecordTypeByIdRequest request, CancellationToken ct = default)
+    public async Task<IResult> HandleAsync(GetRecordByIdRequest request, CancellationToken ct = default)
     {
         var validationResult = await _validator.ValidateAsync(request, ct);
         if (!validationResult.IsValid)
@@ -45,11 +45,11 @@ public class GetRecordTypeByIdHandler
 
         var userId = _currentUserService.GetUserId();
 
-        var recordType = await _recordTypeRepository.GetByIdWithFieldsAsync(request.Id, userId, ct);
-        if (recordType == null)
+        var record = await _recordRepository.GetByIdWithFieldsAsync(request.Id, userId, ct);
+        if (record == null)
             return Results.NotFound(new { Message = "Record Type not found." });
 
-        var dto = _mapper.Map<RecordTypeDto>(recordType);
+        var dto = _mapper.Map<RecordDto>(record);
 
         return Results.Ok(dto);
     }
