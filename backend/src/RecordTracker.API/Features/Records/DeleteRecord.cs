@@ -3,13 +3,13 @@ using RecordTracker.API.Services.Interfaces;
 using RecordTracker.Infrastructure.Persistence;
 using RecordTracker.Infrastructure.Repositories.Interfaces;
 
-namespace RecordTracker.API.Features.RecordTypes;
+namespace RecordTracker.API.Features.Records;
 
-public record DeleteRecordTypeRequest(Guid Id);
+public record DeleteRecordRequest(Guid Id);
 
-public class DeleteRecordTypeValidator : AbstractValidator<DeleteRecordTypeRequest>
+public class DeleteRecordValidator : AbstractValidator<DeleteRecordRequest>
 {
-    public DeleteRecordTypeValidator()
+    public DeleteRecordValidator()
     {
         RuleFor(x => x.Id)
             .NotEmpty()
@@ -17,26 +17,26 @@ public class DeleteRecordTypeValidator : AbstractValidator<DeleteRecordTypeReque
     }
 }
 
-public class DeleteRecordTypeHandler
+public class DeleteRecordHandler
 {
     private readonly RecordTrackerDbContext _dbContext;
-    private readonly IValidator<DeleteRecordTypeRequest> _validator;
+    private readonly IValidator<DeleteRecordRequest> _validator;
     private readonly ICurrentUserService _currentUserService;
-    private readonly IRecordTypeRepository _recordTypeRepository;
+    private readonly IRecordRepository _recordRepository;
 
-    public DeleteRecordTypeHandler(
+    public DeleteRecordHandler(
         RecordTrackerDbContext dbContext,
-        IValidator<DeleteRecordTypeRequest> validator,
+        IValidator<DeleteRecordRequest> validator,
         ICurrentUserService currentUserService,
-        IRecordTypeRepository recordTypeRepository)
+        IRecordRepository recordRepository)
     {
         _dbContext = dbContext;
         _validator = validator;
         _currentUserService = currentUserService;
-        _recordTypeRepository = recordTypeRepository;
+        _recordRepository = recordRepository;
     }
 
-    public async Task<IResult> HandleAsync(DeleteRecordTypeRequest request, CancellationToken ct = default)
+    public async Task<IResult> HandleAsync(DeleteRecordRequest request, CancellationToken ct = default)
     {
         var validationResult = await _validator.ValidateAsync(request, ct);
         if (!validationResult.IsValid)
@@ -44,21 +44,21 @@ public class DeleteRecordTypeHandler
 
         var userId = _currentUserService.GetUserId();
 
-        var recordType = await _recordTypeRepository.GetByIdFullAsync(request.Id, userId, ct);
-        if (recordType == null)
+        var record = await _recordRepository.GetByIdFullAsync(request.Id, userId, ct);
+        if (record == null)
             return Results.NotFound(new { Message = "Record Type not found." });
 
-        // Delete the main RecordType
-        recordType.IsDeleted = true;
-        recordType.DeletedByUserId = userId;
-        recordType.DeletedAt = DateTime.UtcNow;
+        // Delete the main Record
+        record.IsDeleted = true;
+        record.DeletedByUserId = userId;
+        record.DeletedAt = DateTime.UtcNow;
 
         // Delete all associated RecordFields
-        foreach (var field in recordType.RecordFields)
+        foreach (var field in record.RecordFields)
             field.IsDeleted = true;
 
         // Delete all associated RecordItems and RecordValues
-        foreach (var item in recordType.RecordItems)
+        foreach (var item in record.RecordItems)
         {
             item.IsDeleted = true;
             item.DeletedByUserId = userId;

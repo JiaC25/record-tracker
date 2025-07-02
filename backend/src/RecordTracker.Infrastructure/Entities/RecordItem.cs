@@ -6,7 +6,7 @@ public class RecordItem
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     
     // FK
-    public Guid RecordTypeId { get; set; }
+    public Guid RecordId { get; set; }
     public Guid CreatedByUserId { get; set; }
 
     // Soft Delete
@@ -17,7 +17,7 @@ public class RecordItem
     // Navigation
     public User CreatedByUser {  get; set; } = default!;
     public User? DeletedByUser { get; set; }
-    public RecordType RecordType { get; set; } = default!;
+    public Record Record { get; set; } = default!;
     public ICollection<RecordValue> RecordValues { get; set; } = new List<RecordValue>();
 }
 
