@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using RecordTracker.API.Configuration;
@@ -6,6 +7,8 @@ using RecordTracker.Infrastructure.Entities;
 using RecordTracker.Infrastructure.Repositories.Interfaces;
 
 namespace RecordTracker.API.Features.Auth;
+
+using CreateUserResponseType = Results<Conflict<string>, BadRequest<string>, ValidationProblem>;
 
 public record CreateUserResponse(Guid Id, string Email);
 public record CreateUserRequest(string Email, string Password);
@@ -19,7 +22,7 @@ public class CreateUserValidator : AbstractValidator<CreateUserRequest>
             .EmailAddress()
             .MaximumLength(256)
             .MustAsync(async (email, _) => await userRepository.IsEmailUniqueAsync(email))
-            .WithMessage("Email is already registered.");
+            .WithMessage(HttpErrorMessage.EMAIL_ALREADY_REGISTERED);
 
         RuleFor(x => x.Password)
             .NotEmpty()
@@ -41,11 +44,11 @@ public class CreateUserHandler
         _userRepository = userRepository;
     }
 
-    public async Task<Results<Created<CreateUserResponse>, ValidationProblem>> HandleAsync(CreateUserRequest request)
+    public async Task<Results<Created<CreateUserResponse>, CreateUserResponseType>> HandleAsync(CreateUserRequest request)
     {
         var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid)
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
+            return GetErrosAndStatusCode(validationResult);
 
         var user = new User
         {
@@ -57,6 +60,22 @@ public class CreateUserHandler
         await _userRepository.AddAsync(user);
 
         return TypedResults.Created($"/api/users/{user.Id}", new CreateUserResponse(user.Id, user.Email));
+    }
+
+    private CreateUserResponseType GetErrosAndStatusCode(ValidationResult result)
+    {
+
+        foreach (var error in result.Errors)
+        {
+            switch (error.ErrorMessage)
+            {
+                case HttpErrorMessage.EMAIL_ALREADY_REGISTERED:
+                    {
+                        return TypedResults.Conflict(error.ErrorMessage);
+                    }
+            }
+        }
+        return TypedResults.ValidationProblem(result.ToDictionary());
     }
 }
 
