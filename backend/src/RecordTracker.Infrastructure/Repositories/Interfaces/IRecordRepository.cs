@@ -9,7 +9,7 @@ public interface IRecordRepository
     #endregion
 
     #region Read
-    Task<List<Record>> GetAllAsync(Guid userId, CancellationToken ct = default);
+    Task<List<Record>> GetAllWithFieldsAsync(Guid userId, CancellationToken ct = default);
     
     Task<Record?> GetByIdAsync(Guid id, Guid userId, CancellationToken ct = default);
     Task<Record?> GetByIdWithFieldsAsync(Guid id, Guid userId, CancellationToken ct = default);

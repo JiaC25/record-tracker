@@ -23,10 +23,11 @@ public class RecordRepository : IRecordRepository
     #endregion
 
     #region Read
-    public async Task<List<Record>> GetAllAsync(Guid userId, CancellationToken ct = default)
+    public async Task<List<Record>> GetAllWithFieldsAsync(Guid userId, CancellationToken ct = default)
     {
         return await _dbContext.Record
             .Where(rt => rt.CreatedByUserId == userId)
+            .Include(rt => rt.RecordFields)
             .OrderByDescending(rt => rt.CreatedAt)
             .ToListAsync(ct);
     }

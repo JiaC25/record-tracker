@@ -25,9 +25,9 @@ public class GetAllUserRecordsHandler
     {
         var userId = _currentUserService.GetUserId();
 
-        var records = await _recordRepository.GetAllAsync(userId, ct);
+        var records = await _recordRepository.GetAllWithFieldsAsync(userId, ct);
 
-        var recordDtos = _mapper.Map<List<RecordDto>>(records);
+        var recordDtos = _mapper.Map<List<RecordSummaryDto>>(records);
 
         return Results.Ok(recordDtos);
     }
