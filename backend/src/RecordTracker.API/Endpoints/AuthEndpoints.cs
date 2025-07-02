@@ -8,7 +8,7 @@ public class AuthEndpoints : IEndpointDefinition
 {
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/auth");
+        var group = app.MapGroup("/api/auth").WithTags("Auth");
 
         group.MapPost("/signup", async (CreateUserRequest request, CreateUserHandler handler) =>
         {

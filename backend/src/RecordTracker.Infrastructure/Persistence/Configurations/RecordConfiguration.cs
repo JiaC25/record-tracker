@@ -4,11 +4,11 @@ using RecordTracker.Infrastructure.Entities;
 
 namespace RecordTracker.Infrastructure.Persistence.Configurations;
 
-public class RecordTypeConfiguration : IEntityTypeConfiguration<RecordType>
+public class RecordConfiguration : IEntityTypeConfiguration<Record>
 {
-    public void Configure(EntityTypeBuilder<RecordType> builder)
+    public void Configure(EntityTypeBuilder<Record> builder)
     {
-        builder.ToTable("RecordType");
+        builder.ToTable("Record");
 
         builder.HasKey(x => x.Id);
 
@@ -26,7 +26,7 @@ public class RecordTypeConfiguration : IEntityTypeConfiguration<RecordType>
         builder.HasIndex(x => x.CreatedByUserId);
 
         // Navigation
-        builder.HasOne(x => x.CreatedByUser) // TODO: Add RecordTypes collection nav to User model and move OnDelete config there
+        builder.HasOne(x => x.CreatedByUser) // TODO: Add Records collection nav to User model and move OnDelete config there
             .WithMany()
             .HasForeignKey(x => x.CreatedByUserId)
             .OnDelete(DeleteBehavior.Restrict);
@@ -37,13 +37,13 @@ public class RecordTypeConfiguration : IEntityTypeConfiguration<RecordType>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(x => x.RecordFields)
-            .WithOne(x => x.RecordType)
-            .HasForeignKey(x => x.RecordTypeId)
+            .WithOne(x => x.Record)
+            .HasForeignKey(x => x.RecordId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.RecordItems)
-            .WithOne(x => x.RecordType)
-            .HasForeignKey(x => x.RecordTypeId)
+            .WithOne(x => x.Record)
+            .HasForeignKey(x => x.RecordId)
             .OnDelete(DeleteBehavior.Cascade);
 
         // Global filter to exclude soft-deleted records

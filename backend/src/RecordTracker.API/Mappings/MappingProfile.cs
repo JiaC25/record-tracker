@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using RecordTracker.API.Features.RecordFields.Dtos;
-using RecordTracker.API.Features.RecordTypes.Dtos;
+using RecordTracker.API.Features.Records.Dtos;
 using RecordTracker.Infrastructure.Entities;
 
 namespace RecordTracker.API.Mappings;
@@ -9,10 +9,10 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        #region RecordType
+        #region Record
         // Ef to Dto
-        CreateMap<RecordType, RecordTypeDto>();
-        CreateMap<RecordType, RecordTypeSummaryDto>();
+        CreateMap<Record, RecordDto>();
+        CreateMap<Record, RecordSummaryDto>();
         #endregion
 
         #region RecordField
@@ -21,7 +21,7 @@ public class MappingProfile : Profile
         
         // Dto to Ef
         CreateMap<CreateRecordFieldDto, RecordField>()
-            .ForMember(dest => dest.RecordTypeId, opt => opt.Ignore());
+            .ForMember(dest => dest.RecordId, opt => opt.Ignore());
         #endregion
     }
 }

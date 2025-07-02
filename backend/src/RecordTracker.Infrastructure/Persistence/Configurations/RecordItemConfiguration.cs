@@ -17,7 +17,7 @@ public class RecordItemConfiguration : IEntityTypeConfiguration<RecordItem>
             .IsRequired();
 
         // FK
-        builder.Property(x => x.RecordTypeId)
+        builder.Property(x => x.RecordId)
             .IsRequired();
         
         builder.HasIndex(x => x.CreatedByUserId);
@@ -33,9 +33,9 @@ public class RecordItemConfiguration : IEntityTypeConfiguration<RecordItem>
             .HasForeignKey(x => x.DeletedByUserId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(x => x.RecordType)
+        builder.HasOne(x => x.Record)
             .WithMany(x => x.RecordItems)
-            .HasForeignKey(x => x.RecordTypeId);
+            .HasForeignKey(x => x.RecordId);
 
         builder.HasMany(x => x.RecordValues)
             .WithOne(x => x.RecordItem)

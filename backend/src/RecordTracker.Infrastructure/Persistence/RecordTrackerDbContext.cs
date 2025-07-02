@@ -8,7 +8,7 @@ public class RecordTrackerDbContext : DbContext
     public RecordTrackerDbContext(DbContextOptions<RecordTrackerDbContext> options) : base(options) { }
 
     public DbSet<User> User => Set<User>();
-    public DbSet<RecordType> RecordType => Set<RecordType>();
+    public DbSet<Record> Record => Set<Record>();
     public DbSet<RecordField> RecordField => Set<RecordField>();
     public DbSet<RecordItem> RecordItem => Set<RecordItem>();
     public DbSet<RecordValue> RecordValue => Set<RecordValue>();

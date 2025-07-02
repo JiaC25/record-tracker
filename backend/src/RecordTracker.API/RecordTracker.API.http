@@ -23,7 +23,7 @@ Content-Type: application/json
 
 ###
 @accessToken = {{loginRequest.response.body.token}}
-GET {{API_HostAddress}}/recordtypes
+GET {{API_HostAddress}}/records
 Authorization: {{token}}
 
 ###

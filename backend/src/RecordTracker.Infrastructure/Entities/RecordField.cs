@@ -9,12 +9,12 @@ public class RecordField
     public int Order { get; set; }
 
     // FK
-    public Guid RecordTypeId { get; set; }
+    public Guid RecordId { get; set; }
 
     // Soft Delete
     public bool IsDeleted { get; set; } = false;
 
     // Navigation
-    public RecordType RecordType { get; set; } = default!;
+    public Record Record { get; set; } = default!;
     public ICollection<RecordValue> RecordValues { get; set; } = new List<RecordValue>();
 }

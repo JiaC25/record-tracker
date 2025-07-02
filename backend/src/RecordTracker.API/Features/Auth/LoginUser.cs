@@ -28,18 +28,15 @@ public class LoginUserHandler
 {
     private readonly IValidator<LoginUserRequest> _validator;
     private readonly IUserRepository _userRepository;
-    private readonly IConfiguration _configuration;
     private readonly IJwtTokenService _jwtTokenService;
 
     public LoginUserHandler(
         IValidator<LoginUserRequest> validator,
         IUserRepository userRepository,
-        IConfiguration configuration,
         IJwtTokenService jwtTokenService)
     {
         _validator = validator;
         _userRepository = userRepository;
-        _configuration = configuration;
         _jwtTokenService = jwtTokenService;
     }
 

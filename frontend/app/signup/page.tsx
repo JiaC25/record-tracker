@@ -3,8 +3,10 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useAuthRedirect } from '@/hooks/use-auth-redirect';
 import { signupUser } from '@/lib/api/userApi';
-import { useAuthRedirect } from '@/lib/useAuthRedirect';
+import { useAuthStore } from '@/lib/store/authStore';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -14,11 +16,31 @@ const SignupPage = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    
+
+    const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+    const isHydrated = useAuthStore((state) => state.isHydrated);
     const router = useRouter();
 
-    useAuthRedirect(); // Redirect if already logged in
-    
+    const willRedirect = useAuthRedirect(); // Redirect if already logged in
+    // Show loading state while checking auth status
+    if (!isHydrated || (isHydrated && isLoggedIn && willRedirect)) {
+        return (
+            <div className="max-w-sm mx-auto mt-20 p-4">
+                <Card className="w-full max-w-sm">
+                    <CardHeader>
+                        <Skeleton className="h-6 w-20 mb-2" />
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <Skeleton className="h-9 w-full" />
+                        <Skeleton className="h-9 w-full" />
+                        <Skeleton className="h-9 w-full" />
+                        <Skeleton className="h-9 w-full" />
+                    </CardContent>
+                </Card>
+            </div>
+        )
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
@@ -54,7 +76,7 @@ const SignupPage = () => {
 
     return (
         <div className="max-w-sm mx-auto mt-20">
-            <Card className='w-full max-w-sm'>
+            <Card className='mx-2'>
                 <CardHeader>
                     <CardTitle>Signup</CardTitle>
                 </CardHeader>
@@ -90,6 +112,9 @@ const SignupPage = () => {
                                         Signing Up
                                     </span>
                                 ) : 'Sign Up'}
+                            </Button>
+                            <Button type="button" variant="link" className="w-full" onClick={() => router.push('/login')}>
+                                <span className='text-sm'>Already signed up? Log In</span>
                             </Button>
                         </fieldset>
                     </form>

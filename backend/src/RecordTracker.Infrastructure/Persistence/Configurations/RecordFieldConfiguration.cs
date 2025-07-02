@@ -26,13 +26,13 @@ public class RecordFieldConfiguration : IEntityTypeConfiguration<RecordField>
             .IsRequired();
 
         // FK
-        builder.Property(x => x.RecordTypeId)
+        builder.Property(x => x.RecordId)
             .IsRequired();
 
         // Navigation
-        builder.HasOne(x => x.RecordType)
+        builder.HasOne(x => x.Record)
             .WithMany(x => x.RecordFields)
-            .HasForeignKey(x => x.RecordTypeId);
+            .HasForeignKey(x => x.RecordId);
 
         builder.HasMany(x => x.RecordValues)
             .WithOne(x => x.RecordField)
