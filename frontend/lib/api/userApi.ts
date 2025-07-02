@@ -1,9 +1,9 @@
-import { BACKEND_API, fetchPost } from './fetchConfig';
+import { fetchPost } from './fetchConfig';
 
-export const loginUser = async (email: string, password: string) => fetchPost(`${BACKEND_API}/api/auth/login`, {
+export const loginUser = async (email: string, password: string) => fetchPost('auth/login', {
     body: JSON.stringify({ email, password }),
 });
 
-export const signupUser = async (email: string, password: string) => fetchPost(`${BACKEND_API}/api/auth/signup`, {
+export const signupUser = async (email: string, password: string) => fetchPost('auth/signup', {
     body: JSON.stringify({ email, password }),
 });

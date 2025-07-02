@@ -3,12 +3,12 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 type AuthStore = {
-    isHydrated: boolean;
     token: string | null;
     userId: string | null;
     userEmail: string | null;
     isLoggedIn: boolean;
-
+    isHydrated: boolean;
+    
     setToken: (token: string) => void;
     clearToken: () => void;
     setHydrated: () => void
@@ -18,11 +18,11 @@ export const useAuthStore = create<AuthStore>()(
     persist(
         (set) => ({
             /** States */
-            isHydrated: false,
             token: null,
             userId: null,
             userEmail: null,
             isLoggedIn: false,
+            isHydrated: false,
 
             /** Actions */
             setHydrated: () => {
