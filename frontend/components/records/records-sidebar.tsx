@@ -1,25 +1,37 @@
 'use client'
 
 import { Skeleton } from '@/components/ui/skeleton'
+import { useAuthStore } from '@/lib/store/authStore'
 import { useRecordStore } from '@/lib/store/recordStore'
 import { LayoutDashboard, Plus } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { Button } from '../ui/button'
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from '../ui/sidebar'
 
 const RecordsSidebar = () => {
+    const router = useRouter();
+
+    const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+    const authIsHydrated = useAuthStore((state) => state.isHydrated);
+
     const groupedRecordSummaries = useRecordStore((state) => state.groupedRecordSummaries);
     const selectedRecordId = useRecordStore((state) => state.selectedRecordId);
     const isLoading = useRecordStore((state) => state.isLoadingRecordSummaries);
     const isHydrated = useRecordStore((state) => state.isHydrated);
 
-    const { loadRecordSummaries, setSelectedRecordId } = useRecordStore();
+    const { loadRecordSummaries, setSelectedRecordId, clearAll } = useRecordStore();
 
     useEffect(() => {
-        if (isHydrated) {
+        if (!authIsHydrated || !isHydrated) return;
+         
+        if (isLoggedIn) {
             loadRecordSummaries();
+        } else {
+            clearAll();
+            router.push('/login')
         }
-    }, [isHydrated, loadRecordSummaries])
+    }, [isLoggedIn, authIsHydrated, isHydrated, loadRecordSummaries, clearAll, router])
 
     const handleAddRecord = () => {
         // Todo
@@ -29,7 +41,7 @@ const RecordsSidebar = () => {
     }
 
     // Show loading skeleton
-    if (isLoading) {
+    if (!authIsHydrated || !isHydrated || isLoading) {
         return (
             <Sidebar className="top-[var(--header-height)]" variant="inset">
                 <SidebarHeader>
@@ -81,30 +93,30 @@ const RecordsSidebar = () => {
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
-            {sortedLetters.map((letter) => (
-                <SidebarGroup key={letter}>
-                    <SidebarGroupLabel>{letter}</SidebarGroupLabel>
-                    <SidebarGroupContent>
-                        <SidebarMenu>
-                            {groupedRecordSummaries[letter].map((record) => (
-                                <SidebarMenuItem key={record.id}>
-                                    <SidebarMenuButton 
-                                        asChild
-                                        isActive={selectedRecordId === record.id}
-                                        onClick={() => handleSelectRecord(record.id)}
-                                    >
-                                        <div className="cursor-pointer">
-                                            <LayoutDashboard className="h-4 w-4" />
-                                            <span title={record.name}>{record.name}</span>
-                                        </div>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))}
-                        </SidebarMenu>
-                    </SidebarGroupContent>
-                </SidebarGroup>
-            ))}
             <SidebarContent className="pb-16">
+                {sortedLetters.map((letter) => (
+                    <SidebarGroup key={letter}>
+                        <SidebarGroupLabel>{letter}</SidebarGroupLabel>
+                        <SidebarGroupContent>
+                            <SidebarMenu>
+                                {groupedRecordSummaries[letter].map((record) => (
+                                    <SidebarMenuItem key={record.id}>
+                                        <SidebarMenuButton 
+                                            asChild
+                                            isActive={selectedRecordId === record.id}
+                                            onClick={() => handleSelectRecord(record.id)}
+                                        >
+                                            <div className="cursor-pointer">
+                                                <LayoutDashboard className="h-4 w-4" />
+                                                <span title={record.name}>{record.name}</span>
+                                            </div>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                ))}
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                ))}
             </SidebarContent>
             <SidebarRail />
         </Sidebar>

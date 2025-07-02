@@ -19,6 +19,7 @@ type RecordStore = {
     loadRecordSummaries: () => Promise<void>
     setSelectedRecordId: (recordId: string) => void
     clearSelectedRecordId: () => void
+    clearAll: () => void
     setHydrated: () => void
 }
 
@@ -76,6 +77,15 @@ export const useRecordStore = create<RecordStore>()(
             clearSelectedRecordId: () => {
                 set({
                     selectedRecordId: null,
+                })
+            },
+
+            clearAll: () => {
+                set({
+                    recordSummaries: [],
+                    groupedRecordSummaries: {},
+                    selectedRecordId: null,
+                    isLoadingRecordSummaries: false,
                 })
             },
 
