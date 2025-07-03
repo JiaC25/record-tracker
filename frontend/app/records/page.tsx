@@ -16,15 +16,20 @@ const RecordsPage = () => {
     return 'Records';
   };
 
+  const isSidebarLoading = !isHydrated || isLoadingRecordSummaries;
+
   return (
-    <SidebarLayout sidebar={<RecordsSidebar />} title={getPageTitle()} isLoading={(!isHydrated || isLoadingRecordSummaries)}>
+    <SidebarLayout sidebar={<RecordsSidebar />} title={getPageTitle()} isLoading={isSidebarLoading}>
       {/* Content area for selected record (edit/add/view all record items etc) */}
       <div className="p-5 text-sm">
         <div>{selectedRecord?.description || '' }</div>
         <br/>
         {
           selectedRecord &&
-          <pre className="text-xs">{ JSON.stringify(selectedRecord, null, 2) }</pre>
+          <div className='flex flex-wrap'>
+            <pre className="text-xs">{ selectedRecord.recordFields.map(rf => (rf.name + '(' + rf.fieldType + ')')).join(' | ') }</pre>
+            {/* <pre className="text-xs">{ JSON.stringify(selectedRecord.recordFields, null, 2) }</pre> */}
+          </div>
         }
         {/* <RecordTypeForm/> for adding or editing record */}
         {/* <RecordItemForm/> for adding record item */}
