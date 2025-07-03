@@ -1,7 +1,4 @@
-﻿using RecordTracker.API.Features.RecordFields.Dtos;
-using RecordTracker.API.Features.RecordItems.Dtos;
-
-namespace RecordTracker.API.Features.Records.Dtos;
+﻿namespace RecordTracker.API.Features.Records.Dtos;
 
 public class RecordDto
 {

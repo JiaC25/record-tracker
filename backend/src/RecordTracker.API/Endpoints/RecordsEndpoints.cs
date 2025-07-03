@@ -12,7 +12,7 @@ public class RecordsEndpoints : IEndpointDefinition
 
         #region Get
         group.MapGet("/", async (
-            GetAllUserRecordsHandler handler,
+            GetAllRecordsHandler handler,
             CancellationToken ct) =>
         {
             return await handler.HandleAsync(ct);

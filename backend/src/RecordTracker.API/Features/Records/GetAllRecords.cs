@@ -5,13 +5,13 @@ using RecordTracker.Infrastructure.Repositories.Interfaces;
 
 namespace RecordTracker.API.Features.Records;
 
-public class GetAllUserRecordsHandler
+public class GetAllRecordsHandler
 {
     private readonly IRecordRepository _recordRepository;
     private readonly ICurrentUserService _currentUserService;
     private readonly IMapper _mapper;
 
-    public GetAllUserRecordsHandler(
+    public GetAllRecordsHandler(
         IRecordRepository recordRepository,
         ICurrentUserService currentUserService,
         IMapper mapper)

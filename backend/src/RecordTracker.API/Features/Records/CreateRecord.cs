@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using RecordTracker.API.Features.RecordFields;
-using RecordTracker.API.Features.RecordFields.Dtos;
 using RecordTracker.API.Features.Records.Dtos;
+using RecordTracker.API.Features.Records.Requests;
 using RecordTracker.API.Services.Interfaces;
 using RecordTracker.Infrastructure.Entities;
 using RecordTracker.Infrastructure.Repositories.Interfaces;
@@ -13,7 +12,7 @@ namespace RecordTracker.API.Features.Records
     {
         public string Name { get; init; } = default!;
         public string? Description { get; init; }
-        public List<CreateRecordFieldDto> RecordFields { get; init; } = [];
+        public List<CreateRecordFieldRequest> RecordFields { get; init; } = [];
     }
 
     public class CreateRecordValidator : AbstractValidator<CreateRecordRequest>

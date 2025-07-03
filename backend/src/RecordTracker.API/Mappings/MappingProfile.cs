@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using RecordTracker.API.Features.RecordFields.Dtos;
 using RecordTracker.API.Features.Records.Dtos;
+using RecordTracker.API.Features.Records.Requests;
 using RecordTracker.Infrastructure.Entities;
 
 namespace RecordTracker.API.Mappings;
@@ -21,7 +21,7 @@ public class MappingProfile : Profile
         CreateMap<RecordField, RecordFieldDto>();
         
         // Dto to Ef
-        CreateMap<CreateRecordFieldDto, RecordField>()
+        CreateMap<CreateRecordFieldRequest, RecordField>()
             .ForMember(dest => dest.RecordId, opt => opt.Ignore());
         #endregion
     }
