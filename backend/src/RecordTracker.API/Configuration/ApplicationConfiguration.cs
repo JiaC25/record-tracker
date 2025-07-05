@@ -1,14 +1,22 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Http.Json;
 using RecordTracker.API.Mappings;
+using System.Text.Json.Serialization;
 
 namespace RecordTracker.API.Configuration;
 
-public static class DependencyInjection
+public static class ApplicationConfiguration
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         var currentAssembly = typeof(Program).Assembly;
-        
+
+        // Allow input of enums as strings in JSON
+        services.Configure<JsonOptions>(options =>
+        {
+            options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
+
         services.AddAutoMapper(typeof(MappingProfile));
         services.AddHttpContextAccessor();
 

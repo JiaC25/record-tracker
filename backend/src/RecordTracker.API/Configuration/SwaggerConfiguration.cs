@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
+using RecordTracker.API.Configuration;
 
 namespace RecordTracker.API.Configuration;
 
@@ -17,12 +18,12 @@ public static class SwaggerConfiguration
         return services.AddSwaggerGen(options =>
         {
             // Describe JWT authentication token scheme
-            options.AddSecurityDefinition(JwtAuthenticationService.BEARER,
+            options.AddSecurityDefinition(JwtConfiguration.BEARER,
             new OpenApiSecurityScheme
             {
                 Name = "Authorization",
                 Type = SecuritySchemeType.ApiKey,
-                Scheme = JwtAuthenticationService.BEARER,
+                Scheme = JwtConfiguration.BEARER,
                 BearerFormat = "JWT",
                 In = ParameterLocation.Header,
                 Description = "Enter 'Bearer {token}'"
@@ -36,7 +37,7 @@ public static class SwaggerConfiguration
                     {
                         Reference = new OpenApiReference
                         {
-                            Id = JwtAuthenticationService.BEARER,
+                            Id = JwtConfiguration.BEARER,
                             Type = ReferenceType.SecurityScheme
                         }
                     },
