@@ -45,11 +45,34 @@ public class GetRecordByIdHandler
 
         var userId = _currentUserService.GetUserId();
 
-        var record = await _recordRepository.GetByIdWithFieldsAsync(request.Id, userId, ct);
+        var record = await _recordRepository.GetRecordByIdFullAsync(request.Id, userId, ct);
         if (record == null)
             return Results.NotFound(new { Message = "Record Type not found." });
 
         var dto = _mapper.Map<RecordDto>(record);
+
+        // Mapping to the flattened RecordItems representation
+        dto.RecordItems = record.RecordItems
+            .OrderByDescending(item => item.CreatedAt)
+            .Select(item =>
+            {
+                var dict = new Dictionary<string, string>
+                {
+                    ["id"] = item.Id.ToString(),
+                    ["createdAt"] = item.CreatedAt.ToString("o")
+                };
+
+                // Populate all fields according to RecordFields orders
+                // "record-field-guid" : "corresponding record value"
+                foreach (var field in dto.RecordFields)
+                {
+                    var matchingValue = item.RecordValues.FirstOrDefault(v => v.RecordFieldId == field.Id);
+                    dict[field.Id.ToString()] = matchingValue?.Value ?? "";
+                }
+
+                return dict;
+            })
+            .ToList();
 
         return Results.Ok(dto);
     }

@@ -68,7 +68,8 @@ namespace RecordTracker.API.Features.Records
                 RecordFields = _mapper.Map<List<RecordField>>(request.RecordFields)
             };
 
-            await _recordRepository.AddAsync(record, ct);
+            await _recordRepository.AddRecordAsync(record, ct);
+            await _recordRepository.SaveChangesAsync(ct);
 
             var dto = _mapper.Map<RecordSummaryDto>(record);
 
