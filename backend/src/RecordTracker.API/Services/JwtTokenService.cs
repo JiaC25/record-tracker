@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using RecordTracker.API.Configuration;
+using RecordTracker.API.Configuration.Options;
 using RecordTracker.API.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -16,9 +16,9 @@ static class CustomClaimTypes
 
 public class JwtTokenService : IJwtTokenService
 {
-    private readonly JwtConfig _jwtConfig;
+    private readonly JwtOptions _jwtConfig;
 
-    public JwtTokenService(IOptions<JwtConfig> jwtConfig)
+    public JwtTokenService(IOptions<JwtOptions> jwtConfig)
     {
         _jwtConfig = jwtConfig?.Value ?? throw new ArgumentNullException(nameof(jwtConfig));
     }
