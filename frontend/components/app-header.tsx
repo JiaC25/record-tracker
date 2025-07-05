@@ -78,7 +78,9 @@ const AppHeader = () => {
                         <NavigationMenuList>
                             {navItems.map((item, index) => (
                                 <NavigationMenuItem key={index} asChild className={navigationMenuTriggerStyle()}>
-                                    <Link href={item.href}>{item.label}</Link>
+                                    <Button variant="ghost" asChild className="justify-start">
+                                        <Link href={item.href}><item.icon />{item.label}</Link>
+                                    </Button>
                                 </NavigationMenuItem>
                             ))}
                         </NavigationMenuList>

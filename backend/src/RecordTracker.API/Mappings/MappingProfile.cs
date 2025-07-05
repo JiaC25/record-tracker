@@ -12,7 +12,8 @@ public class MappingProfile : Profile
         #region Record
         // Ef to Dto
         CreateMap<Record, RecordDto>();
-        CreateMap<Record, RecordSummaryDto>();
+        CreateMap<Record, RecordSummaryDto>()
+            .ForMember(dest => dest.RecordFields, opt => opt.MapFrom(src => src.RecordFields.OrderBy(rf => rf.Order)));
         #endregion
 
         #region RecordField
