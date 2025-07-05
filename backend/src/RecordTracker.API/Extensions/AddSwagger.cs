@@ -3,7 +3,7 @@ using Microsoft.OpenApi.Models;
 
 namespace RecordTracker.API.Configuration;
 
-public static class SwaggerConfiguration
+public static class AddSwaggerExtension
 {
     /// <summary>
     /// Adds Swagger generation services to the specified <see cref="IServiceCollection"/>.
@@ -12,17 +12,17 @@ public static class SwaggerConfiguration
     /// <returns>The updated service collection.</returns>
     /// 
     /// Launch url - http://localhost:5000/swagger/index.html
-    public static IServiceCollection AddSwaggerGen(this IServiceCollection services)
+    public static IServiceCollection AddSwagger(this IServiceCollection services)
     {
         return services.AddSwaggerGen(options =>
         {
             // Describe JWT authentication token scheme
-            options.AddSecurityDefinition(JwtAuthenticationService.BEARER,
+            options.AddSecurityDefinition(AddJwtAuthenticationExtension.BEARER,
             new OpenApiSecurityScheme
             {
                 Name = "Authorization",
                 Type = SecuritySchemeType.ApiKey,
-                Scheme = JwtAuthenticationService.BEARER,
+                Scheme = AddJwtAuthenticationExtension.BEARER,
                 BearerFormat = "JWT",
                 In = ParameterLocation.Header,
                 Description = "Enter 'Bearer {token}'"
@@ -36,7 +36,7 @@ public static class SwaggerConfiguration
                     {
                         Reference = new OpenApiReference
                         {
-                            Id = JwtAuthenticationService.BEARER,
+                            Id = AddJwtAuthenticationExtension.BEARER,
                             Type = ReferenceType.SecurityScheme
                         }
                     },

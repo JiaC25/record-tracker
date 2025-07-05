@@ -2,7 +2,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace RecordTracker.API.Configuration;
 
-public static class JwtAuthenticationService
+public static class AddJwtAuthenticationExtension
 {
     public static string BEARER = "Bearer";
     public static string GetSecretKeyOrThrow(string? jwtKey = "Jwt:Key")

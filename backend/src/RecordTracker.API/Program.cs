@@ -41,7 +41,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(CorsPolicy.POLICY_ALLOW_FRONTEND_DEV);
+app.UseCors(AddCorsExtension.POLICY_ALLOW_FRONTEND_DEV);
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

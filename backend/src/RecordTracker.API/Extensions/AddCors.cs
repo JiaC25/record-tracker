@@ -1,11 +1,6 @@
 namespace RecordTracker.API.Configuration.CorsPolicy;
 
-public class CorsPolicyConfig
-{
-    public string Origin { get; set; } = "";
-}
-
-public static class CorsPolicy
+public static class AddCorsExtension
 {
     const string ORIGIN = "http://localhost:3000";
     public static readonly string POLICY_ALLOW_FRONTEND_DEV = "AllowFrontendDev";

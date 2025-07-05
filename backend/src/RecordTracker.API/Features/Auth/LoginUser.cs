@@ -66,7 +66,7 @@ public static class LoginUserApiDocumentation
     public static RouteHandlerBuilder ProduceLoginUserApiDocumentation(this RouteHandlerBuilder builder)
     {
         // This method can be used to produce API documentation for the login endpoint.
-        return SwaggerConfiguration.ProduceValidationProblemsApiDocumentation(
+        return AddSwaggerExtension.ProduceValidationProblemsApiDocumentation(
             builder,
             StatusCodes.Status400BadRequest,
             new Microsoft.OpenApi.Any.OpenApiObject

@@ -3,7 +3,7 @@ using RecordTracker.API.Mappings;
 
 namespace RecordTracker.API.Configuration;
 
-public static class DependencyInjection
+public static class AddApplicationServicesExtension
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {

@@ -84,7 +84,7 @@ public static class CreateUserApiDocumentation
     public static RouteHandlerBuilder ProduceCreateUserApiDocumentation(this RouteHandlerBuilder builder)
     {
         // This method can be used to produce API documentation if needed.
-        return SwaggerConfiguration.ProduceValidationProblemsApiDocumentation(
+        return AddSwaggerExtension.ProduceValidationProblemsApiDocumentation(
             builder,
             StatusCodes.Status400BadRequest,
             new Microsoft.OpenApi.Any.OpenApiObject

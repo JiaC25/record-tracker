@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using RecordTracker.API.Common;
+﻿using RecordTracker.API.Common;
 using RecordTracker.API.Features.Auth;
 
 namespace RecordTracker.API.Endpoints;
