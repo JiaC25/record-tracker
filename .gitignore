@@ -8,7 +8,6 @@
 /frontend/.pnp
 /frontend/pnpm-lock.yaml
 /frontend/yarn.lock
-/frontend/package-lock.json
 /frontend/*.tsbuildinfo
 /frontend/next-env.d.ts
 
