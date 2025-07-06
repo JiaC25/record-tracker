@@ -22,7 +22,7 @@ const buildHeaders = (useAuth: boolean = true) => {
     return headers;
 };
 
-export const handleHttpError = (response: Response): Promise<ApiResponse<T>> => {
+export const handleHttpError = (response: Response): Promise<Response> => {
     if (!response.ok) {
         console.error(response);
         return Promise.reject(response);
