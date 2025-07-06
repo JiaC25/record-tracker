@@ -1,6 +1,6 @@
-import { parseJwt } from '@/lib/helpers/authHelpers';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { UserInfo } from '../api/userApi';
 
 type AuthStore = {
     token: string | null;
@@ -9,7 +9,7 @@ type AuthStore = {
     isLoggedIn: boolean;
     isHydrated: boolean;
     
-    setToken: (token: string) => void;
+    setToken: (userInfo: UserInfo) => void;
     clearToken: () => void;
     setHydrated: () => void
 };
@@ -28,14 +28,13 @@ export const useAuthStore = create<AuthStore>()(
             setHydrated: () => {
                 set({ isHydrated: true })
             },
-            setToken: (token) => {
+            setToken: (userInfo) => {
                 set(() => {
-                    const payload = parseJwt(token);
-                    if (token && payload) {
+                    if (userInfo) {
                         return {
-                            token,
-                            userId: payload.userId,
-                            userEmail: payload.email,
+                            token: userInfo.token,
+                            userId: userInfo.userId,
+                            userEmail: userInfo.email,
                             isLoggedIn: true,
                         };
                     } else {

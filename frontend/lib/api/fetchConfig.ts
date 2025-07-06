@@ -1,5 +1,9 @@
 import { useAuthStore } from '@/lib/store/authStore';
 
+export interface ApiResponse<T> extends Response {
+  data?: T;
+};
+
 export const BASE_URL = 'http://localhost:5000';
 
 const buildUrl = (path: string) => {
@@ -18,14 +22,14 @@ const buildHeaders = (useAuth: boolean = true) => {
     return headers;
 };
 
-export const fetchGet = (path: string, config?: RequestInit) =>
+export const fetchGet = <T>(path: string, config?: RequestInit): Promise<ApiResponse<T>> =>
     fetch(buildUrl(path), {
         method: 'GET',
         headers: buildHeaders(true),
         ...config,
     });
 
-export const fetchPost = (path: string, config?: RequestInit) =>
+export const fetchPost = <T>(path: string, config?: RequestInit): Promise<ApiResponse<T>> =>
     fetch(buildUrl(path), {
         method: 'POST',
         headers: buildHeaders(true),

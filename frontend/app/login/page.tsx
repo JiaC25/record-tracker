@@ -55,13 +55,12 @@ const LoginPage = () => {
 
         try {
             const response = await loginUser(email, password);
-
             if (!response.ok) {
                 throw new Error('Login failed');
             }
 
             const data = await response.json();
-            setToken(data.token);
+            setToken(data);
 
             router.push('/'); // Redirect to the home page after successful login
         } catch (error) {
