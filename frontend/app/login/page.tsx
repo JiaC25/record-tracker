@@ -1,7 +1,10 @@
 'use client';
 
+import Alert from '@/components/general/alert-banner';
+import DialogInfo, { DialogInfoPayload } from '@/components/general/dialog-info';
 import { Button } from '@/components/ui/button';
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Form, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuthRedirect } from '@/hooks/use-auth-redirect';
@@ -10,10 +13,14 @@ import { useAuthStore } from '@/lib/store/authStore';
 import { Loader2Icon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
+
+type LoginFormInput = {
+    email: string;
+    password: string;
+};
 const LoginPage = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
@@ -23,6 +30,18 @@ const LoginPage = () => {
     const router = useRouter();
 
     const willRedirect = useAuthRedirect(); // Redirect if already logged in
+
+    const form = useForm<LoginFormInput>();
+    const {register, 
+        handleSubmit,
+        setError,
+        formState: {errors}} = form;
+
+    const [showErrorDialog, setShowErrorDialog] = useState<DialogInfoPayload>({
+        open: false,
+        title: 'Opps!',
+        message: 'An unexpected error occurred. Please try again later.',
+    });
 
     // Show loading state while checking auth status
     if (!isHydrated || (isHydrated && isLoggedIn && willRedirect)) {
@@ -43,32 +62,28 @@ const LoginPage = () => {
         )
     }
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const onSubmit: SubmitHandler<LoginFormInput> = async ({email, password}) => {
         setIsLoading(true);
-        // Todo: Better form validation
-        if (!email || !password) {
-            console.error('Email and password are required');
-            setIsLoading(false);
-            return;
-        }
-
         try {
             const response = await loginUser(email, password);
-
-            if (!response.ok) {
-                throw new Error('Login failed');
-            }
-
             const data = await response.json();
-            setToken(data.token);
-
+            setToken(data);
             router.push('/'); // Redirect to the home page after successful login
         } catch (error) {
-            console.error('Login failed:', error);
-            // Todo: Handle error (e.g., show a notification or alert )
+            handleHttpError(error);
         } finally {
             setIsLoading(false);
+        }
+    }
+
+    const handleHttpError = (response: Response | any) => {
+        switch (response.status) {
+            case 404:
+            case 401:
+                setError('root', { type: 'http', message: 'Invalid email or password.' });
+                break;
+            default:
+                setShowErrorDialog({...showErrorDialog, open: true});
         }
     }
 
@@ -85,32 +100,38 @@ const LoginPage = () => {
                     </CardAction>
                 </CardHeader>
                 <CardContent>
-                    <form onSubmit={handleSubmit}>
+                    <Form {...form}>
+                        <form onSubmit={handleSubmit(onSubmit)}>
                         <fieldset className='space-y-4' disabled={isLoading}>
                             <Input
-                                type='email'
+                                {...register('email', { required: 'Email is required.' })}
+                                type='email' autoFocus
                                 placeholder='User@example.com'
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+
                             />
+                            <FormMessage>{errors?.email?.message ?? ''}</FormMessage>
+    
                             <Input
+                                {...register('password', { required: 'Password is required.' })}
                                 type='password'
                                 placeholder='Password'
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
                             />
+                            <FormMessage>{errors?.password?.message ?? ''}</FormMessage>
                             <Button type="submit" className="w-full" disabled={isLoading}>
-                                {isLoading ? (
+                                Login {isLoading && (
                                     <span className="flex items-center gap-2">
                                         <Loader2Icon className="animate-spin" />
-                                        Logging In
                                     </span>
-                                ) : 'Login'}
+                                )}
                             </Button>
+                            {/* General error message */}
+                            <Alert variant="destructive" title={errors.root?.message} />
                         </fieldset>
-                    </form>
+                        </form>
+                    </Form>
                 </CardContent>
             </Card>
+            <DialogInfo {...showErrorDialog} open={showErrorDialog.open} onClose={() => setShowErrorDialog({...showErrorDialog, open: false})}/>
         </div>
     )
 }

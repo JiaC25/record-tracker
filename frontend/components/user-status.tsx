@@ -23,7 +23,7 @@ const UserStatus = () => {
 
     const handleLogout = () => {
         clearToken();
-        // router.push('/login');
+        router.push('/login');
     }
 
     // Show skeleton loading state during hydration

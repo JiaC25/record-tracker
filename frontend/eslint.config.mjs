@@ -20,8 +20,12 @@ const eslintConfig = [
   {
     files: ["**/*.ts", "**/*.tsx"],
     rules: {
-      "quotes" : ["warn", "single"] // Enforce single quotes for strings
+      "quotes" : ["warn", "single"], // Enforce single quotes for strings,
+      "@typescript-eslint/no-explicit-any": "off", // Allow explicit 'any' type
     }
+  },
+  {
+    ignores: ["components/ui/**"] // Ignore components from shadcn/ui
   }
 ];
 
