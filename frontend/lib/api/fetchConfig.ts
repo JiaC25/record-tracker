@@ -22,16 +22,24 @@ const buildHeaders = (useAuth: boolean = true) => {
     return headers;
 };
 
+export const handleHttpError = (response: Response): Promise<ApiResponse<T>> => {
+    if (!response.ok) {
+        console.error(response);
+        return Promise.reject(response);
+    }
+    return Promise.resolve(response);
+};
+
 export const fetchGet = <T>(path: string, config?: RequestInit): Promise<ApiResponse<T>> =>
     fetch(buildUrl(path), {
         method: 'GET',
         headers: buildHeaders(true),
         ...config,
-    });
+    }).then(handleHttpError);
 
 export const fetchPost = <T>(path: string, config?: RequestInit): Promise<ApiResponse<T>> =>
     fetch(buildUrl(path), {
         method: 'POST',
         headers: buildHeaders(true),
         ...config,
-    });
+    }).then(handleHttpError);
