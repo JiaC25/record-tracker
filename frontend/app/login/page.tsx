@@ -1,5 +1,6 @@
 'use client';
 
+import Alert from '@/components/general/alert-banner/alert';
 import DialogInfo, { DialogInfoPayload } from '@/components/general/alert-dialog/dialog-info';
 import { Button } from '@/components/ui/button';
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -78,7 +79,8 @@ const LoginPage = () => {
     const handleHttpError = (response: Response | any) => {
         switch (response.status) {
             case 404:
-                setError('email', { type: 'http', message: 'User not regsitered yet, try to sign up first?' });
+            case 401:
+                setError('root', { type: 'http', message: 'Invalid email or password.' });
                 break;
             default:
                 setShowErrorDialog({...showErrorDialog, open: true});
@@ -122,6 +124,8 @@ const LoginPage = () => {
                                     </span>
                                 )}
                             </Button>
+                            {/* General error message */}
+                            <Alert variant="destructive" title={errors.root?.message} />
                         </fieldset>
                         </form>
                     </Form>

@@ -1,7 +1,6 @@
 import React from 'react';
-import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter } from '@/components/ui/alert-dialog';
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter,  AlertDialogDescription} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { AlertDialogDescription } from '@radix-ui/react-alert-dialog';
 
 export type DialogInfoPayload = {
     open: boolean;
@@ -23,10 +22,11 @@ const DialogInfo: React.FC<DialogInfoProps> = ({ open, title = 'Info', message, 
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
         </AlertDialogHeader>
-        <AlertDialogDescription />
-        <div className="py-2">{message}</div>
+        <AlertDialogDescription>
+          {message}
+        </AlertDialogDescription>
         <AlertDialogFooter>
-          <Button onClick={onClose} autoFocus>OK</Button>
+          <Button variant={'secondary'} onClick={onClose} autoFocus>OK</Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
