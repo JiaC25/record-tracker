@@ -15,7 +15,7 @@ type DialogInfoProps ={
   onClose: () => void;
 }
 
-const DialogInfo: React.FC<DialogInfoProps> = ({ open, title = 'Info', message, onClose }) => {
+const DialogInfo = ({ open, title = 'Info', message, onClose }: DialogInfoProps) => {
   return (
     <AlertDialog open={open} onOpenChange={onClose}>
       <AlertDialogContent>

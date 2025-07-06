@@ -1,7 +1,7 @@
 'use client';
 
-import Alert from '@/components/general/alert-banner/alert';
-import DialogInfo, { DialogInfoPayload } from '@/components/general/alert-dialog/dialog-info';
+import Alert from '@/components/general/alert-banner';
+import DialogInfo, { DialogInfoPayload } from '@/components/general/dialog-info';
 import { Button } from '@/components/ui/button';
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormMessage } from '@/components/ui/form';
