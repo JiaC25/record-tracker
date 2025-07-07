@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using RecordTracker.API.Features.Records.Dtos;
 using RecordTracker.API.Services.Interfaces;
 using RecordTracker.Infrastructure.Repositories.Interfaces;
 
 namespace RecordTracker.API.Features.Records;
+
+public record GetAllRecordsResponse(List<RecordSummaryDto> RecordDtos);
 
 public class GetAllRecordsHandler
 {
@@ -21,7 +24,7 @@ public class GetAllRecordsHandler
         _mapper = mapper;
     }
 
-    public async Task<IResult> HandleAsync(CancellationToken ct = default)
+    public async Task<Ok<GetAllRecordsResponse>> HandleAsync(CancellationToken ct = default)
     {
         var userId = _currentUserService.GetUserId();
 
@@ -29,6 +32,6 @@ public class GetAllRecordsHandler
 
         var recordDtos = _mapper.Map<List<RecordSummaryDto>>(records);
 
-        return Results.Ok(recordDtos);
+        return TypedResults.Ok(new GetAllRecordsResponse(recordDtos));
     }
 }

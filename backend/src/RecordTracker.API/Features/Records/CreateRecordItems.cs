@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using Microsoft.AspNetCore.Http.HttpResults;
 using RecordTracker.API.Services.Interfaces;
 using RecordTracker.Infrastructure.Entities;
 using RecordTracker.Infrastructure.Repositories.Interfaces;
@@ -71,14 +72,14 @@ public class CreateRecordItemsHandler
     {
         var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid)
-            return Results.ValidationProblem(validationResult.ToDictionary());
+            return TypedResults.ValidationProblem(validationResult.ToDictionary());
 
         var userId = _currentUserService.GetUserId();
 
         // Validate the record exists and belongs to the current user
         var record = await _recordRepository.GetRecordByIdWithFieldsAsync(recordId, userId, ct);
         if (record == null)
-            return Results.NotFound("Record not found or user no access");
+            return TypedResults.NotFound("Record not found or user no access");
 
         // Validate all provided RecordFieldIds are valid
         var validFieldIds = record.RecordFields.Select(f => f.Id).ToHashSet();
@@ -88,7 +89,7 @@ public class CreateRecordItemsHandler
             .ToHashSet();
         var invalidIds = allValueInputFieldIds.Except(validFieldIds);
         if (invalidIds.Any())
-            return Results.BadRequest($"Invalid field ID: {string.Join(", ", invalidIds)}");
+            return TypedResults.BadRequest($"Invalid field ID: {string.Join(", ", invalidIds)}");
 
         // Create RecordItems with RecordValues
         foreach (var itemInput in request.Items)
@@ -112,7 +113,7 @@ public class CreateRecordItemsHandler
 
         await _recordRepository.SaveChangesAsync(ct);
 
-        return Results.Ok();
+        return TypedResults.Ok();
     }
 
 }
