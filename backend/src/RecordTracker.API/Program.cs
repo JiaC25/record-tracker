@@ -9,7 +9,7 @@ builder.Services
     .AddApplicationServices() // Dependency injection for application services
     .AddInfrastructureServices(builder.Configuration) // Add DB Infrastructure services
     .AddCorsPolicy(builder.Configuration)
-    .AddJwtAuthentication(builder.Configuration)
+    .AddAuthenticationServices(builder.Configuration)
     .AddEndpointsApiExplorer()
     .AddSwaggerGen();
 

@@ -14,16 +14,24 @@ static class CustomClaimTypes
     public const string Email = "email";
 }
 
-public class JwtTokenService : IJwtTokenService
+public class AuthService : IAuthService
 {
+    private readonly AuthOptions _authConfig;
     private readonly JwtOptions _jwtConfig;
+    private readonly AuthCookieOptions _cookieConfig;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public JwtTokenService(IOptions<JwtOptions> jwtConfig)
+    public AuthService(
+        IOptions<AuthOptions> authConfig,
+        IHttpContextAccessor httpContextAccessor)
     {
-        _jwtConfig = jwtConfig?.Value ?? throw new ArgumentNullException(nameof(jwtConfig));
+        _authConfig = authConfig?.Value ?? throw new ArgumentNullException(nameof(authConfig));
+        _jwtConfig = _authConfig.Jwt;
+        _cookieConfig = _authConfig.Cookie;
+        _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
     }
 
-    public string GenerateToken(Guid userId, string email)
+    public string GenerateJwtToken(Guid userId, string email)
     {
         if (string.IsNullOrWhiteSpace(_jwtConfig.Key))
             throw new InvalidOperationException("Missing JWT Key");
@@ -44,11 +52,24 @@ public class JwtTokenService : IJwtTokenService
         // Construct the token object
         var token = new JwtSecurityToken(
             claims: claims,
-            expires: DateTime.UtcNow.AddDays(7),
+            expires: DateTime.UtcNow.AddDays(_jwtConfig.ExpiryDays),
             signingCredentials: credentials
         );
 
         // Convert token object to string
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public void SetAuthCookie(string token)
+    {
+        var options = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = _cookieConfig.Secure,
+            SameSite = Enum.Parse<SameSiteMode>(_cookieConfig.SameSite, ignoreCase: true),
+            Expires = DateTimeOffset.UtcNow.AddDays(_jwtConfig.ExpiryDays)
+        };
+
+        _httpContextAccessor.HttpContext?.Response.Cookies.Append(_cookieConfig.Name, token, options);
     }
 }

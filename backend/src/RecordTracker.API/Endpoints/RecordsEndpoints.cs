@@ -1,6 +1,5 @@
 ﻿using RecordTracker.API.Common;
 using RecordTracker.API.Features.Records;
-using RecordTracker.API.Features.Records;
 
 namespace RecordTracker.API.Endpoints;
 

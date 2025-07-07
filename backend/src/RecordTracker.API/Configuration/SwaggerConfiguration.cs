@@ -18,12 +18,12 @@ public static class SwaggerConfiguration
         return services.AddSwaggerGen(options =>
         {
             // Describe JWT authentication token scheme
-            options.AddSecurityDefinition(JwtConfiguration.BEARER,
+            options.AddSecurityDefinition(AuthenticationConfiguration.BEARER,
             new OpenApiSecurityScheme
             {
                 Name = "Authorization",
                 Type = SecuritySchemeType.ApiKey,
-                Scheme = JwtConfiguration.BEARER,
+                Scheme = AuthenticationConfiguration.BEARER,
                 BearerFormat = "JWT",
                 In = ParameterLocation.Header,
                 Description = "Enter 'Bearer {token}'"
@@ -37,7 +37,7 @@ public static class SwaggerConfiguration
                     {
                         Reference = new OpenApiReference
                         {
-                            Id = JwtConfiguration.BEARER,
+                            Id = AuthenticationConfiguration.BEARER,
                             Type = ReferenceType.SecurityScheme
                         }
                     },

@@ -28,16 +28,16 @@ public class LoginUserHandler
 {
     private readonly IValidator<LoginUserRequest> _validator;
     private readonly IUserRepository _userRepository;
-    private readonly IJwtTokenService _jwtTokenService;
+    private readonly IAuthService _authService;
 
     public LoginUserHandler(
         IValidator<LoginUserRequest> validator,
         IUserRepository userRepository,
-        IJwtTokenService jwtTokenService)
+        IAuthService jwtTokenService)
     {
         _validator = validator;
         _userRepository = userRepository;
-        _jwtTokenService = jwtTokenService;
+        _authService = jwtTokenService;
     }
 
     public async Task<Results<Ok<LoginUserResponse>, NotFound, UnauthorizedHttpResult, ValidationProblem>> HandleAsync(LoginUserRequest request)
@@ -55,7 +55,8 @@ public class LoginUserHandler
         if (result != PasswordVerificationResult.Success)
             return TypedResults.Unauthorized();
 
-        var token = _jwtTokenService.GenerateToken(user.Id, user.Email);
+        var token = _authService.GenerateJwtToken(user.Id, user.Email);
+        _authService.SetAuthCookie(token);
 
         return TypedResults.Ok(new LoginUserResponse(token, user.Email, user.Id));
     }
