@@ -15,15 +15,22 @@ public class RecordRepository : IRecordRepository
     }
 
     #region Create
-    public async Task AddAsync(Record record, CancellationToken ct = default)
+    // -- Record --
+    public async Task AddRecordAsync(Record record, CancellationToken ct = default)
     {
         await _dbContext.Record.AddAsync(record, ct);
-        await _dbContext.SaveChangesAsync(ct);
+    }
+
+    // -- RecordItem --
+    public async Task AddRecordItemAsync(RecordItem item, CancellationToken ct = default)
+    {
+        await _dbContext.RecordItem.AddAsync(item, ct);
     }
     #endregion
 
     #region Read
-    public async Task<List<Record>> GetAllWithFieldsAsync(Guid userId, CancellationToken ct = default)
+    // -- Record --
+    public async Task<List<Record>> GetAllRecordsWithFieldsAsync(Guid userId, CancellationToken ct = default)
     {
         return await _dbContext.Record
             .Where(rt => rt.CreatedByUserId == userId)
@@ -31,21 +38,20 @@ public class RecordRepository : IRecordRepository
             .OrderByDescending(rt => rt.CreatedAt)
             .ToListAsync(ct);
     }
-
-    public async Task<Record?> GetByIdAsync(Guid id, Guid userId, CancellationToken ct = default)
+    public async Task<Record?> GetRecordByIdAsync(Guid id, Guid userId, CancellationToken ct = default)
     {
         return await _dbContext.Record
             .Where(rt => rt.Id == id && rt.CreatedByUserId == userId)
             .FirstOrDefaultAsync(ct);
     }
-    public async Task<Record?> GetByIdWithFieldsAsync(Guid id, Guid userId, CancellationToken ct = default)
+    public async Task<Record?> GetRecordByIdWithFieldsAsync(Guid id, Guid userId, CancellationToken ct = default)
     {
         return await _dbContext.Record
             .Where(rt => rt.Id == id && rt.CreatedByUserId == userId)
             .Include(rt => rt.RecordFields)
             .FirstOrDefaultAsync(ct);
     }
-    public async Task<Record?> GetByIdFullAsync(Guid id, Guid userId, CancellationToken ct = default)
+    public async Task<Record?> GetRecordByIdFullAsync(Guid id, Guid userId, CancellationToken ct = default)
     {
         return await _dbContext.Record
             .Where(rt => rt.Id == id && rt.CreatedByUserId == userId)
@@ -55,4 +61,9 @@ public class RecordRepository : IRecordRepository
             .FirstOrDefaultAsync(ct);
     }
     #endregion
+
+    public async Task SaveChangesAsync(CancellationToken ct = default)
+    {
+        await _dbContext.SaveChangesAsync(ct);
+    }
 }

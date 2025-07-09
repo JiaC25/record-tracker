@@ -1,6 +1,5 @@
 ﻿using RecordTracker.API.Common;
 using RecordTracker.API.Features.Records;
-using RecordTracker.API.Features.Records;
 
 namespace RecordTracker.API.Endpoints;
 
@@ -11,6 +10,7 @@ public class RecordsEndpoints : IEndpointDefinition
         var group = app.MapGroup("/api/records").WithTags("Records");
 
         #region Get
+        // Returns List<RecordSummaryDto> : Records with metadata only (without Items)
         group.MapGet("/", async (
             GetAllRecordsHandler handler,
             CancellationToken ct) =>
@@ -18,6 +18,7 @@ public class RecordsEndpoints : IEndpointDefinition
             return await handler.HandleAsync(ct);
         });
 
+        // Returns RecordDto : Full Record object (with Items)
         group.MapGet("/{id:guid}", async (
             [AsParameters] GetRecordByIdRequest request,
             GetRecordByIdHandler handler,
@@ -34,6 +35,15 @@ public class RecordsEndpoints : IEndpointDefinition
             CancellationToken ct) =>
         {
             return await handler.HandleAsync(request, ct);
+        });
+
+        group.MapPost("/{id:guid}/items", async (
+            Guid id,
+            CreateRecordItemsRequest request,
+            CreateRecordItemsHandler handler,
+            CancellationToken ct) =>
+        {
+            return await handler.HandleAsync(id, request, ct);
         });
         #endregion
 
