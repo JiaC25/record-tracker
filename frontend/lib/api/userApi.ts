@@ -8,9 +8,11 @@ export const signupUser = async (email: string, password: string) => {
 }
 
 export const loginUser = async (email: string, password: string) : Promise<UserInfo>  => {
-    return await fetchPost<UserInfo>('auth/login', {
+    const response = await fetchPost<UserInfo>('auth/login', {
         body: JSON.stringify({ email, password }),
-    }).then(res => res.json());
+    });
+    const data: UserInfo = await response.json();
+    return data;
 }
 
 export const logoutUser = async () => {
