@@ -11,7 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 
 const UserStatus = () => {
     const router = useRouter();
-    const { clearToken } = useAuthStore();
+    const { logoutUser } = useAuthStore();
     const userEmail = useAuthStore((state) => state.userEmail);
     const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
@@ -22,7 +22,7 @@ const UserStatus = () => {
     }, [])
 
     const handleLogout = () => {
-        clearToken();
+        logoutUser();
         router.push('/login');
     }
 

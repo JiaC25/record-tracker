@@ -9,7 +9,7 @@ using RecordTracker.Infrastructure.Repositories.Interfaces;
 namespace RecordTracker.API.Features.Auth;
 
 public record LoginUserRequest(string Email, string Password);
-public record LoginUserResponse(string Token, string Email, Guid UserId);
+public record LoginUserResponse(Guid UserId, string Email);
 
 public class LoginUserValidator : AbstractValidator<LoginUserRequest>
 {
@@ -58,7 +58,7 @@ public class LoginUserHandler
         var token = _authService.GenerateJwtToken(user.Id, user.Email);
         _authService.SetAuthCookie(token);
 
-        return TypedResults.Ok(new LoginUserResponse(token, user.Email, user.Id));
+        return TypedResults.Ok(new LoginUserResponse(user.Id, user.Email));
     }
 }
 

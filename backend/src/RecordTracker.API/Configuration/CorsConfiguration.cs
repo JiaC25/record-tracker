@@ -20,7 +20,8 @@ public static class CorsConfiguration
             {
                 builder.WithOrigins(corsOptions.AllowedOrigins)
                     .AllowAnyHeader()
-                    .AllowAnyMethod();
+                    .AllowAnyMethod()
+                    .AllowCredentials();
             });
         });
 

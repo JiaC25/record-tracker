@@ -31,6 +31,7 @@ public class AuthService : IAuthService
         _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
     }
 
+    #region Jwt
     public string GenerateJwtToken(Guid userId, string email)
     {
         if (string.IsNullOrWhiteSpace(_jwtConfig.Key))
@@ -59,17 +60,37 @@ public class AuthService : IAuthService
         // Convert token object to string
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+    #endregion
 
+    #region Cookie
     public void SetAuthCookie(string token)
     {
-        var options = new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = _cookieConfig.Secure,
-            SameSite = Enum.Parse<SameSiteMode>(_cookieConfig.SameSite, ignoreCase: true),
-            Expires = DateTimeOffset.UtcNow.AddDays(_jwtConfig.ExpiryDays)
-        };
-
-        _httpContextAccessor.HttpContext?.Response.Cookies.Append(_cookieConfig.Name, token, options);
+        _httpContextAccessor.HttpContext?.Response.Cookies.Append(
+            _cookieConfig.Name,
+            token,
+            new CookieOptions
+            {
+                Path = "/",
+                HttpOnly = true,
+                Secure = _cookieConfig.Secure,
+                SameSite = Enum.Parse<SameSiteMode>(_cookieConfig.SameSite, ignoreCase: true),
+                Expires = DateTimeOffset.UtcNow.AddDays(_cookieConfig.ExpiryDays),
+            }
+        );
     }
+
+    public void ClearAuthCookie()
+    {
+        _httpContextAccessor.HttpContext?.Response.Cookies.Delete(
+            _cookieConfig.Name,
+            new CookieOptions
+            {
+                Path = "/",
+                HttpOnly = true,
+                Secure = _cookieConfig.Secure,
+                SameSite = Enum.Parse<SameSiteMode>(_cookieConfig.SameSite, ignoreCase: true),
+            }
+        );
+    }
+    #endregion
 }
