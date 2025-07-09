@@ -1,6 +1,6 @@
-import { getRecordSummaries } from '@/lib/api/recordApi'
+import { getRecord, getRecordSummaries } from '@/lib/api/recordApi'
 import { groupRecordSummariesByLetter } from '@/lib/helpers/recordHelpers'
-import { GroupedRecordSummaries, RecordSummary } from '@/lib/types/records'
+import { GroupedRecordSummaries, Record, RecordSummary } from '@/lib/types/records'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
@@ -11,6 +11,8 @@ type RecordStore = {
     selectedRecordId: string | null
     isLoadingRecordSummaries: boolean
     isHydrated: boolean
+    selectedRecord: Record | null
+    isLoadingItems: boolean
     
     // Getters
     getSelectedRecordSummary: () => RecordSummary | null
@@ -32,6 +34,8 @@ export const useRecordStore = create<RecordStore>()(
             selectedRecordId: null,
             isLoadingRecordSummaries: false,
             isHydrated: false,
+            selectedRecord: null,
+            isLoadingItems: false,
 
             // Getters
             getSelectedRecordSummary: () => {
@@ -71,8 +75,17 @@ export const useRecordStore = create<RecordStore>()(
 
             setSelectedRecordId: (recordId: string) => {
                 set({
+                    selectedRecord: null,
                     selectedRecordId: recordId,
+                    isLoadingItems: true,
                 })
+
+                getRecord(recordId).then(res => {
+                    set({
+                        selectedRecord: res,
+                        isLoadingItems: false,
+                    });
+                });
             },
             clearSelectedRecordId: () => {
                 set({
@@ -86,6 +99,7 @@ export const useRecordStore = create<RecordStore>()(
                     groupedRecordSummaries: {},
                     selectedRecordId: null,
                     isLoadingRecordSummaries: false,
+                    selectedRecord: null,
                 })
             },
 
@@ -97,6 +111,7 @@ export const useRecordStore = create<RecordStore>()(
             name: 'record-type-store',
             partialize: (state) => ({
                 selectedRecordId: state.selectedRecordId,
+                selectedRecord: state.selectedRecord,
             }),
             onRehydrateStorage: () => (state) => {
                 state?.setHydrated()

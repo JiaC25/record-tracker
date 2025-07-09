@@ -5,15 +5,19 @@ namespace RecordTracker.Infrastructure.Repositories.Interfaces;
 public interface IRecordRepository
 {
     #region Create
-    Task AddAsync(Record record, CancellationToken ct = default);
+    // -- Record --
+    Task AddRecordAsync(Record record, CancellationToken ct = default);
+    // -- RecordItem --
+    Task AddRecordItemAsync(RecordItem item, CancellationToken ct = default);
     #endregion
 
     #region Read
-    Task<List<Record>> GetAllWithFieldsAsync(Guid userId, CancellationToken ct = default);
-    
-    Task<Record?> GetByIdAsync(Guid id, Guid userId, CancellationToken ct = default);
-    Task<Record?> GetByIdWithFieldsAsync(Guid id, Guid userId, CancellationToken ct = default);
-    Task<Record?> GetByIdFullAsync(Guid id, Guid userId, CancellationToken ct = default);
-
+    // -- Record --
+    Task<List<Record>> GetAllRecordsWithFieldsAsync(Guid userId, CancellationToken ct = default);
+    Task<Record?> GetRecordByIdAsync(Guid id, Guid userId, CancellationToken ct = default);
+    Task<Record?> GetRecordByIdWithFieldsAsync(Guid id, Guid userId, CancellationToken ct = default);
+    Task<Record?> GetRecordByIdFullAsync(Guid id, Guid userId, CancellationToken ct = default);
     #endregion
+
+    Task SaveChangesAsync(CancellationToken ct = default);
 }

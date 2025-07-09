@@ -25,9 +25,27 @@ export type RecordField = {
 
 export type RecordItem = {
     id: string
-    // Todo
+    createdAt: string
+} & {
+    [fieldId: string]: string
 }
 
+/** Request */
+export type CreateRecordItemsRequest = {
+    items: {
+        values: {
+            recordFieldId: string
+            value: string
+        }[]
+    }[]
+}
+
+/** Response */
+export type GetAllRecordsResponse = {
+    recordDtos: RecordSummary[]
+}
+
+/** Frontend type */
 export type GroupedRecordSummaries = {
     [letter: string]: RecordSummary[]
 }

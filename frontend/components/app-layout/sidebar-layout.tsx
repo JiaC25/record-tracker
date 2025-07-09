@@ -5,7 +5,7 @@ import type React from 'react'
 import { ScrollArea } from '../ui/scroll-area'
 import { Separator } from '../ui/separator'
 
-interface SidebarLayoutProps {
+type SidebarLayoutProps = {
     children: React.ReactNode
     sidebar: React.ReactNode
     title?: string

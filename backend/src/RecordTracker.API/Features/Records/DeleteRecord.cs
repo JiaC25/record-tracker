@@ -44,7 +44,7 @@ public class DeleteRecordHandler
 
         var userId = _currentUserService.GetUserId();
 
-        var record = await _recordRepository.GetByIdFullAsync(request.Id, userId, ct);
+        var record = await _recordRepository.GetRecordByIdFullAsync(request.Id, userId, ct);
         if (record == null)
             return Results.NotFound(new { Message = "Record Type not found." });
 
