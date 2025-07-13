@@ -10,19 +10,24 @@
 /frontend/yarn.lock
 /frontend/*.tsbuildinfo
 /frontend/next-env.d.ts
-
-# === FRONTEND logs/debug/testing ===
 /frontend/coverage
-/frontend/npm-debug.log*
-/frontend/yarn-debug.log*
-/frontend/yarn-error.log*
-/frontend/pnpm-debug.log*
 
 # === BACKEND (ASP.NET Core) ===
 /backend/**/bin/
 /backend/**/obj/
 /backend/**/.vs
 /backend/**/.env*
+
+# sensitive config files
+/backend/**/appsettings.Development.json
+/backend/**/appsettings.Production.json
+
+# === logs/debug/testing ===
+*.log
+/frontend/npm-debug.log*
+/frontend/yarn-debug.log*
+/frontend/yarn-error.log*
+/frontend/pnpm-debug.log*
 
 # === IDE ===
 *.user
