@@ -8,9 +8,8 @@ using RecordTracker.Infrastructure.Repositories.Interfaces;
 
 namespace RecordTracker.API.Features.Auth;
 
-using CreateUserResponseType = Results<Conflict<string>, BadRequest<string>, ValidationProblem>;
+using CreateUserResponseType = Results<NoContent, Conflict<string>, BadRequest<string>, ValidationProblem>;
 
-public record CreateUserResponse(Guid Id, string Email);
 public record CreateUserRequest(string Email, string Password);
 
 public class CreateUserValidator : AbstractValidator<CreateUserRequest>
@@ -44,7 +43,7 @@ public class CreateUserHandler
         _userRepository = userRepository;
     }
 
-    public async Task<Results<Created<CreateUserResponse>, CreateUserResponseType>> HandleAsync(CreateUserRequest request)
+    public async Task<CreateUserResponseType> HandleAsync(CreateUserRequest request)
     {
         var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid)
@@ -59,7 +58,7 @@ public class CreateUserHandler
 
         await _userRepository.AddAsync(user);
 
-        return TypedResults.Created($"/api/users/{user.Id}", new CreateUserResponse(user.Id, user.Email));
+        return TypedResults.NoContent();
     }
 
     private CreateUserResponseType GetErrosAndStatusCode(ValidationResult result)

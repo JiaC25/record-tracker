@@ -57,16 +57,9 @@ const SignupPage = () => {
         }
 
         try {
-            const response = await signupUser(email, password);
-
-            if (!response.ok) {
-                console.error('Signup failed:', response);
-                throw new Error('Signup failed');
-            }
-
-            const data = await response.json();
-            console.log('Signup successful:', data);
-            router.push('/login'); // Redirect to login page after successful signup
+            await signupUser(email, password);
+            console.log('Signup successful'); // Todo: show alert or notification on UI
+            router.push('/login');
         } catch (error) {
             console.error('Signup failed:', error);
         } finally {

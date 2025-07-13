@@ -8,7 +8,6 @@ import { Form, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuthRedirect } from '@/hooks/use-auth-redirect';
-import { loginUser } from '@/lib/api/userApi';
 import { useAuthStore } from '@/lib/store/authStore';
 import { Loader2Icon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -25,7 +24,7 @@ const LoginPage = () => {
 
     const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
     const isHydrated = useAuthStore((state) => state.isHydrated);
-    const { setToken } = useAuthStore();
+    const { loginUser } = useAuthStore();
 
     const router = useRouter();
 
@@ -65,18 +64,19 @@ const LoginPage = () => {
     const onSubmit: SubmitHandler<LoginFormInput> = async ({email, password}) => {
         setIsLoading(true);
         try {
-            const response = await loginUser(email, password);
-            const data = await response.json();
-            setToken(data);
-            router.push('/'); // Redirect to the home page after successful login
+            const isLoggedIn = await loginUser(email, password);
+            console.log(isLoggedIn);
+            if (isLoggedIn) {
+                router.push('/'); // Redirect to the home page after successful login
+            }
         } catch (error) {
-            handleHttpError(error);
+            handleLoginResponseError(error);
         } finally {
             setIsLoading(false);
         }
     }
 
-    const handleHttpError = (response: Response | any) => {
+    const handleLoginResponseError = (response: Response | any) => {
         switch (response.status) {
             case 404:
             case 401:

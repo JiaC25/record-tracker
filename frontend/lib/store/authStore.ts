@@ -1,24 +1,24 @@
+import { UserInfo } from '@/lib/types/auth';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { UserInfo } from '../api/userApi';
+import { loginUser, logoutUser } from '../api/userApi';
 
 type AuthStore = {
-    token: string | null;
     userId: string | null;
     userEmail: string | null;
     isLoggedIn: boolean;
     isHydrated: boolean;
     
-    setToken: (userInfo: UserInfo) => void;
-    clearToken: () => void;
-    setHydrated: () => void
+    setUserInfo: (userInfo: UserInfo) => void;
+    loginUser: (email: string, password: string) => Promise<boolean>;
+    logoutUser: () => void;
+    setHydrated: () => void;
 };
 
 export const useAuthStore = create<AuthStore>()(
     persist(
-        (set) => ({
+        (set, get) => ({
             /** States */
-            token: null,
             userId: null,
             userEmail: null,
             isLoggedIn: false,
@@ -28,18 +28,16 @@ export const useAuthStore = create<AuthStore>()(
             setHydrated: () => {
                 set({ isHydrated: true })
             },
-            setToken: (userInfo) => {
+            setUserInfo: (userInfo) => {
                 set(() => {
                     if (userInfo) {
                         return {
-                            token: userInfo.token,
                             userId: userInfo.userId,
                             userEmail: userInfo.email,
                             isLoggedIn: true,
                         };
                     } else {
                         return {
-                            token: null,
                             userId: null,
                             userEmail: null,
                             isLoggedIn: false,
@@ -47,10 +45,25 @@ export const useAuthStore = create<AuthStore>()(
                     }
                 });
             },
+            loginUser: async (email, password) => {
+                const { isLoggedIn, setUserInfo } = get();
 
-            clearToken: () => {
+                try {
+                    const userInfo = await loginUser(email, password);
+                    setUserInfo(userInfo);
+                    return isLoggedIn;
+                } catch (error) {
+                    console.error('Login failed', error);
+                    throw error;
+                }
+            },
+            logoutUser: async () => {
+                try {
+                    await logoutUser();
+                } catch (error) {
+                    console.error('Logout failed', error);
+                }
                 set(() => ({
-                    token: null,
                     userId: null,
                     email: null,
                     isLoggedIn: false,
@@ -60,7 +73,6 @@ export const useAuthStore = create<AuthStore>()(
         {
             name: 'auth-store',
             partialize: (state) => ({
-                token: state.token,
                 userId: state.userId,
                 userEmail: state.userEmail,
                 isLoggedIn: state.isLoggedIn,

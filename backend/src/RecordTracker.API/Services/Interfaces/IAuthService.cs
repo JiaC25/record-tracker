@@ -2,10 +2,10 @@
 
 namespace RecordTracker.API.Services.Interfaces;
 
-public interface IJwtTokenService
+public interface IAuthService
 {
-    string GenerateToken(Guid userId, string email);
-
+    #region Jwt
+    string GenerateJwtToken(Guid userId, string email);
     //string GenerateToken(Guid userId, string email, string role, DateTime expirationDate);
     //ClaimsPrincipal ValidateToken(string token);
     //bool IsTokenExpired(string token);
@@ -13,4 +13,10 @@ public interface IJwtTokenService
     //string GetEmailFromToken(string token);
     //string GetRoleFromToken(string token);
     //DateTime GetExpirationDateFromToken(string token);
+    #endregion
+
+    #region Cookie
+    void SetAuthCookie(string token);
+    void ClearAuthCookie();
+    #endregion
 }

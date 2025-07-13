@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using RecordTracker.API.Common;
+﻿using RecordTracker.API.Common;
 using RecordTracker.API.Features.Auth;
 
 namespace RecordTracker.API.Endpoints;
@@ -19,5 +18,10 @@ public class AuthEndpoints : IEndpointDefinition
         {
             return await handler.HandleAsync(request);
         }).ProduceLoginUserApiDocumentation();
+
+        group.MapPost("/logout", (LogoutUserHandler handler) =>
+        {
+            return handler.Handle();
+        });
     }
 }

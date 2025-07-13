@@ -1,4 +1,5 @@
-﻿using RecordTracker.API.Common;
+using Microsoft.AspNetCore.Authorization;
+using RecordTracker.API.Common;
 using RecordTracker.API.Features.Records;
 
 namespace RecordTracker.API.Endpoints;
@@ -7,7 +8,7 @@ public class RecordsEndpoints : IEndpointDefinition
 {
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/records").WithTags("Records");
+        var group = app.MapGroup("/api/records").WithTags("Records").RequireAuthorization();
 
         #region Get
         // Returns List<RecordSummaryDto> : Records with metadata only (without Items)
