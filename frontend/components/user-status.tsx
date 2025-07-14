@@ -1,6 +1,7 @@
 'use client'
 
 import { Skeleton } from '@/components/ui/skeleton';
+import { ROUTES } from '@/lib/routes.config';
 import { useAuthStore } from '@/lib/store/authStore';
 import { User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -23,7 +24,7 @@ const UserStatus = () => {
 
     const handleLogout = () => {
         logoutUser();
-        router.push('/login');
+        router.push(ROUTES.LOGIN);
     }
 
     // Show skeleton loading state during hydration
@@ -63,7 +64,7 @@ const UserStatus = () => {
             </DropdownMenuContent>
         </DropdownMenu>
     ) : (
-        <Button onClick={() => router.push('/login')} size="sm">
+        <Button onClick={() => router.push(ROUTES.LOGIN)} size="sm">
             Login
         </Button>
     )

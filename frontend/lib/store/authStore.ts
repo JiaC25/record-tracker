@@ -1,3 +1,4 @@
+import { useRecordStore } from '@/lib/store/recordStore';
 import { UserInfo } from '@/lib/types/auth';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -60,6 +61,7 @@ export const useAuthStore = create<AuthStore>()(
             logoutUser: async () => {
                 try {
                     await logoutUser();
+                    useRecordStore.getState().clearAll(); // Clear record store on logout
                 } catch (error) {
                     console.error('Logout failed', error);
                 }

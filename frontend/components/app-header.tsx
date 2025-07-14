@@ -1,8 +1,12 @@
+'use client'
+
 import ThemeToggleInline from '@/components/app-theme/theme-toggle-inline'
 import { Button } from '@/components/ui/button'
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList, navigationMenuTriggerStyle } from '@/components/ui/navigation-menu'
 import { Separator } from '@/components/ui/separator'
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { ROUTES } from '@/lib/routes.config'
+import { useAuthStore } from '@/lib/store/authStore'
 import { ChartColumnBig, LucideIcon, Menu, Notebook, NotebookPen } from 'lucide-react'
 import Link from 'next/link'
 import UserStatus from './user-status'
@@ -14,18 +18,23 @@ interface NavItem {
 }
 
 const AppHeader = () => {
-    const navItems : NavItem[] = [
-        {
-            href: '/records',
-            label: 'Records',
-            icon: Notebook
-        },
-        {
-            href: '/',
-            label: 'Analytics',
-            icon: ChartColumnBig
-        },
-    ]
+    const isLoggedIn = useAuthStore(state => state.isLoggedIn);
+
+    const navItems : NavItem[] = isLoggedIn
+        ? [
+            {
+                href: ROUTES.RECORDS,
+                label: 'Records',
+                icon: Notebook
+            },
+            {
+                href: ROUTES.ANALYTICS,
+                label: 'Analytics',
+                icon: ChartColumnBig
+            },
+        ] : [
+            // Any public routes for unauthenticated users
+        ];
     
     return (
         <header className="flex h-[var(--header-height)] shrink-0 items-center gap-2 border-b px-4">
