@@ -7,8 +7,8 @@ export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     const isAuthenticated = !!token;
-    const isAuthPage = PUBLIC_AUTH_ROUTES.some(route => pathname.startsWith(route));
-    const isProtectedRoute = PROTECTED_ROUTES.some(route => pathname.startsWith(route));
+    const isAuthPage = PUBLIC_AUTH_ROUTES.includes(pathname);
+    const isProtectedRoute = PROTECTED_ROUTES.includes(pathname);
 
     // Redirect unauthenticated users trying to access protected routes
     if (!isAuthenticated && isProtectedRoute) {
