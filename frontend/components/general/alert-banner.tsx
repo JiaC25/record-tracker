@@ -1,5 +1,5 @@
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { AlertCircle } from 'lucide-react'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 interface AlertBannerProps {
     title?: string;
@@ -21,6 +21,6 @@ const AlertBanner = ({
       <AlertDescription>{description}</AlertDescription>
     </Alert>}
   </>
-)
+);
 
-export default AlertBanner
+export default AlertBanner;
