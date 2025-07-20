@@ -6,7 +6,7 @@ using RecordTracker.Infrastructure.Repositories.Interfaces;
 
 namespace RecordTracker.API.Features.Records;
 
-public record GetAllRecordsResponse(List<RecordSummaryDto> RecordDtos);
+public record GetAllRecordsResponse(List<RecordSummaryDto> records);
 
 public class GetAllRecordsHandler
 {
@@ -30,8 +30,6 @@ public class GetAllRecordsHandler
 
         var records = await _recordRepository.GetAllRecordsWithFieldsAsync(userId, ct);
 
-        var recordDtos = _mapper.Map<List<RecordSummaryDto>>(records);
-
-        return TypedResults.Ok(new GetAllRecordsResponse(recordDtos));
+        return TypedResults.Ok(new GetAllRecordsResponse(_mapper.Map<List<RecordSummaryDto>>(records)));
     }
 }

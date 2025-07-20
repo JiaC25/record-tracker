@@ -42,7 +42,7 @@ export type CreateRecordItemsRequest = {
 
 /** Response */
 export type GetAllRecordsResponse = {
-    recordDtos: RecordSummary[]
+    records: RecordSummary[]
 }
 
 /** Frontend type */

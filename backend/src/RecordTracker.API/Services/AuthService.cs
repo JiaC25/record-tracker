@@ -11,7 +11,7 @@ namespace RecordTracker.API.Services;
 static class CustomClaimTypes
 {
     public const string UserId = "userId";
-    public const string Email = "email";
+    public const string UserEmail = "userEmail";
 }
 
 public class AuthService : IAuthService
@@ -47,7 +47,7 @@ public class AuthService : IAuthService
         var claims = new List<Claim>
         {
             new Claim(CustomClaimTypes.UserId, userId.ToString()),
-            new Claim(CustomClaimTypes.Email, email)
+            new Claim(CustomClaimTypes.UserEmail, email)
         };
 
         // Construct the token object

@@ -20,18 +20,12 @@ const RecordsSidebar = () => {
     const isLoading = useRecordStore((state) => state.isLoadingRecordSummaries);
     const isHydrated = useRecordStore((state) => state.isHydrated);
 
-    const { loadRecordSummaries, setSelectedRecordId, clearAll } = useRecordStore();
+    const { loadRecordSummaries, setSelectedRecordId } = useRecordStore();
 
     useEffect(() => {
-        if (!authIsHydrated || !isHydrated) return;
-         
-        if (isLoggedIn) {
-            loadRecordSummaries();
-        } else {
-            clearAll();
-            router.push('/login')
-        }
-    }, [isLoggedIn, authIsHydrated, isHydrated, loadRecordSummaries, clearAll, router])
+        if (!authIsHydrated || !isHydrated || !isLoggedIn ) return;
+        loadRecordSummaries();
+    }, [isLoggedIn, authIsHydrated, isHydrated, loadRecordSummaries, router])
 
     const handleAddRecord = () => {
         // Todo

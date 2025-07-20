@@ -5,7 +5,7 @@ import { CreateRecordItemsRequest, GetAllRecordsResponse, Record, RecordSummary 
 export const getRecordSummaries = async () : Promise<RecordSummary[]> => {
     const response = await fetchGet('records');
     const data: GetAllRecordsResponse = await response.json();
-    return data.recordDtos;
+    return data.records;
 };
 
 export const getRecord = async (recordId: string) : Promise<Record> => {

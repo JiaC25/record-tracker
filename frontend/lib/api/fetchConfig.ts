@@ -6,12 +6,12 @@ export interface ApiResponse<T> extends Response {
 
 export const BASE_URL = 'http://localhost:5000';
 
-const buildUrl = (path: string) => {
+export const buildUrl = (path: string) => {
     const cleanPath = path.startsWith('/') ? path : `/${path}`;
     return `${BASE_URL}/api${cleanPath}`;
 };
 
-const buildHeaders = () => {
+export const buildHeaders = () => {
     const headers: Record<string, string> = { 
         'Content-Type' : 'application/json' 
     };
@@ -21,11 +21,13 @@ const buildHeaders = () => {
 export const handleHttpError = async (response: Response): Promise<Response> => {
     if (!response.ok) {
         if (response.status === 401) {
-            // JWT Token or the Cookie likely expired
-            console.warn('Session expired, logging out...');
-            await useAuthStore.getState().logoutUser?.();
+            console.warn('Session expired, clearing session');
+            const { clearSession } = useAuthStore.getState();
+            clearSession();
+            window.location.href = '/login'; // Redirect to login page
+            return Promise.reject(new Error('Session expired'));
         }
-        console.error('Error', response);
+        console.error('Api Error', response);
         return Promise.reject(response);
     }
     return Promise.resolve(response);

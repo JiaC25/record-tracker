@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using RecordTracker.API.Configuration;
+using RecordTracker.API.Features.Auth.Dtos;
 using RecordTracker.API.Services.Interfaces;
 using RecordTracker.Infrastructure.Entities;
 using RecordTracker.Infrastructure.Repositories.Interfaces;
@@ -9,7 +10,6 @@ using RecordTracker.Infrastructure.Repositories.Interfaces;
 namespace RecordTracker.API.Features.Auth;
 
 public record LoginUserRequest(string Email, string Password);
-public record LoginUserResponse(Guid UserId, string Email);
 
 public class LoginUserValidator : AbstractValidator<LoginUserRequest>
 {
@@ -40,7 +40,7 @@ public class LoginUserHandler
         _authService = jwtTokenService;
     }
 
-    public async Task<Results<Ok<LoginUserResponse>, NotFound, UnauthorizedHttpResult, ValidationProblem>> HandleAsync(LoginUserRequest request)
+    public async Task<Results<Ok<UserDto>, NotFound, UnauthorizedHttpResult, ValidationProblem>> HandleAsync(LoginUserRequest request)
     {
         var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid)
@@ -58,7 +58,7 @@ public class LoginUserHandler
         var token = _authService.GenerateJwtToken(user.Id, user.Email);
         _authService.SetAuthCookie(token);
 
-        return TypedResults.Ok(new LoginUserResponse(user.Id, user.Email));
+        return TypedResults.Ok(new UserDto(user.Id, user.Email));
     }
 }
 
