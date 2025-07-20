@@ -8,6 +8,7 @@ import { Form, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuthRedirect } from '@/hooks/use-auth-redirect';
+import { ROUTES } from '@/lib/routes.config';
 import { useAuthStore } from '@/lib/store/authStore';
 import { Loader2Icon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -65,7 +66,6 @@ const LoginPage = () => {
         setIsLoading(true);
         try {
             const isLoggedIn = await loginUser(email, password);
-            console.log(isLoggedIn);
             if (isLoggedIn) {
                 router.push('/'); // Redirect to the home page after successful login
             }
@@ -94,7 +94,7 @@ const LoginPage = () => {
                     <CardTitle>Login</CardTitle>
                     <CardDescription>Enter your email below to login to your account</CardDescription>
                     <CardAction>
-                        <Button variant="link" onClick={() => router.push('/signup')}>
+                        <Button variant="link" onClick={() => router.push(ROUTES.SIGNUP)}>
                             <span className='text-sm'>Sign Up</span>
                         </Button>
                     </CardAction>

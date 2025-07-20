@@ -3,28 +3,15 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuthStore } from '@/lib/store/authStore';
 import { User } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 
 const UserStatus = () => {
-    const router = useRouter();
     const { logoutUser } = useAuthStore();
     const userEmail = useAuthStore((state) => state.userEmail);
-    const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
-    const [isHydrated, setIsHydrated] = useState(false);
-    
-    useEffect(() => {
-        setIsHydrated(true)
-    }, [])
-
-    const handleLogout = () => {
-        logoutUser();
-        router.push('/login');
-    }
+    const isHydrated = useAuthStore((state) => state.isHydrated);
 
     // Show skeleton loading state during hydration
     if (!isHydrated) {
@@ -35,7 +22,7 @@ const UserStatus = () => {
         )
     }
 
-    return isLoggedIn ? (
+    return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="relative h-8 w-8 rounded-full">
@@ -57,15 +44,11 @@ const UserStatus = () => {
                     Appearance <ThemeToggleInline />
                 </DropdownMenuItem> */}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout} className="flex justify-center text-xs">
+                <DropdownMenuItem onClick={logoutUser} className="flex justify-center text-xs">
                     Log out
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
-    ) : (
-        <Button onClick={() => router.push('/login')} size="sm">
-            Login
-        </Button>
     )
 }
 

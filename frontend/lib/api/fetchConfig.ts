@@ -6,29 +6,31 @@ export interface ApiResponse<T> extends Response {
 
 export const BASE_URL = 'http://localhost:5000';
 
-const buildUrl = (path: string) => {
-  const cleanPath = path.startsWith('/') ? path : `/${path}`;
-  return `${BASE_URL}/api${cleanPath}`;
+export const buildUrl = (path: string) => {
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+    return `${BASE_URL}/api${cleanPath}`;
 };
 
-const buildHeaders = () => {
-  const headers: Record<string, string> = { 
-    'Content-Type' : 'application/json' 
-  };
-  return headers;
+export const buildHeaders = () => {
+    const headers: Record<string, string> = { 
+        'Content-Type' : 'application/json' 
+    };
+    return headers;
 };
 
 export const handleHttpError = async (response: Response): Promise<Response> => {
-  if (!response.ok) {
-    if (response.status === 401) {
-      // JWT Token or the Cookie likely expired
-      console.warn('Session expired, logging out...');
-      await useAuthStore.getState().logoutUser?.();
+    if (!response.ok) {
+        if (response.status === 401) {
+            console.warn('Session expired, clearing session');
+            const { clearSession } = useAuthStore.getState();
+            clearSession();
+            window.location.href = '/login'; // Redirect to login page
+            return Promise.reject(new Error('Session expired'));
+        }
+        console.error('Api Error', response);
+        return Promise.reject(response);
     }
-    console.error('Error', response);
-    return Promise.reject(response);
-  }
-  return Promise.resolve(response);
+    return Promise.resolve(response);
 };
 
 export const fetchGet = <T>(path: string, config?: RequestInit): Promise<ApiResponse<T>> =>
