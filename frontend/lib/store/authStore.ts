@@ -1,19 +1,22 @@
+import { ROUTES } from '@/lib/routes.config';
 import { useRecordStore } from '@/lib/store/recordStore';
 import { UserInfo } from '@/lib/types/auth';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { loginUser, logoutUser } from '../api/userApi';
+import { apiCheckAuth, apiLogout, loginUser } from '../api/authApi';
 
 type AuthStore = {
     userId: string | null;
     userEmail: string | null;
     isLoggedIn: boolean;
     isHydrated: boolean;
-    
-    setUserInfo: (userInfo: UserInfo) => void;
-    loginUser: (email: string, password: string) => Promise<boolean>;
-    logoutUser: () => void;
+
     setHydrated: () => void;
+    setUserInfo: (userInfo: UserInfo | null) => void;
+    loginUser: (email: string, password: string) => Promise<boolean>;
+    clearSession: () => void;
+    logoutUser: () => void;
+    checkAuth: () => Promise<void>;
 };
 
 export const useAuthStore = create<AuthStore>()(
@@ -58,18 +61,33 @@ export const useAuthStore = create<AuthStore>()(
                     throw error;
                 }
             },
-            logoutUser: async () => {
+            clearSession: () => {
+                const { setUserInfo } = get();
+                
+                // Clear user info
+                setUserInfo(null);
+
+                // Clear any other persisted stores
+                useRecordStore.getState().clearAll();
+            },
+            logoutUser: () => {
+                const { clearSession } = get();
+                
+                clearSession();
+                apiLogout(); // Skip await to avoid blocking UI
+                window.location.href = ROUTES.HOME; // Redirect to home page
+            },
+            checkAuth: async () => {
+                const { setUserInfo } = get();
                 try {
-                    await logoutUser();
-                    useRecordStore.getState().clearAll(); // Clear record store on logout
+                    const userInfo = await apiCheckAuth();
+                    setUserInfo(userInfo);
                 } catch (error) {
-                    console.error('Logout failed', error);
+                    console.error('Auth check failed', error);
+                    setUserInfo(null);
+                } finally {
+                    set({ isHydrated: true });
                 }
-                set(() => ({
-                    userId: null,
-                    email: null,
-                    isLoggedIn: false,
-                }));
             },
         }),
         {

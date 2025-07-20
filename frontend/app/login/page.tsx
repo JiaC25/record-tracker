@@ -66,7 +66,6 @@ const LoginPage = () => {
         setIsLoading(true);
         try {
             const isLoggedIn = await loginUser(email, password);
-            console.log(isLoggedIn);
             if (isLoggedIn) {
                 router.push('/'); // Redirect to the home page after successful login
             }

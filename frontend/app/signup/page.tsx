@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuthRedirect } from '@/hooks/use-auth-redirect';
-import { signupUser } from '@/lib/api/userApi';
+import { signupUser } from '@/lib/api/authApi';
 import { ROUTES } from '@/lib/routes.config';
 import { useAuthStore } from '@/lib/store/authStore';
 import { Loader2 } from 'lucide-react';

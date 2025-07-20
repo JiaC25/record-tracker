@@ -10,7 +10,7 @@ public class AuthEndpoints : IEndpointDefinition
     {
         var group = app.MapGroup("/api/auth").WithTags("Auth");
 
-        group.MapGet("/me", (ICurrentUserService currentUserService) =>
+        group.MapGet("/check", (ICurrentUserService currentUserService) =>
         {
             try
             {
