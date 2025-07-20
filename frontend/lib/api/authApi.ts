@@ -1,42 +1,34 @@
-import { UserInfo } from '@/lib/types/auth';
-import { buildUrl, fetchPost } from './fetchConfig';
+import { UserInfo } from '../types/auth';
+import { API_BASE, apiClient } from './apiClient';
+import { ApiError } from './apiError';
 
-export const signupUser = async (email: string, password: string) => {
-    await fetchPost('auth/signup', {
-        body: JSON.stringify({ email, password }),
-    });
-}
+export const authApi = {
+    signupUser: (email: string, password: string) =>
+        apiClient.post<void>('/auth/signup', { email, password }),
 
-export const loginUser = async (email: string, password: string) : Promise<UserInfo>  => {
-    const response = await fetchPost<UserInfo>('auth/login', {
-        body: JSON.stringify({ email, password }),
-    });
-    const data = await response.json();
-    return data as UserInfo;
-}
+    loginUser: (email: string, password: string) =>
+        apiClient.post<UserInfo>('/auth/login', { email, password }),
 
-export const apiLogout = async (): Promise<void> => {
-    // Using raw fetch to avoid recursive logout issues
-    try {
-        await fetch(buildUrl('/auth/logout'), {
-            method: 'POST',
-            credentials: 'include',
-        });
-    } catch (error) {
-        console.warn('Backend Logout failed', error);
-    }
-}
+    logoutUser: async (): Promise<void> => {
+        try {
+            // Using raw fetch to avoid recursive logout calls
+            await fetch(`${API_BASE}/auth/logout`, {
+                method: 'POST',
+                credentials: 'include',
+            });
+        } catch (error) {
+            console.warn('Backend Logout failed', error);
+        }
+    },
 
-export const apiCheckAuth = async () : Promise<UserInfo | null> => {
-    const response = await fetch(buildUrl('/auth/check'), {
-        method: 'GET',
-        credentials: 'include',
-    });
-
-    if (response.status === 401) return null; // Not authenticated
-    if (!response.ok) throw new Error('Failed to check authentication');
-
-    const data = await response.json();
-
-    return data?.userId ? (data as UserInfo) : null;
+    checkAuth: async (): Promise<UserInfo | null> => {
+        try {
+            return await apiClient.get<UserInfo>('/auth/check');
+        } catch (error) {
+            if (error instanceof ApiError && error.status === 401) {
+                return null; // Not Authenticated
+            }
+            throw error;
+        }
+    },
 }

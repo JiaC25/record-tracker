@@ -3,7 +3,11 @@
 /frontend/node_modules/
 /frontend/out/
 /frontend/.vercel
-/frontend/.env*
+# /frontend/.env*
+/frontend/.env.local
+/frontend/.env.development
+/frontend/.env.production
+/frontend/.env.test
 /frontend/build
 /frontend/.pnp
 /frontend/pnpm-lock.yaml

@@ -11,12 +11,12 @@ export function middleware(request: NextRequest) {
     const isProtectedRoute = PROTECTED_ROUTES.includes(pathname);
 
     // Redirect unauthenticated users trying to access protected routes
-    if (!isAuthenticated && isProtectedRoute) {
+    if (!isAuthenticated && isProtectedRoute && pathname !== ROUTES.LOGIN) {
         return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
     }
 
     // Redirect authenticated users to home if they try to access auth pages
-    if (isAuthenticated && isAuthPage) {
+    if (isAuthenticated && isAuthPage && pathname !== ROUTES.HOME) {
         return NextResponse.redirect(new URL(ROUTES.HOME, request.url));
     }
 
