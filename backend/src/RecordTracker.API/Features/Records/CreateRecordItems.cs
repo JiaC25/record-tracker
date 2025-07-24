@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using FluentValidation;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using FluentValidation;
 using RecordTracker.API.Services.Interfaces;
 using RecordTracker.Infrastructure.Entities;
 using RecordTracker.Infrastructure.Repositories.Interfaces;
@@ -113,7 +111,7 @@ public class CreateRecordItemsHandler
 
         await _recordRepository.SaveChangesAsync(ct);
 
-        return TypedResults.Ok();
+        return TypedResults.NoContent();
     }
 
 }

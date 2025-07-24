@@ -1,22 +1,15 @@
-import { fetchGet, fetchPost } from '@/lib/api/fetchConfig';
 import { CreateRecordItemsRequest, GetAllRecordsResponse, Record, RecordSummary } from '@/lib/types/records';
+import { apiClient } from './apiClient';
 
-/** GET */
-export const getRecordSummaries = async () : Promise<RecordSummary[]> => {
-    const response = await fetchGet('records');
-    const data: GetAllRecordsResponse = await response.json();
-    return data.records;
-};
+export const recordApi = {
+    getRecordSummaries: async () : Promise<RecordSummary[]> => {
+        const data = await apiClient.get<GetAllRecordsResponse>('records');
+        return data.records;
+    },
 
-export const getRecord = async (recordId: string) : Promise<Record> => {
-    const response = await fetchGet(`records/${recordId}`);
-    const data: Record = await response.json();
-    return data;
-}
+    getRecord: (recordId: string) : Promise<Record> =>
+        apiClient.get<Record>(`records/${recordId}`),
 
-/** POST */
-export const createRecordItems = async (recordId: string, requestBody: CreateRecordItemsRequest) => {
-    await fetchPost(`records/${recordId}/items`, {
-        body: JSON.stringify(requestBody)
-    });
+    createRecordItems: (recordId: string, requestBody: CreateRecordItemsRequest) : Promise<void> =>
+        apiClient.post<void>(`records/${recordId}/items`, requestBody),
 }
