@@ -3,7 +3,7 @@ import { useRecordStore } from '@/lib/store/recordStore';
 import { UserInfo } from '@/lib/types/auth';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { apiCheckAuth, apiLogout, loginUser } from '../api/authApi';
+import { authApi } from '../api/authApi';
 
 type AuthStore = {
     userId: string | null;
@@ -13,7 +13,7 @@ type AuthStore = {
 
     setHydrated: () => void;
     setUserInfo: (userInfo: UserInfo | null) => void;
-    loginUser: (email: string, password: string) => Promise<boolean>;
+    loginUser: (email: string, password: string) => Promise<void>;
     clearSession: () => void;
     logoutUser: () => void;
     checkAuth: () => Promise<void>;
@@ -49,41 +49,38 @@ export const useAuthStore = create<AuthStore>()(
                     }
                 });
             },
-            loginUser: async (email, password) => {
-                const { isLoggedIn, setUserInfo } = get();
+            loginUser: async (email: string, password: string) => {
+                const { setUserInfo } = get();
 
                 try {
-                    const userInfo = await loginUser(email, password);
+                    const userInfo = await authApi.loginUser(email, password);
                     setUserInfo(userInfo);
-                    return isLoggedIn;
                 } catch (error) {
-                    console.error('Login failed', error);
                     throw error;
                 }
             },
             clearSession: () => {
                 const { setUserInfo } = get();
+                setUserInfo(null); // Clear user info
                 
-                // Clear user info
-                setUserInfo(null);
-
                 // Clear any other persisted stores
                 useRecordStore.getState().clearAll();
             },
             logoutUser: () => {
                 const { clearSession } = get();
-                
                 clearSession();
-                apiLogout(); // Skip await to avoid blocking UI
+                
+                authApi.logoutUser();
                 window.location.href = ROUTES.HOME; // Redirect to home page
             },
+
+            /** Check user authentication & update store */
             checkAuth: async () => {
                 const { setUserInfo } = get();
                 try {
-                    const userInfo = await apiCheckAuth();
+                    const userInfo = await authApi.checkAuth();
                     setUserInfo(userInfo);
-                } catch (error) {
-                    console.error('Auth check failed', error);
+                } catch {
                     setUserInfo(null);
                 } finally {
                     set({ isHydrated: true });

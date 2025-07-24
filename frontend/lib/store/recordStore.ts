@@ -1,8 +1,8 @@
-import { getRecord, getRecordSummaries } from '@/lib/api/recordApi'
 import { groupRecordSummariesByLetter } from '@/lib/helpers/recordHelpers'
 import { GroupedRecordSummaries, Record, RecordSummary } from '@/lib/types/records'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { recordApi } from '../api/recordApi'
 
 type RecordStore = {
     // State
@@ -49,7 +49,7 @@ export const useRecordStore = create<RecordStore>()(
                 set({ isLoadingRecordSummaries: true });
 
                 try {
-                    const data = await getRecordSummaries();
+                    const data = await recordApi.getRecordSummaries();
                     const grouped = groupRecordSummariesByLetter(data);
 
                     set({
@@ -80,12 +80,19 @@ export const useRecordStore = create<RecordStore>()(
                     isLoadingItems: true,
                 })
 
-                getRecord(recordId).then(res => {
-                    set({
-                        selectedRecord: res,
-                        isLoadingItems: false,
+                recordApi.getRecord(recordId)
+                    .then(res => {
+                        set({
+                            selectedRecord: res,
+                            isLoadingItems: false,
+                        });
+                    }).catch(error => {
+                        console.error('Failed to load record items', error);
+                        set({
+                            selectedRecord: null,
+                            isLoadingItems: false,
+                        });
                     });
-                });
             },
             clearSelectedRecordId: () => {
                 set({

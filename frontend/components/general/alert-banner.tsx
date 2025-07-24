@@ -8,19 +8,19 @@ interface AlertBannerProps {
 }
 
 const AlertBanner = ({
-    title,
-    description,
-    variant = 'default',
+  title,
+  description,
+  variant = 'default',
 }: AlertBannerProps) => (
-    <>
-     {(title || description) && <Alert variant={variant}>
-            <AlertCircle className="h-4 w-4 inline" />
-            <AlertTitle>
-                {title}
-            </AlertTitle>
-        <AlertDescription>{description}</AlertDescription>
+  <>
+    {(title || description) && <Alert variant={variant}>
+      <AlertCircle className="h-4 w-4 inline" />
+      <AlertTitle>
+        {title}
+      </AlertTitle>
+      <AlertDescription>{description}</AlertDescription>
     </Alert>}
-    </>
+  </>
 );
 
 export default AlertBanner;

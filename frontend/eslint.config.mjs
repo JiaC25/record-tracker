@@ -23,6 +23,7 @@ const eslintConfig = [
       "quotes" : ["warn", "single"], // Enforce single quotes for strings,
       "@typescript-eslint/no-explicit-any": "off", // Allow explicit 'any' type
       "@/indent": ["warn", 2],
+      "semi": ["warn", "always"],
     }
   },
   {

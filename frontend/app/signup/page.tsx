@@ -4,13 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAuthRedirect } from '@/hooks/use-auth-redirect';
-import { signupUser } from '@/lib/api/authApi';
 import { ROUTES } from '@/lib/routes.config';
 import { useAuthStore } from '@/lib/store/authStore';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { authApi } from '../../lib/api/authApi';
 
 const SignupPage = () => {
     const [email, setEmail] = useState('');
@@ -18,13 +17,11 @@ const SignupPage = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-    const isHydrated = useAuthStore((state) => state.isHydrated);
+    const isAuthHydrated = useAuthStore((state) => state.isHydrated);
     const router = useRouter();
 
-    const willRedirect = useAuthRedirect(); // Redirect if already logged in
     // Show loading state while checking auth status
-    if (!isHydrated || (isHydrated && isLoggedIn && willRedirect)) {
+    if (!isAuthHydrated) {
         return (
             <div className="max-w-sm mx-auto mt-20 p-4">
                 <Card className="w-full max-w-sm">
@@ -58,7 +55,7 @@ const SignupPage = () => {
         }
 
         try {
-            await signupUser(email, password);
+            await authApi.signupUser(email, password);
             console.log('Signup successful'); // Todo: show alert or notification on UI
             router.push(ROUTES.LOGIN);
         } catch (error) {

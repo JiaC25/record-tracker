@@ -7,29 +7,27 @@ import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle }
 import { Form, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAuthRedirect } from '@/hooks/use-auth-redirect';
 import { ROUTES } from '@/lib/routes.config';
 import { useAuthStore } from '@/lib/store/authStore';
 import { Loader2Icon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { ApiError } from '../../lib/api/apiError';
 
 
 type LoginFormInput = {
     email: string;
     password: string;
 };
+
 const LoginPage = () => {
     const [isLoading, setIsLoading] = useState(false);
 
-    const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-    const isHydrated = useAuthStore((state) => state.isHydrated);
+    const isAuthHydrated = useAuthStore((state) => state.isHydrated);
     const { loginUser } = useAuthStore();
 
     const router = useRouter();
-
-    const willRedirect = useAuthRedirect(); // Redirect if already logged in
 
     const form = useForm<LoginFormInput>();
     const {register, 
@@ -43,8 +41,39 @@ const LoginPage = () => {
         message: 'An unexpected error occurred. Please try again later.',
     });
 
+    const onSubmit: SubmitHandler<LoginFormInput> = async ({email, password}) => {
+        setIsLoading(true);
+        try {
+            await loginUser(email, password);
+            router.push('/'); // Redirect to the home page after successful login
+        } catch (error) {
+            handleLoginResponseError(error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const handleLoginResponseError = (error: unknown) => {
+        if (error instanceof ApiError) {
+            switch (error.status) {
+                case 404:
+                case 401:
+                    setError('root', { type: 'http', message: 'Invalid email or password.' });
+                    return;
+                
+                default:
+                    setShowErrorDialog({...showErrorDialog, open: true});
+                    return;
+            }
+        }
+
+        // Handle unexpected errors (could be Error, string, etc.)
+        console.warn('Unknown thrown value:', error);
+        setShowErrorDialog({ ...showErrorDialog, open: true });
+    }
+
     // Show loading state while checking auth status
-    if (!isHydrated || (isHydrated && isLoggedIn && willRedirect)) {
+    if (!isAuthHydrated) {
         return (
             <div className="max-w-sm mx-auto mt-20 p-4">
                 <Card className="w-full max-w-sm">
@@ -60,31 +89,6 @@ const LoginPage = () => {
                 </Card>
             </div>
         )
-    }
-
-    const onSubmit: SubmitHandler<LoginFormInput> = async ({email, password}) => {
-        setIsLoading(true);
-        try {
-            const isLoggedIn = await loginUser(email, password);
-            if (isLoggedIn) {
-                router.push('/'); // Redirect to the home page after successful login
-            }
-        } catch (error) {
-            handleLoginResponseError(error);
-        } finally {
-            setIsLoading(false);
-        }
-    }
-
-    const handleLoginResponseError = (response: Response | any) => {
-        switch (response.status) {
-            case 404:
-            case 401:
-                setError('root', { type: 'http', message: 'Invalid email or password.' });
-                break;
-            default:
-                setShowErrorDialog({...showErrorDialog, open: true});
-        }
     }
 
     return (
