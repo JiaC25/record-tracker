@@ -31,7 +31,7 @@ public class AuthServiceTest
     }
 
     [Test]
-    public void ShouldGenerateJwtToken()
+    public void ShouldGenerateJwtToken_WhenValidUserIdAndEmail_ShouldReturnToken()
     {
         var uid = Guid.NewGuid();
         var token = authService!.GenerateJwtToken(uid, "email");
@@ -39,7 +39,7 @@ public class AuthServiceTest
     }
 
     [Test]
-    public void ShouldSetAuthToCookie()
+    public void SetAuthCookie_WithValidToken_ShouldAppendCookie()
     {
         string TOKEN = "token";
         authService!.SetAuthCookie(TOKEN);
@@ -50,7 +50,7 @@ public class AuthServiceTest
     }
 
     [Test]
-    public void ShouldClearAuthCookie()
+    public void ShouldClearAuthCookie_WhenLogout_ShouldDeleteCookie()
     {
         authService!.ClearAuthCookie();
         mockHttpContext.Verify(context => context.Response.Cookies.Delete(COOKIE_NAME, It.IsAny<CookieOptions>()), Times.Once);

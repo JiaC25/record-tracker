@@ -29,12 +29,12 @@ jobs:
     - run: npm run lint
     - run: npm test
 
-  run_dotnet_tests:
-    name: Run .NET Tests
+  run_dotnet_unit_tests:
+    name: Run .NET Unit Tests
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: backend/src/RecordTracker.Tests
+        working-directory: backend/tests/RecordTracker.UnitTests
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
