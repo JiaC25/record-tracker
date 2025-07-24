@@ -19,8 +19,7 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     defaults:
       run:
-        shell: bash
-        working-directory: ./frontend
+        working-directory: frontend
     steps:
     - name: Path Check
       run: echo "Running tests in $(pwd)"
