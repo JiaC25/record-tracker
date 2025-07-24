@@ -11,7 +11,9 @@ jobs:
   run_ui_unit_tests:
     name: Run UI Unit Tests
     runs-on: ubuntu-latest
-    working-directory: frontend
+    defaults:
+      run: 
+        working-directory: frontend
     strategy:
       matrix:
         node-version: [24.2.0]
@@ -22,7 +24,7 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        cache: 'npm:///frontend/package-lock.json'
     - run: npm ci
     - run: npm run build
     - run: npm run lint
@@ -31,7 +33,9 @@ jobs:
   run_dotnet_tests:
     name: Run .NET Tests
     runs-on: ubuntu-latest
-    working-directory: backend/src/RecordTracker.Tests
+    defaults:
+      run:
+        working-directory: backend/src/RecordTracker.Tests
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
