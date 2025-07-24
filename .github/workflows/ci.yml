@@ -10,20 +10,14 @@ on:
 jobs:
   run_ui_unit_tests:
     name: Run UI Unit Tests
-
     runs-on: ubuntu-latest
-
+    working-directory: frontend
     strategy:
       matrix:
         node-version: [24.2.0]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-    defaults:
-      run:
-        working-directory: frontend
     steps:
     - uses: actions/checkout@v4
-    - name: Path Check
-      run: echo "Running tests in $(pwd)"
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
@@ -36,11 +30,8 @@ jobs:
 
   run_dotnet_tests:
     name: Run .NET Tests
-
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend/src/RecordTracker.Tests
+    working-directory: backend/src/RecordTracker.Tests
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
