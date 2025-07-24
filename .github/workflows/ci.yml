@@ -24,7 +24,8 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm:///frontend/package-lock.json'
+        cache: 'npm'
+        path: ${{github.workspace}}/.npm
     - run: npm ci
     - run: npm run build
     - run: npm run lint
