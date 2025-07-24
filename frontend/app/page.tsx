@@ -1,4 +1,4 @@
-export const Home = () => {
+const Home = () => {
   return (
     <main>
       <div className="flex flex-col gap-2 p-5">
