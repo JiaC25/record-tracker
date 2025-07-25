@@ -25,51 +25,42 @@ public class CurrentUserServiceTest
     [Test]
     public void GetUserId_WhenUserIsAuthenticated_ShouldReturnUserId()
     {
-        // Arrange
         var userId = Guid.NewGuid();
         mockHttpContext.Setup(context => context.User)
             .Returns(CreateClaimsPrincipal(userId));
 
-        // Act
         var result = currentUserService!.GetUserId();
 
-        // Assert
         Assert.That(result, Is.EqualTo(userId));
     }
 
     [Test]
     public void GetUserId_WhenUserIdClaimIsMissing_ShouldThrowUnauthorizedAccessException()
     {
-        // Arrange
         mockHttpContext.Setup(context => context.User)
             .Returns(new ClaimsPrincipal(new ClaimsIdentity(null, USER_AUTH)));
 
-        // Act & Assert
         Assert.Throws<UnauthorizedAccessException>(() => currentUserService!.GetUserId());
     }
 
     [Test]
     public void GetUserEmail_WhenUserIsAuthenticated_ShouldReturnUserEmail()
     {
-        // Arrange
         var email = "email";
         mockHttpContext.Setup(context => context.User)
             .Returns(CreateClaimsPrincipal(email));
 
-        // Act
         var result = currentUserService!.GetUserEmail();
 
-        // Assert
         Assert.That(result, Is.EqualTo(email));
     }
 
     [Test]
     public void GetUserEmail_WhenUserEmailClaimIsMissing_ShouldThrowUnauthorizedAccessException()
     {
-        // Arrange
         mockHttpContext.Setup(context => context.User)
             .Returns(new ClaimsPrincipal(new ClaimsIdentity(null, USER_AUTH)));
-        // Act & Assert
+
         Assert.Throws<UnauthorizedAccessException>(() => currentUserService!.GetUserEmail());
     }
 

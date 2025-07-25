@@ -33,6 +33,7 @@ public class AuthServiceTest
     {
         var uid = Guid.NewGuid();
         var token = authService!.GenerateJwtToken(uid, "email");
+
         Assert.That(token, Is.Not.Null);
     }
 
@@ -41,17 +42,26 @@ public class AuthServiceTest
     {
         string TOKEN = "token";
         authService!.SetAuthCookie(TOKEN);
-        mockHttpContext.Verify(context => context.Response.Cookies.Append(
-            COOKIE_NAME,
-            TOKEN,
-            It.IsAny<CookieOptions>()), Times.Once);
+        
+        mockHttpContext.Verify(
+            context => context.Response.Cookies.Append(
+                COOKIE_NAME,
+                TOKEN,
+                It.IsAny<CookieOptions>()
+            ),
+            Times.Once
+        );
     }
 
     [Test]
     public void ClearAuthCookie_WhenLogout_ShouldDeleteCookie()
     {
         authService!.ClearAuthCookie();
-        mockHttpContext.Verify(context => context.Response.Cookies.Delete(COOKIE_NAME, It.IsAny<CookieOptions>()), Times.Once);
+        
+        mockHttpContext.Verify(
+            context => context.Response.Cookies.Delete(COOKIE_NAME, It.IsAny<CookieOptions>()),
+            Times.Once
+        );
     }
 
     private IOptions<AuthOptions> CreateAuthConfig()
