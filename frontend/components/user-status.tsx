@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuthStore } from '@/lib/store/authStore';
@@ -8,48 +8,48 @@ import { Button } from './ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 
 const UserStatus = () => {
-    const { logoutUser } = useAuthStore();
-    const userEmail = useAuthStore((state) => state.userEmail);
+  const { logoutUser } = useAuthStore();
+  const userEmail = useAuthStore((state) => state.userEmail);
 
-    const isHydrated = useAuthStore((state) => state.isHydrated);
+  const isHydrated = useAuthStore((state) => state.isHydrated);
 
-    // Show skeleton loading state during hydration
-    if (!isHydrated) {
-        return (
-            <div className="flex items-center gap-2">
-                <Skeleton className="h-8 w-8 rounded-full" />
-            </div>
-        )
-    }
-
+  // Show skeleton loading state during hydration
+  if (!isHydrated) {
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-8 w-8">
-                        <AvatarImage src="" alt="User" />
-                        <AvatarFallback>{userEmail ? userEmail.charAt(0).toUpperCase() : <User/>}</AvatarFallback>
-                    </Avatar>
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="z-50">
-                <DropdownMenuLabel className="flex justify-center text-xs">{userEmail}</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-xs">Profile</DropdownMenuItem>
-                <DropdownMenuItem className="text-xs">Settings</DropdownMenuItem>
-                {/* <DropdownMenuItem
+      <div className="flex items-center gap-2">
+        <Skeleton className="h-8 w-8 rounded-full" />
+      </div>
+    );
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" className="relative h-8 w-8 rounded-full">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src="" alt="User" />
+            <AvatarFallback>{userEmail ? userEmail.charAt(0).toUpperCase() : <User/>}</AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="z-50">
+        <DropdownMenuLabel className="flex justify-center text-xs">{userEmail}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className="text-xs">Profile</DropdownMenuItem>
+        <DropdownMenuItem className="text-xs">Settings</DropdownMenuItem>
+        {/* <DropdownMenuItem
                     onSelect={(e) => e.preventDefault()}
                     className="flex justify-between p-2 focus:bg-transparent text-xs"
                 >
                     Appearance <ThemeToggleInline />
                 </DropdownMenuItem> */}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logoutUser} className="flex justify-center text-xs">
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={logoutUser} className="flex justify-center text-xs">
                     Log out
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
-    )
-}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
-export default UserStatus
+export default UserStatus;

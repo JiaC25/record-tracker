@@ -20,83 +20,83 @@ type AuthStore = {
 };
 
 export const useAuthStore = create<AuthStore>()(
-    persist(
-        (set, get) => ({
-            /** States */
-            userId: null,
-            userEmail: null,
-            isLoggedIn: false,
-            isHydrated: false,
+  persist(
+    (set, get) => ({
+      /** States */
+      userId: null,
+      userEmail: null,
+      isLoggedIn: false,
+      isHydrated: false,
 
-            /** Actions */
-            setHydrated: () => {
-                set({ isHydrated: true })
-            },
-            setUserInfo: (userInfo) => {
-                set(() => {
-                    if (userInfo) {
-                        return {
-                            userId: userInfo.userId,
-                            userEmail: userInfo.email,
-                            isLoggedIn: true,
-                        };
-                    } else {
-                        return {
-                            userId: null,
-                            userEmail: null,
-                            isLoggedIn: false,
-                        };
-                    }
-                });
-            },
-            loginUser: async (email: string, password: string) => {
-                const { setUserInfo } = get();
+      /** Actions */
+      setHydrated: () => {
+        set({ isHydrated: true });
+      },
+      setUserInfo: (userInfo) => {
+        set(() => {
+          if (userInfo) {
+            return {
+              userId: userInfo.userId,
+              userEmail: userInfo.email,
+              isLoggedIn: true,
+            };
+          } else {
+            return {
+              userId: null,
+              userEmail: null,
+              isLoggedIn: false,
+            };
+          }
+        });
+      },
+      loginUser: async (email: string, password: string) => {
+        const { setUserInfo } = get();
 
-                try {
-                    const userInfo = await authApi.loginUser(email, password);
-                    setUserInfo(userInfo);
-                } catch (error) {
-                    throw error;
-                }
-            },
-            clearSession: () => {
-                const { setUserInfo } = get();
-                setUserInfo(null); // Clear user info
-                
-                // Clear any other persisted stores
-                useRecordStore.getState().clearAll();
-            },
-            logoutUser: () => {
-                const { clearSession } = get();
-                clearSession();
-                
-                authApi.logoutUser();
-                window.location.href = ROUTES.HOME; // Redirect to home page
-            },
-
-            /** Check user authentication & update store */
-            checkAuth: async () => {
-                const { setUserInfo } = get();
-                try {
-                    const userInfo = await authApi.checkAuth();
-                    setUserInfo(userInfo);
-                } catch {
-                    setUserInfo(null);
-                } finally {
-                    set({ isHydrated: true });
-                }
-            },
-        }),
-        {
-            name: 'auth-store',
-            partialize: (state) => ({
-                userId: state.userId,
-                userEmail: state.userEmail,
-                isLoggedIn: state.isLoggedIn,
-            }),
-            onRehydrateStorage: () => (state) => {
-                state?.setHydrated()
-            }
+        try {
+          const userInfo = await authApi.loginUser(email, password);
+          setUserInfo(userInfo);
+        } catch (error) {
+          throw error;
         }
-    )
-)
+      },
+      clearSession: () => {
+        const { setUserInfo } = get();
+        setUserInfo(null); // Clear user info
+                
+        // Clear any other persisted stores
+        useRecordStore.getState().clearAll();
+      },
+      logoutUser: () => {
+        const { clearSession } = get();
+        clearSession();
+                
+        authApi.logoutUser();
+        window.location.href = ROUTES.HOME; // Redirect to home page
+      },
+
+      /** Check user authentication & update store */
+      checkAuth: async () => {
+        const { setUserInfo } = get();
+        try {
+          const userInfo = await authApi.checkAuth();
+          setUserInfo(userInfo);
+        } catch {
+          setUserInfo(null);
+        } finally {
+          set({ isHydrated: true });
+        }
+      },
+    }),
+    {
+      name: 'auth-store',
+      partialize: (state) => ({
+        userId: state.userId,
+        userEmail: state.userEmail,
+        isLoggedIn: state.isLoggedIn,
+      }),
+      onRehydrateStorage: () => (state) => {
+        state?.setHydrated();
+      }
+    }
+  )
+);
