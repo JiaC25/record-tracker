@@ -1,5 +1,6 @@
 
 using System.Security.Claims;
+using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
@@ -31,7 +32,7 @@ public class CurrentUserServiceTest
 
         var result = currentUserService!.GetUserId();
 
-        Assert.That(result, Is.EqualTo(userId));
+        result.Should().Be(userId);
     }
 
     [Test]
@@ -40,7 +41,9 @@ public class CurrentUserServiceTest
         mockHttpContext.Setup(context => context.User)
             .Returns(new ClaimsPrincipal(new ClaimsIdentity(null, USER_AUTH)));
 
-        Assert.Throws<UnauthorizedAccessException>(() => currentUserService!.GetUserId());
+        currentUserService.Invoking((subject) => subject!.GetUserId())
+        .Should()
+        .Throw<UnauthorizedAccessException>();
     }
 
     [Test]
@@ -52,7 +55,7 @@ public class CurrentUserServiceTest
 
         var result = currentUserService!.GetUserEmail();
 
-        Assert.That(result, Is.EqualTo(email));
+        result.Should().Be(email);
     }
 
     [Test]
@@ -61,7 +64,9 @@ public class CurrentUserServiceTest
         mockHttpContext.Setup(context => context.User)
             .Returns(new ClaimsPrincipal(new ClaimsIdentity(null, USER_AUTH)));
 
-        Assert.Throws<UnauthorizedAccessException>(() => currentUserService!.GetUserEmail());
+        currentUserService.Invoking((subject) => subject!.GetUserEmail())
+        .Should()
+        .Throw<UnauthorizedAccessException>();
     }
 
     private ClaimsPrincipal CreateClaimsPrincipal(Guid userId)
