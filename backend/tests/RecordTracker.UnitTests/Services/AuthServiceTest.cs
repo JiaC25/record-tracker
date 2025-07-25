@@ -5,7 +5,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Http;
 using RecordTracker.API.Services;
 
-namespace RecordTracker.Tests.Services;
+namespace RecordTracker.UnitTests.Services;
+
 [TestFixture]
 public class AuthServiceTest
 {

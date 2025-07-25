@@ -8,7 +8,7 @@ using System.Text;
 
 namespace RecordTracker.API.Services;
 
-static class CustomClaimTypes
+public static class CustomClaimTypes
 {
     public const string UserId = "userId";
     public const string UserEmail = "userEmail";
