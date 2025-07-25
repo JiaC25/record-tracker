@@ -13,65 +13,64 @@ public class CurrentUserServiceTest
     private readonly Mock<HttpContext> mockHttpContext = new();
     private readonly Mock<IHttpContextAccessor> mockHttpContextAccessor = new();
     private CurrentUserService? currentUserService;
-    private const string AUTH_TYPE = "TestAuth";
+    private const string USER_AUTH = "UserAuth";
+
+    [OneTimeSetUp]
+    public void Setup()
+    {
+        mockHttpContextAccessor.Setup(context => context.HttpContext).Returns(mockHttpContext.Object);
+        currentUserService = new CurrentUserService(mockHttpContextAccessor.Object);
+    }
 
     [Test]
-    public void GetUserId_ShouldReturnUserId_WhenUserIsAuthenticated()
+    public void GetUserId_WhenUserIsAuthenticated_ShouldReturnUserId()
     {
         // Arrange
         var userId = Guid.NewGuid();
-        mockHttpContextAccessor.Setup(context => context.HttpContext).Returns(mockHttpContext.Object);
         mockHttpContext.Setup(context => context.User)
             .Returns(CreateClaimsPrincipal(userId));
 
         // Act
-        currentUserService = new CurrentUserService(mockHttpContextAccessor.Object);
-        var result = currentUserService.GetUserId();
+        var result = currentUserService!.GetUserId();
 
         // Assert
         Assert.That(result, Is.EqualTo(userId));
     }
 
     [Test]
-    public void GetUserId_ShouldThrowUnauthorizedAccessException_WhenUserIdClaimIsMissing()
+    public void GetUserId_WhenUserIdClaimIsMissing_ShouldThrowUnauthorizedAccessException()
     {
         // Arrange
-        mockHttpContextAccessor.Setup(context => context.HttpContext).Returns(mockHttpContext.Object);
         mockHttpContext.Setup(context => context.User)
-            .Returns(new ClaimsPrincipal(new ClaimsIdentity(null, AUTH_TYPE)));
+            .Returns(new ClaimsPrincipal(new ClaimsIdentity(null, USER_AUTH)));
 
         // Act & Assert
-        currentUserService = new CurrentUserService(mockHttpContextAccessor.Object);
-        Assert.Throws<UnauthorizedAccessException>(() => currentUserService.GetUserId());
+        Assert.Throws<UnauthorizedAccessException>(() => currentUserService!.GetUserId());
     }
 
     [Test]
-    public void GetUserEmail_ShouldReturnUserEmail_WhenUserIsAuthenticated()
+    public void GetUserEmail_WhenUserIsAuthenticated_ShouldReturnUserEmail()
     {
         // Arrange
         var email = "email";
-        mockHttpContextAccessor.Setup(context => context.HttpContext).Returns(mockHttpContext.Object);
         mockHttpContext.Setup(context => context.User)
             .Returns(CreateClaimsPrincipal(email));
 
         // Act
-        currentUserService = new CurrentUserService(mockHttpContextAccessor.Object);
-        var result = currentUserService.GetUserEmail();
+        var result = currentUserService!.GetUserEmail();
 
         // Assert
         Assert.That(result, Is.EqualTo(email));
     }
 
     [Test]
-    public void GetUserEmail_ShouldThrowUnauthorizedAccessException_WhenUserEmailClaimIsMissing()
+    public void GetUserEmail_WhenUserEmailClaimIsMissing_ShouldThrowUnauthorizedAccessException()
     {
         // Arrange
-        mockHttpContextAccessor.Setup(context => context.HttpContext).Returns(mockHttpContext.Object);
         mockHttpContext.Setup(context => context.User)
-            .Returns(new ClaimsPrincipal(new ClaimsIdentity(null, AUTH_TYPE)));
+            .Returns(new ClaimsPrincipal(new ClaimsIdentity(null, USER_AUTH)));
         // Act & Assert
-        currentUserService = new CurrentUserService(mockHttpContextAccessor.Object);
-        Assert.Throws<UnauthorizedAccessException>(() => currentUserService.GetUserEmail());
+        Assert.Throws<UnauthorizedAccessException>(() => currentUserService!.GetUserEmail());
     }
 
     private ClaimsPrincipal CreateClaimsPrincipal(Guid userId)
@@ -80,7 +79,7 @@ public class CurrentUserServiceTest
         {
             new Claim(CustomClaimTypes.UserId, userId.ToString()),
         };
-        return new ClaimsPrincipal(new ClaimsIdentity(claims, AUTH_TYPE));
+        return new ClaimsPrincipal(new ClaimsIdentity(claims, USER_AUTH));
     }
 
     private ClaimsPrincipal CreateClaimsPrincipal(string email)
@@ -89,6 +88,6 @@ public class CurrentUserServiceTest
         {
             new Claim(CustomClaimTypes.UserEmail, email),
         };
-        return new ClaimsPrincipal(new ClaimsIdentity(claims, AUTH_TYPE));
+        return new ClaimsPrincipal(new ClaimsIdentity(claims, USER_AUTH));
     }
 }
