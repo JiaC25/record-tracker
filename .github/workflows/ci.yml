@@ -1,31 +1,49 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: Node.js CI
+name: CI
 
 on:
   push:
     branches: [ "*" ]
 
 jobs:
-  build:
-
+  run_ui_unit_tests:
+    name: Run UI Unit Tests
     runs-on: ubuntu-latest
-
+    defaults:
+      run: 
+        working-directory: frontend
     strategy:
       matrix:
         node-version: [24.2.0]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-    defaults:
-      run:
-        working-directory: ./frontend
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
     - run: npm ci
+    - run: npm run build
     - run: npm run lint
     - run: npm test
+
+  run_dotnet_unit_tests:
+    name: Run .NET Unit Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/tests/RecordTracker.UnitTests
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.411
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
