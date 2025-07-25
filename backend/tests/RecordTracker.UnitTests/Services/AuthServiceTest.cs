@@ -29,7 +29,7 @@ public class AuthServiceTest
     }
 
     [Test]
-    public void GenerateJwtToken_WhenValidUserIdAndEmail_ShouldReturnToken()
+    public void GenerateJwtToken_WithValidUserIdAndEmail_ShouldReturnToken()
     {
         var uid = Guid.NewGuid();
         var token = authService!.GenerateJwtToken(uid, "email");
