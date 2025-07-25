@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Http;
 using RecordTracker.API.Services;
+using FluentAssertions;
 
 namespace RecordTracker.UnitTests.Services;
 
@@ -34,7 +35,7 @@ public class AuthServiceTest
         var uid = Guid.NewGuid();
         var token = authService!.GenerateJwtToken(uid, "email");
 
-        Assert.That(token, Is.Not.Null);
+        token.Should().NotBeNull();
     }
 
     [Test]
