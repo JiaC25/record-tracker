@@ -5,15 +5,13 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Http;
 using RecordTracker.API.Services;
 
-namespace RecordTracker.Tests.Services;
+namespace RecordTracker.UnitTests.Services;
+
 [TestFixture]
 public class AuthServiceTest
 {
     private IOptions<AuthOptions>? authConfig;
-    // Create a mock IHttpContextAccessor instance
     private readonly Mock<IHttpContextAccessor> mockHttpContextAccessor = new();
-
-    // Create a mock HttpContext instance
     private readonly Mock<HttpContext> mockHttpContext = new();
     private AuthService? authService;
 
@@ -31,10 +29,11 @@ public class AuthServiceTest
     }
 
     [Test]
-    public void ShouldGenerateJwtToken_WhenValidUserIdAndEmail_ShouldReturnToken()
+    public void GenerateJwtToken_WithValidUserIdAndEmail_ShouldReturnToken()
     {
         var uid = Guid.NewGuid();
         var token = authService!.GenerateJwtToken(uid, "email");
+
         Assert.That(token, Is.Not.Null);
     }
 
@@ -43,17 +42,26 @@ public class AuthServiceTest
     {
         string TOKEN = "token";
         authService!.SetAuthCookie(TOKEN);
-        mockHttpContext.Verify(context => context.Response.Cookies.Append(
-            COOKIE_NAME,
-            TOKEN,
-            It.IsAny<CookieOptions>()), Times.Once);
+        
+        mockHttpContext.Verify(
+            context => context.Response.Cookies.Append(
+                COOKIE_NAME,
+                TOKEN,
+                It.IsAny<CookieOptions>()
+            ),
+            Times.Once
+        );
     }
 
     [Test]
-    public void ShouldClearAuthCookie_WhenLogout_ShouldDeleteCookie()
+    public void ClearAuthCookie_WhenLogout_ShouldDeleteCookie()
     {
         authService!.ClearAuthCookie();
-        mockHttpContext.Verify(context => context.Response.Cookies.Delete(COOKIE_NAME, It.IsAny<CookieOptions>()), Times.Once);
+        
+        mockHttpContext.Verify(
+            context => context.Response.Cookies.Delete(COOKIE_NAME, It.IsAny<CookieOptions>()),
+            Times.Once
+        );
     }
 
     private IOptions<AuthOptions> CreateAuthConfig()
