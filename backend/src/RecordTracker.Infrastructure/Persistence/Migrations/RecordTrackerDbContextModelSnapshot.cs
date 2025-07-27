@@ -22,6 +22,45 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("RecordTracker.Infrastructure.Entities.Record", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("DeletedByUserId");
+
+                    b.ToTable("Record", (string)null);
+                });
+
             modelBuilder.Entity("RecordTracker.Infrastructure.Entities.RecordField", b =>
                 {
                     b.Property<Guid>("Id")
@@ -30,6 +69,9 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
 
                     b.Property<int>("FieldType")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsRequired")
                         .HasColumnType("boolean");
@@ -42,14 +84,14 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("RecordTypeId")
+                    b.Property<Guid>("RecordId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RecordTypeId");
+                    b.HasIndex("RecordId");
 
-                    b.ToTable("RecordField");
+                    b.ToTable("RecordField", (string)null);
                 });
 
             modelBuilder.Entity("RecordTracker.Infrastructure.Entities.RecordItem", b =>
@@ -61,47 +103,30 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("CreatedByUserId")
+                    b.Property<Guid>("CreatedByUserId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("RecordTypeId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedByUserId");
-
-                    b.HasIndex("RecordTypeId");
-
-                    b.ToTable("RecordItem");
-                });
-
-            modelBuilder.Entity("RecordTracker.Infrastructure.Entities.RecordType", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("CreatedByUserId")
+                    b.Property<Guid?>("DeletedByUserId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                    b.Property<Guid>("RecordId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedByUserId");
 
-                    b.ToTable("RecordType");
+                    b.HasIndex("DeletedByUserId");
+
+                    b.HasIndex("RecordId");
+
+                    b.ToTable("RecordItem", (string)null);
                 });
 
             modelBuilder.Entity("RecordTracker.Infrastructure.Entities.RecordValue", b =>
@@ -126,7 +151,7 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("RecordItemId");
 
-                    b.ToTable("RecordValue");
+                    b.ToTable("RecordValue", (string)null);
                 });
 
             modelBuilder.Entity("RecordTracker.Infrastructure.Entities.User", b =>
@@ -138,10 +163,16 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("DeactivatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
+
+                    b.Property<bool>("IsDeactivated")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -153,18 +184,36 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.ToTable("User", (string)null);
+                });
+
+            modelBuilder.Entity("RecordTracker.Infrastructure.Entities.Record", b =>
+                {
+                    b.HasOne("RecordTracker.Infrastructure.Entities.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("RecordTracker.Infrastructure.Entities.User", "DeletedByUser")
+                        .WithMany()
+                        .HasForeignKey("DeletedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("DeletedByUser");
                 });
 
             modelBuilder.Entity("RecordTracker.Infrastructure.Entities.RecordField", b =>
                 {
-                    b.HasOne("RecordTracker.Infrastructure.Entities.RecordType", "RecordType")
+                    b.HasOne("RecordTracker.Infrastructure.Entities.Record", "Record")
                         .WithMany("RecordFields")
-                        .HasForeignKey("RecordTypeId")
+                        .HasForeignKey("RecordId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("RecordType");
+                    b.Navigation("Record");
                 });
 
             modelBuilder.Entity("RecordTracker.Infrastructure.Entities.RecordItem", b =>
@@ -172,27 +221,25 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
                     b.HasOne("RecordTracker.Infrastructure.Entities.User", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.HasOne("RecordTracker.Infrastructure.Entities.RecordType", "RecordType")
+                    b.HasOne("RecordTracker.Infrastructure.Entities.User", "DeletedByUser")
+                        .WithMany()
+                        .HasForeignKey("DeletedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("RecordTracker.Infrastructure.Entities.Record", "Record")
                         .WithMany("RecordItems")
-                        .HasForeignKey("RecordTypeId")
+                        .HasForeignKey("RecordId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("CreatedByUser");
 
-                    b.Navigation("RecordType");
-                });
+                    b.Navigation("DeletedByUser");
 
-            modelBuilder.Entity("RecordTracker.Infrastructure.Entities.RecordType", b =>
-                {
-                    b.HasOne("RecordTracker.Infrastructure.Entities.User", "CreatedByUser")
-                        .WithMany()
-                        .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("CreatedByUser");
+                    b.Navigation("Record");
                 });
 
             modelBuilder.Entity("RecordTracker.Infrastructure.Entities.RecordValue", b =>
@@ -214,6 +261,13 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
                     b.Navigation("RecordItem");
                 });
 
+            modelBuilder.Entity("RecordTracker.Infrastructure.Entities.Record", b =>
+                {
+                    b.Navigation("RecordFields");
+
+                    b.Navigation("RecordItems");
+                });
+
             modelBuilder.Entity("RecordTracker.Infrastructure.Entities.RecordField", b =>
                 {
                     b.Navigation("RecordValues");
@@ -222,13 +276,6 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("RecordTracker.Infrastructure.Entities.RecordItem", b =>
                 {
                     b.Navigation("RecordValues");
-                });
-
-            modelBuilder.Entity("RecordTracker.Infrastructure.Entities.RecordType", b =>
-                {
-                    b.Navigation("RecordFields");
-
-                    b.Navigation("RecordItems");
                 });
 #pragma warning restore 612, 618
         }
