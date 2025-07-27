@@ -3,11 +3,11 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useRecordStore } from '@/lib/store/recordStore';
-import { LayoutDashboard, Plus } from 'lucide-react';
+import { LayoutDashboard } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { Button } from '../ui/button';
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from '../ui/sidebar';
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from '@/components/ui/sidebar';
+import { CreateNewRecordButton } from '@/components/records/create-record-button';
 
 const RecordsSidebar = () => {
   const router = useRouter();
@@ -27,9 +27,6 @@ const RecordsSidebar = () => {
     loadRecordSummaries();
   }, [isLoggedIn, authIsHydrated, isHydrated, loadRecordSummaries, router]);
 
-  const handleAddRecord = () => {
-    // Todo
-  };
   const handleSelectRecord = (recordId: string) => {
     setSelectedRecordId(recordId);
   };
@@ -80,14 +77,15 @@ const RecordsSidebar = () => {
           <SidebarMenuItem>
             <div className="flex items-center justify-between">
                             Records
-              <Button variant="secondary" size="icon" className="size-6 cursor-pointer" onClick={handleAddRecord}>
-                <Plus className='size-4' />
-              </Button>
+
             </div>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent className="pb-16">
+        
+        <CreateNewRecordButton />
+
         {sortedLetters.map((letter) => (
           <SidebarGroup key={letter}>
             <SidebarGroupLabel>{letter}</SidebarGroupLabel>

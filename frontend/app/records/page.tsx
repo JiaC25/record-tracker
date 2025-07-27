@@ -1,7 +1,7 @@
 'use client';
 
 import { SidebarLayout } from '@/components/app-layout/sidebar-layout';
-import RecordsSidebar from '@/components/records/records-sidebar';
+import RecordsSidebar from '@/app/records/records-sidebar';
 import { useRecordStore } from '@/lib/store/recordStore';
 import { CreateRecordItemsRequest } from '@/lib/types/records';
 import { useState } from 'react';
