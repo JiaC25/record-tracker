@@ -8,6 +8,7 @@ public class Record
     public string Name { get; set; } = default!;
     public string? Description { get; set; }
     
+    public bool IsPrimary { get; set; } = false;
     // FK
     public Guid CreatedByUserId { get; set; }
 
