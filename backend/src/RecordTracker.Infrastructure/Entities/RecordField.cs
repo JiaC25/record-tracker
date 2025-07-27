@@ -6,6 +6,7 @@ public class RecordField
     public string Name { get; set; } = default!;
     public FieldType FieldType { get; set; }
     public bool IsRequired { get; set; } = false;
+    public bool IsPrimary { get; set; } = false;
     public int Order { get; set; }
 
     // FK
