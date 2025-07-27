@@ -57,7 +57,7 @@ export const RecordView = ({ record }: RecordViewProps) => {
       )}
 
       {/* Table with items */}
-      <table className="table-auto border-collapse border border-gray-400 text-sm w-1/2">
+      <table className="table-auto border-collapse border border-gray-400 text-sm w-full lg:w-1/2">
         <thead>
           <tr>
             {record.recordFields.map((field) => (
