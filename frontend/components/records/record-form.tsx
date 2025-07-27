@@ -4,25 +4,25 @@ import { Input } from '@/components/ui/input';
 import { Form, FormMessage } from '@/components/ui/form';
 import { useEffect } from 'react';
 
-export type RecordForm ={
+export type RecordFormField ={
   name: string;
   description: string;
 }
-type CreateOrEditRecordFormProps = {
-  onFormChange: (isFormValid: boolean, data: Partial<RecordForm>) => void;
+type RecordFormProps = {
+  onFormChange: (isFormValid: boolean, data: Partial<RecordFormField>) => void;
 }
-export const CreateOrEditRecordForm = ({ onFormChange }: CreateOrEditRecordFormProps) => {
+export const RecordForm = ({ onFormChange }: RecordFormProps) => {
   const MAX_NAME_LENGTH = 50;
   const MAX_DESCRIPTION_LENGTH = 200;
 
-  const form = useForm<RecordForm>({mode: 'onChange'});
+  const form = useForm<RecordFormField>({mode: 'onChange'});
   const {register, reset, watch,
     formState: {errors}} = form;
 
   const values = watch();
 
   useEffect(() => {
-    const isFormValid = (values: Partial<RecordForm>): boolean => {
+    const isFormValid = (values: Partial<RecordFormField>): boolean => {
       const hasErrors = Object.keys(errors).length > 0;
       const nameHasValue = values?.name && values.name.trim().length > 0;
       return !!nameHasValue && !hasErrors;

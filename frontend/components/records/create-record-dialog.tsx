@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { CreateOrEditRecordForm, RecordForm } from './create-or-edit-record-form';
+import { RecordForm, RecordFormField } from './record-form';
 import { Button } from '@/components/ui/button';
 
 type CreateRecordDialogProps = {
@@ -12,9 +12,8 @@ export const CreateRecordDialog = (props: CreateRecordDialogProps) => {
   const handleSave = () => {
   };
   
-  const handleFormChange = (isFormValid: boolean, data: Partial<RecordForm>) => {
+  const handleFormChange = (isFormValid: boolean, data: Partial<RecordFormField>) => {
     setIsFormValid(isFormValid);
-    console.log('Form data:', data);
   };
 
   return (
@@ -25,7 +24,7 @@ export const CreateRecordDialog = (props: CreateRecordDialogProps) => {
         </AlertDialogHeader>
         <AlertDialogDescription />
 
-        <CreateOrEditRecordForm onFormChange={handleFormChange} />
+        <RecordForm onFormChange={handleFormChange} />
       
         <AlertDialogFooter>
           <Button variant="secondary" onClick={props.onDialogClose}>Cancel</Button>

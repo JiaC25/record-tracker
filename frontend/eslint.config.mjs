@@ -20,10 +20,11 @@ const eslintConfig = [
   {
     files: ["**/*.ts", "**/*.tsx"],
     rules: {
-      "quotes" : ["warn", "single"], // Enforce single quotes for strings,
-      "@typescript-eslint/no-explicit-any": "off", // Allow explicit 'any' type
+      "quotes" : ["warn", "single"],
+      "@typescript-eslint/no-explicit-any": "off",
       "@/indent": ["warn", 2],
       "semi": ["warn", "always"],
+      "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
     }
   },
   {

@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
-import { CreateOrEditRecordForm } from './create-or-edit-record-form';
+import { RecordForm } from './record-form';
 import userEvent from '@testing-library/user-event';
 
 describe('CreateOrEditRecordForm', () => {
@@ -8,7 +8,7 @@ describe('CreateOrEditRecordForm', () => {
   console.error = jest.fn(); // Mock console.error to avoid act() warnings due to watch() reapeated calls
 
   it('should disable the submit button when form is invalid', async () => {
-    render(<CreateOrEditRecordForm onFormChange={mockOnFormChange} />);
+    render(<RecordForm onFormChange={mockOnFormChange} />);
     userEvent.type(screen.getByTestId('record-name'), 'Test Record');
     await waitFor(() => {
       expect(screen.getByTestId('record-name')).toHaveValue('Test Record');
@@ -17,7 +17,7 @@ describe('CreateOrEditRecordForm', () => {
   });
 
   it('should show validation errors when submitting empty form', async () => {
-    render(<CreateOrEditRecordForm onFormChange={mockOnFormChange} />);
+    render(<RecordForm onFormChange={mockOnFormChange} />);
     
     userEvent.type(screen.getByTestId('record-name'), 'A');
     await waitFor(() => {
@@ -33,7 +33,7 @@ describe('CreateOrEditRecordForm', () => {
   });
 
   it('should show validation error for name exceeding max length', async () => {
-    render(<CreateOrEditRecordForm onFormChange={mockOnFormChange} />);
+    render(<RecordForm onFormChange={mockOnFormChange} />);
     userEvent.type(screen.getByTestId('record-name'), 'a'.repeat(51));
     
     await waitFor(() => {
@@ -44,7 +44,7 @@ describe('CreateOrEditRecordForm', () => {
   });
 
   it('should show validation error for description exceeding max length', async () => {
-    render(<CreateOrEditRecordForm onFormChange={mockOnFormChange} />);
+    render(<RecordForm onFormChange={mockOnFormChange} />);
     const descriptionInput = screen.getByTestId('record-description');
     userEvent.type(descriptionInput, 'a'.repeat(201));
 
