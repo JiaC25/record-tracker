@@ -6,15 +6,12 @@ namespace RecordTracker.Infrastructure.Persistence;
 
 public class RecordTrackerDbContextFactory : IDesignTimeDbContextFactory<RecordTrackerDbContext>
 {
-    private string? environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "";
-
     public RecordTrackerDbContext CreateDbContext(string[] args)
     {
-        Console.WriteLine($"Creating DbContext for environment: {environment}");
         // Build config manually so CLI can access it
         var config = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
+            .AddJsonFile("appsettings.json", optional: false)
             .Build();
 
         var optionsBuilder = new DbContextOptionsBuilder<RecordTrackerDbContext>();
