@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
-import { CreateNewRecordButton } from './create-new-record-button';
+import { CreateNewRecordButton } from './create-record-button';
 import userEvent from '@testing-library/user-event';
 
 describe('AddNewRecordButton', () => {

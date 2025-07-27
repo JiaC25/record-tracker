@@ -1,4 +1,4 @@
-import AppHeader from '@/components/app-header';
+import AppHeader from '@/app/app-header';
 import { ThemeProvider } from '@/components/app-theme/theme-provider';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { Metadata } from 'next';

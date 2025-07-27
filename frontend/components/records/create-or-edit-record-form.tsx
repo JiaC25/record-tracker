@@ -1,46 +1,40 @@
-import { AlertDialog, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
-import { AlertDialogDescription } from '@radix-ui/react-alert-dialog';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Form, FormMessage } from '@/components/ui/form';
 import { useEffect } from 'react';
 
-type RecordForm ={
+export type RecordForm ={
   name: string;
   description: string;
 }
 type CreateOrEditRecordFormProps = {
-    open: boolean;
-    onClose: () => void;
-    edit?: boolean;
+  onFormChange: (isFormValid: boolean, data: Partial<RecordForm>) => void;
 }
-export const CreateOrEditRecordForm = (props: CreateOrEditRecordFormProps) => {
+export const CreateOrEditRecordForm = ({ onFormChange }: CreateOrEditRecordFormProps) => {
   const MAX_NAME_LENGTH = 50;
   const MAX_DESCRIPTION_LENGTH = 200;
 
   const form = useForm<RecordForm>({mode: 'onChange'});
-  const {register, 
-    reset,
-    trigger,
-    getValues,
+  const {register, reset, watch,
     formState: {errors}} = form;
 
+  const values = watch();
+
   useEffect(() => {
-    if (props.open) {
-      reset();
-    }
-  }, [props.open, reset]);
+    const isFormValid = (values: Partial<RecordForm>): boolean => {
+      const hasErrors = Object.keys(errors).length > 0;
+      const nameHasValue = values?.name && values.name.trim().length > 0;
+      return !!nameHasValue && !hasErrors;
+    };
+  
+    const isValid = isFormValid(values);
+    onFormChange(isValid, values);
+  }, [values, errors, onFormChange]);
 
-  const onDialogClose = () => {
-    props.onClose();
-  };
-
-  const handleSave = () => {
-    trigger();
-    console.log(getValues());
-  };
+  useEffect(() => {
+    reset();
+  }, [reset]);
 
   const renderNameInput = () => {
     return  <div className="grid gap-3">
@@ -67,37 +61,12 @@ export const CreateOrEditRecordForm = (props: CreateOrEditRecordFormProps) => {
     </div>;
   };
 
-  const renderFormContent = () => {
-    return (
-      <Form {...form}>
-        <form>
-          <fieldset className='grid gap-4'>
-            {renderNameInput()}
-            {renderDescriptionInput()}
-          </fieldset>
-        </form>
-      </Form>);
-  };
-
-  const isFormValid = (): boolean => {
-    const hasErrors = Object.keys(errors).length > 0;
-    const nameHasValue = getValues('name')?.trim().length > 0;
-    return nameHasValue && !hasErrors;
-  };
-
-  return <AlertDialog open={props.open} onOpenChange={onDialogClose}>
-    <AlertDialogContent>
-      <AlertDialogHeader>
-        <AlertDialogTitle>{props.edit ? 'Edit Record' : 'Create New Record'}</AlertDialogTitle>
-      </AlertDialogHeader>
-      
-      <AlertDialogDescription />
-      {renderFormContent()}
-      
-      <AlertDialogFooter>
-        <Button variant="secondary" onClick={onDialogClose}>Cancel</Button>
-        <Button disabled={!isFormValid()} onClick={handleSave} type="submit">Save</Button>
-      </AlertDialogFooter>
-    </AlertDialogContent>
-  </AlertDialog>;
+  return <Form {...form}>
+    <form>
+      <fieldset className='grid gap-4'>
+        {renderNameInput()}
+        {renderDescriptionInput()}
+      </fieldset>
+    </form>
+  </Form>;
 };

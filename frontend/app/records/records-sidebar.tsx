@@ -6,8 +6,8 @@ import { useRecordStore } from '@/lib/store/recordStore';
 import { LayoutDashboard } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from '../ui/sidebar';
-import { CreateNewRecordButton } from './create-new-record-button';
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from '@/components/ui/sidebar';
+import { CreateNewRecordButton } from '@/components/records/create-record-button';
 
 const RecordsSidebar = () => {
   const router = useRouter();
