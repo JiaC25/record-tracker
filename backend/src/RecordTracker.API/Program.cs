@@ -20,7 +20,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    // Create a scoped service provider
+    // Create a scoped service provider and apply any pending migrations
     using (var scope = app.Services.CreateScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<RecordTrackerDbContext>();
