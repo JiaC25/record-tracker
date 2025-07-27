@@ -12,8 +12,8 @@ using RecordTracker.Infrastructure.Persistence;
 namespace RecordTracker.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(RecordTrackerDbContext))]
-    [Migration("20250727024617_AddIsPrimaryToRecord")]
-    partial class AddIsPrimaryToRecord
+    [Migration("20250727034531_AddIsPrimaryToRecordField")]
+    partial class AddIsPrimaryToRecordField
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,9 +50,6 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsPrimary")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -77,6 +74,9 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
                         .HasColumnType("integer");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsPrimary")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsRequired")

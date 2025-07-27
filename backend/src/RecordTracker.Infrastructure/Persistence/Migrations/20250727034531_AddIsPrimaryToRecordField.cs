@@ -5,14 +5,14 @@
 namespace RecordTracker.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class AddIsPrimaryToRecord : Migration
+    public partial class AddIsPrimaryToRecordField : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<bool>(
                 name: "IsPrimary",
-                table: "Record",
+                table: "RecordField",
                 type: "boolean",
                 nullable: false,
                 defaultValue: false);
@@ -23,7 +23,7 @@ namespace RecordTracker.Infrastructure.Persistence.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "IsPrimary",
-                table: "Record");
+                table: "RecordField");
         }
     }
 }
