@@ -7,7 +7,7 @@ import { LayoutDashboard } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from '../ui/sidebar';
-import { AddNewRecordButton } from './add-new-record-button';
+import { CreateNewRecordButton } from './create-new-record-button';
 
 const RecordsSidebar = () => {
   const router = useRouter();
@@ -84,7 +84,7 @@ const RecordsSidebar = () => {
       </SidebarHeader>
       <SidebarContent className="pb-16">
         
-        <AddNewRecordButton />
+        <CreateNewRecordButton />
 
         {sortedLetters.map((letter) => (
           <SidebarGroup key={letter}>

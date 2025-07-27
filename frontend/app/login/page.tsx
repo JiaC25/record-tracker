@@ -111,7 +111,7 @@ const LoginPage = () => {
                   {...register('email', { required: 'Email is required.' })}
                   type='email' autoFocus
                   placeholder='User@example.com'
-
+                  aria-invalid={!!errors.email}
                 />
                 <FormMessage>{errors?.email?.message ?? ''}</FormMessage>
     
@@ -119,6 +119,7 @@ const LoginPage = () => {
                   {...register('password', { required: 'Password is required.' })}
                   type='password'
                   placeholder='Password'
+                  aria-invalid={!!errors.password}
                 />
                 <FormMessage>{errors?.password?.message ?? ''}</FormMessage>
                 <Button type="submit" className="w-full" disabled={isLoading}>
