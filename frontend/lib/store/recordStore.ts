@@ -1,5 +1,5 @@
 import { groupRecordSummariesByLetter } from '@/lib/helpers/recordHelpers';
-import { GroupedRecordSummaries, Record, RecordSummary } from '@/lib/types/records';
+import { GroupedRecordSummaries, RecordEntity, RecordSummary } from '@/lib/types/records';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { recordApi } from '../api/recordApi';
@@ -8,19 +8,19 @@ type RecordStore = {
     // State
     recordSummaries: RecordSummary[]
     groupedRecordSummaries: GroupedRecordSummaries
-    selectedRecordId: string | null
     isLoadingRecordSummaries: boolean
+
+    records: Record<string, RecordEntity>
+
     isHydrated: boolean
-    selectedRecord: Record | null
-    isLoadingItems: boolean
     
     // Getters
-    getSelectedRecordSummary: () => RecordSummary | null
+    getRecordSummary: (id: string) => RecordSummary | undefined
+    getRecord: (id: string) => RecordEntity | undefined
 
     // Actions
     loadRecordSummaries: () => Promise<void>
-    setSelectedRecordId: (recordId: string) => void
-    clearSelectedRecordId: () => void
+    fetchRecord: (recordId: string) => Promise<RecordEntity | undefined>
     clearAll: () => void
     setHydrated: () => void
 }
@@ -31,18 +31,15 @@ export const useRecordStore = create<RecordStore>()(
       // States
       recordSummaries: [],
       groupedRecordSummaries: {},
-      selectedRecordId: null,
       isLoadingRecordSummaries: false,
+
+      records: {},
+      
       isHydrated: false,
-      selectedRecord: null,
-      isLoadingItems: false,
 
       // Getters
-      getSelectedRecordSummary: () => {
-        const { recordSummaries, selectedRecordId } = get();
-        if (!selectedRecordId) return null;
-        return recordSummaries.find((record) => record.id === selectedRecordId) || null;
-      },
+      getRecordSummary: (id: string) => get().recordSummaries.find(r => r.id === id),
+      getRecord: (id: string) => get().records[id],
 
       // Actions
       loadRecordSummaries: async () => {
@@ -56,16 +53,6 @@ export const useRecordStore = create<RecordStore>()(
             recordSummaries: data,
             groupedRecordSummaries: grouped,
           });
-
-          // Clear selectedRecordId if it no longer exist in the new fetched list
-          const { selectedRecordId, recordSummaries } = get();
-          if (selectedRecordId) {
-            const selectedRecord = recordSummaries.find((record) => record.id === selectedRecordId) || null;
-            if (!selectedRecord) {
-              set({ selectedRecordId: null });
-            }
-          }
-
         } catch (error) {
           console.error('Failed to load record list', error);
         } finally {
@@ -73,40 +60,25 @@ export const useRecordStore = create<RecordStore>()(
         }
       },
 
-      setSelectedRecordId: (recordId: string) => {
-        set({
-          selectedRecord: null,
-          selectedRecordId: recordId,
-          isLoadingItems: true,
-        });
-
-        recordApi.getRecord(recordId)
-          .then(res => {
-            set({
-              selectedRecord: res,
-              isLoadingItems: false,
-            });
-          }).catch(error => {
-            console.error('Failed to load record items', error);
-            set({
-              selectedRecord: null,
-              isLoadingItems: false,
-            });
-          });
-      },
-      clearSelectedRecordId: () => {
-        set({
-          selectedRecordId: null,
-        });
+      fetchRecord: async (recordId: string) => {
+        try {
+          const record = await recordApi.getRecord(recordId);
+          set((state) => ({
+            records: { ...state.records, [recordId]: record },
+          }));
+          return record;
+        } catch (error) {
+          console.error('Failed to fetch record', error);
+          return undefined;
+        }
       },
 
       clearAll: () => {
         set({
+          records: {},
           recordSummaries: [],
           groupedRecordSummaries: {},
-          selectedRecordId: null,
           isLoadingRecordSummaries: false,
-          selectedRecord: null,
         });
       },
 
@@ -115,10 +87,10 @@ export const useRecordStore = create<RecordStore>()(
       },
     }),
     {
-      name: 'record-type-store',
+      name: 'record-store',
       partialize: (state) => ({
-        selectedRecordId: state.selectedRecordId,
-        selectedRecord: state.selectedRecord,
+        recordSummaries: state.recordSummaries,
+        groupedRecordSummaries: state.groupedRecordSummaries,
       }),
       onRehydrateStorage: () => (state) => {
         state?.setHydrated();

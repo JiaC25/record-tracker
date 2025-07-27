@@ -1,6 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using RecordTracker.API.Common;
 using RecordTracker.API.Configuration;
 using RecordTracker.Infrastructure.Configuration;
+using RecordTracker.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,14 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    // Create a scoped service provider
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<RecordTrackerDbContext>();
+        dbContext.Database.Migrate();
+    }
+
+    // Enable Swagger
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
@@ -25,8 +35,8 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseCors(CorsConfiguration.GetPolicyName());
 app.UseHttpsRedirection();
+app.UseCors(CorsConfiguration.GetPolicyName());
 app.UseAuthentication();
 app.UseAuthorization();
 
