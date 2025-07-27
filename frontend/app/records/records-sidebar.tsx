@@ -77,8 +77,7 @@ const RecordsSidebar = () => {
         <SidebarMenu>
           <SidebarMenuItem>
             <div className="flex items-center justify-between">
-                            Records
-
+              Records
             </div>
           </SidebarMenuItem>
         </SidebarMenu>
