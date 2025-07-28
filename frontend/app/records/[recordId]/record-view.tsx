@@ -51,13 +51,10 @@ export const RecordView = ({ record }: RecordViewProps) => {
   return (
     <div className="p-5 text-sm">
       {/* Record name & description */}
-      <h2 className="text-lg font-semibold">{record.name}</h2>
-      {record.description && (
-        <p className="text-muted-foreground text-sm mb-4">{record.description}</p>
-      )}
-
+      <h3>{record.name}</h3>
+      {record.description && ( <small>{record.description}</small> )}
       {/* Table with items */}
-      <table className="table-auto border-collapse border border-gray-400 text-sm w-full lg:w-1/2">
+      <table className="table-auto border-collapse border border-gray-400 text-sm w-full lg:w-1/2 mt-5">
         <thead>
           <tr>
             {record.recordFields.map((field) => (

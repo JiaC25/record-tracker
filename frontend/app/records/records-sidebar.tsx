@@ -8,6 +8,7 @@ import { LayoutDashboard } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from '../../components/ui/sidebar';
+import { ROUTES } from '../../lib/routes.config';
 
 const RecordsSidebar = () => {
   const params = useParams<{ recordId: string }>();
@@ -29,7 +30,7 @@ const RecordsSidebar = () => {
   }, [isLoggedIn, authIsHydrated, isHydrated, loadRecordSummaries, router]);
 
   const handleSelectRecord = (recordId: string) => {
-    router.push(`/records/${recordId}`);
+    router.push(ROUTES.RECORD_VIEW(recordId));
   };
 
   // Show loading skeleton
