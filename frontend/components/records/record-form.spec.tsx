@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
-import { RecordForm } from './record-form';
 import userEvent from '@testing-library/user-event';
+import { RecordForm } from './record-form';
 
 describe('CreateOrEditRecordForm', () => {
   const mockOnFormChange = jest.fn();

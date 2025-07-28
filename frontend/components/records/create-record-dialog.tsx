@@ -1,7 +1,7 @@
-import { useState } from 'react';
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { RecordForm, RecordFormField } from './record-form';
 import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import { RecordForm, RecordFormField } from './record-form';
 
 type CreateRecordDialogProps = {
     open: boolean;
@@ -11,7 +11,7 @@ export const CreateRecordDialog = (props: CreateRecordDialogProps) => {
   const [isFormValid, setIsFormValid] = useState(false);
   const handleSave = () => {
   };
-  
+
   const handleFormChange = (isFormValid: boolean, data: Partial<RecordFormField>) => {
     setIsFormValid(isFormValid);
   };
@@ -25,7 +25,7 @@ export const CreateRecordDialog = (props: CreateRecordDialogProps) => {
         <AlertDialogDescription />
 
         <RecordForm onFormChange={handleFormChange} />
-      
+
         <AlertDialogFooter>
           <Button variant="secondary" onClick={props.onDialogClose}>Cancel</Button>
           <Button disabled={!isFormValid} onClick={handleSave} type="submit">Save</Button>

@@ -1,26 +1,28 @@
 'use client';
 
+import { CreateNewRecordButton } from '@/components/records/create-record-button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useRecordStore } from '@/lib/store/recordStore';
 import { LayoutDashboard } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from '@/components/ui/sidebar';
-import { CreateNewRecordButton } from '@/components/records/create-record-button';
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from '../../components/ui/sidebar';
+import { ROUTES } from '../../lib/routes.config';
 
 const RecordsSidebar = () => {
+  const params = useParams<{ recordId: string }>();
+  const activeRecordId = params.recordId;
   const router = useRouter();
 
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const authIsHydrated = useAuthStore((state) => state.isHydrated);
 
   const groupedRecordSummaries = useRecordStore((state) => state.groupedRecordSummaries);
-  const selectedRecordId = useRecordStore((state) => state.selectedRecordId);
   const isLoading = useRecordStore((state) => state.isLoadingRecordSummaries);
   const isHydrated = useRecordStore((state) => state.isHydrated);
 
-  const { loadRecordSummaries, setSelectedRecordId } = useRecordStore();
+  const { loadRecordSummaries } = useRecordStore();
 
   useEffect(() => {
     if (!authIsHydrated || !isHydrated || !isLoggedIn ) return;
@@ -28,7 +30,7 @@ const RecordsSidebar = () => {
   }, [isLoggedIn, authIsHydrated, isHydrated, loadRecordSummaries, router]);
 
   const handleSelectRecord = (recordId: string) => {
-    setSelectedRecordId(recordId);
+    router.push(ROUTES.RECORD_VIEW(recordId));
   };
 
   // Show loading skeleton
@@ -76,8 +78,7 @@ const RecordsSidebar = () => {
         <SidebarMenu>
           <SidebarMenuItem>
             <div className="flex items-center justify-between">
-                            Records
-
+              Records
             </div>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -95,7 +96,7 @@ const RecordsSidebar = () => {
                   <SidebarMenuItem key={record.id}>
                     <SidebarMenuButton 
                       asChild
-                      isActive={selectedRecordId === record.id}
+                      isActive={record.id === activeRecordId}
                       onClick={() => handleSelectRecord(record.id)}
                     >
                       <div className="cursor-pointer">

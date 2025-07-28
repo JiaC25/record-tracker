@@ -45,7 +45,7 @@ const LoginPage = () => {
     setIsLoading(true);
     try {
       await loginUser(email, password);
-      router.push('/'); // Redirect to the home page after successful login
+      router.push(ROUTES.HOME); // Redirect to the home page after successful login
     } catch (error) {
       handleLoginResponseError(error);
     } finally {

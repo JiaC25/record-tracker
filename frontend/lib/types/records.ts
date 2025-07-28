@@ -1,4 +1,4 @@
-export type Record = {
+export type RecordEntity = {
     id: string
     createdAt: string
     name: string

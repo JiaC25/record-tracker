@@ -5,6 +5,8 @@ export const ROUTES = {
   RECORDS: '/records',
   ANALYTICS: '/analytics',
 
+  RECORD_VIEW: (id: string) => `/records/${id}`,
+  
   // NOT_FOUND: '/404',
   // SERVER_ERROR: '/500'
 };

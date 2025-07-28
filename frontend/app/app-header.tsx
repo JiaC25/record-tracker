@@ -4,7 +4,7 @@ import ThemeToggleInline from '@/components/app-theme/theme-toggle-inline';
 import { Button } from '@/components/ui/button';
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList, navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
 import { Separator } from '@/components/ui/separator';
-import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ROUTES } from '@/lib/routes.config';
 import { useAuthStore } from '@/lib/store/authStore';
@@ -84,6 +84,7 @@ const AppHeader = () => {
             </SheetTrigger>
             <SheetContent side="left">
               <SheetHeader className="pb-0">
+                <SheetDescription className="sr-only">description</SheetDescription>
                 <SheetTitle>
                   {/* App branding in mobile menu */}
                   <Link href="/" className='flex items-center'>
