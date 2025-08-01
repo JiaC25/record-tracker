@@ -3,6 +3,8 @@
 import { useRecordStore } from '@/lib/store/recordStore';
 import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
+import { Skeleton } from '../../../components/ui/skeleton';
+import { useSidebarHeader } from '../../../contexts/sidebar-header-context';
 import { RecordView } from './record-view';
 
 const RecordPage = () => {
@@ -11,12 +13,19 @@ const RecordPage = () => {
 
   const record = useRecordStore((state) => state.getRecord(recordId));
   const { fetchRecord } = useRecordStore();
+  const { setHeader } = useSidebarHeader();
+  
+  useEffect(() => {
+    if (!record) fetchRecord(recordId);
+  }, [record]);
 
   useEffect(() => {
-    if (!record && recordId) {
-      fetchRecord(recordId);
+    if (record) {
+      setHeader(<h6>{record.name}</h6>);
+    } else {
+      setHeader(<Skeleton className="h-4 w-24"/>);
     }
-  }, [recordId, record, fetchRecord]);
+  }, [record]);
 
   return record ? (
     <RecordView record={record} />

@@ -50,8 +50,6 @@ export const RecordView = ({ record }: RecordViewProps) => {
 
   return (
     <div className="p-5 text-sm">
-      {/* Record name & description */}
-      <h3>{record.name}</h3>
       {record.description && ( <small>{record.description}</small> )}
       {/* Table with items */}
       <table className="table-auto border-collapse border border-gray-400 text-sm w-full lg:w-1/2 mt-5">

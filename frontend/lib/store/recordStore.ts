@@ -11,6 +11,7 @@ type RecordStore = {
     isLoadingRecordSummaries: boolean
 
     records: Record<string, RecordEntity>
+    isLoadingRecord: boolean
 
     isHydrated: boolean
     
@@ -32,6 +33,7 @@ export const useRecordStore = create<RecordStore>()(
       recordSummaries: [],
       groupedRecordSummaries: {},
       isLoadingRecordSummaries: false,
+      isLoadingRecord: false,
 
       records: {},
       
@@ -61,6 +63,11 @@ export const useRecordStore = create<RecordStore>()(
       },
 
       fetchRecord: async (recordId: string) => {
+        if (get().isLoadingRecord) {
+          return;
+        }
+
+        set({ isLoadingRecord: true });
         try {
           const record = await recordApi.getRecord(recordId);
           set((state) => ({
@@ -70,6 +77,8 @@ export const useRecordStore = create<RecordStore>()(
         } catch (error) {
           console.error('Failed to fetch record', error);
           return undefined;
+        } finally {
+          set({ isLoadingRecord: false });
         }
       },
 
@@ -79,6 +88,7 @@ export const useRecordStore = create<RecordStore>()(
           recordSummaries: [],
           groupedRecordSummaries: {},
           isLoadingRecordSummaries: false,
+          isLoadingRecord: false,
         });
       },
 
