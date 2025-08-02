@@ -8,5 +8,6 @@ public class RecordFieldDto
     public string Name { get; set; } = default!;
     public FieldType FieldType { get; set; }
     public bool IsRequired { get; set; }
+    public bool IsPrimary { get; set; }
     public int Order { get; set; }
 }
