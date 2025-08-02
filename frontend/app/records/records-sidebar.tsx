@@ -12,7 +12,7 @@ import { ROUTES } from '../../lib/routes.config';
 
 const RecordsSidebar = () => {
   const params = useParams<{ recordId: string }>();
-  const activeRecordId = params.recordId;
+  const currentRecordId = params.recordId;
   const router = useRouter();
 
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
@@ -96,7 +96,7 @@ const RecordsSidebar = () => {
                   <SidebarMenuItem key={record.id}>
                     <SidebarMenuButton 
                       asChild
-                      isActive={record.id === activeRecordId}
+                      isActive={record.id === currentRecordId}
                       onClick={() => handleSelectRecord(record.id)}
                     >
                       <div className="cursor-pointer">
