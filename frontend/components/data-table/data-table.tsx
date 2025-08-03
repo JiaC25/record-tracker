@@ -1,6 +1,6 @@
 'use client';
 
-import { DataTablePagination } from '@/components/general/data-table-pagination';
+import { DataTablePagination } from '@/components/data-table/data-table-pagination';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, RowData, useReactTable } from '@tanstack/react-table';
 
