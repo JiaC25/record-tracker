@@ -64,7 +64,7 @@ export const DataTable = <TData, TValue>({ columns, data }: DataTableProps<TData
                     <TableCell
                       key={cell.id}
                       className={
-                        'py-0.5 text-sm '
+                        'py-0.5 text-[0.85rem] '
                         + cell.column.columnDef.meta?.cellClassName
                       }
                     >

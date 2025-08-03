@@ -12,7 +12,7 @@ interface DataTablePaginationProps<TData> {
 export function DataTablePagination<TData>({
   table,
   showNumSelected = false,
-  showRowPerPageOption = true,
+  showRowPerPageOption = false,
 }: DataTablePaginationProps<TData>) {
   const selectedCount = table.getFilteredSelectedRowModel().rows.length;
   const totalRows = table.getFilteredRowModel().rows.length;
@@ -21,11 +21,11 @@ export function DataTablePagination<TData>({
   const totalPages = table.getPageCount();
 
   return (
-    <div className="flex items-center justify-between px-2">
+    <div className="flex items-center justify-between px-2 flex-wrap">
       {/* Left side - Selected rows info*/}
       <div className="flex-1">
         <div className="text-sm text-muted-foreground">
-          {showNumSelected && (
+          {showNumSelected && selectedCount > 0 && (
             <div className="text-sm text-muted-foreground">
               {selectedCount} of {totalRows} selected
             </div>
@@ -33,7 +33,7 @@ export function DataTablePagination<TData>({
         </div>
       </div>
       {/* Right side - Pagination info and controls*/}
-      <div className="flex items-center gap-4 lg:gap-6">
+      <div className="flex items-center gap-2 lg:gap-4">
         {/* Rows per page option */}
         { showRowPerPageOption && (
           <div className="flex items-center gap-2">
@@ -55,7 +55,7 @@ export function DataTablePagination<TData>({
           </div>
         )}
         {/* Page controls */}
-        <div className="flex items-center space-x-2 min-w-[60%]">
+        <div className="flex items-center gap-2 min-w-[60%]">
           <Button
             variant="outline"
             size="icon"
@@ -96,7 +96,7 @@ export function DataTablePagination<TData>({
             variant="outline"
             size="icon"
             className="hidden size-7 lg:flex"
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            onClick={() => table.setPageIndex(totalPages - 1)}
             disabled={!table.getCanNextPage()}
           >
             <span className="sr-only">Go to last page</span>
