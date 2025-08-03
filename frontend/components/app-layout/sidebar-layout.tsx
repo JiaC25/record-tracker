@@ -1,11 +1,11 @@
 'use client';
 
 // This component provides sidebar layout for specific pages
+import { Separator } from '@/components/ui/separator';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import type React from 'react';
 import { useSidebarHeader } from '../../contexts/sidebar-header-context';
 import { ScrollArea } from '../ui/scroll-area';
-import { Separator } from '../ui/separator';
 
 type SidebarLayoutProps = {
     children: React.ReactNode
@@ -19,7 +19,7 @@ export const SidebarLayout = ({ children, sidebar }: SidebarLayoutProps) => {
     <SidebarProvider>
       {sidebar}
       <SidebarInset className="h-full peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4)-var(--header-height))]">
-        <header className="flex h-12 shrink-0 items-center gap-2 border-b p-4">
+        <header className="flex h-10 shrink-0 items-center gap-2 border-b px-3 py-2.5">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4"/>
           {header}

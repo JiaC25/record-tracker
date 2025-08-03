@@ -10,13 +10,13 @@ type RecordViewProps = {
 
 export const RecordView = ({ record }: RecordViewProps) => {
   return (
-    <div className="flex flex-wrap gap-2 p-2">
+    <div className="flex flex-wrap pb-1">
       {/* Data Table */}
-      <div className="w-full lg:flex-1 min-w-[49%] max-w-screen max-h-full">
+      <div className="w-full min-w-[49%] max-w-screen max-h-full p-1 lg:flex-1">
         <RecordDataTable record={record}></RecordDataTable>
       </div>
       {/* Analytics */}
-      <div className="w-full lg:flex-1 min-w-[49%] max-w-screen">
+      <div className="w-full min-w-[49%] max-w-screen max-h-full p-1 lg:flex-1">
         <div className="p-3 border-2 rounded-sm">
           <h3 className="mb-2">Analytics Placeholder</h3>
           <div className="grid grid-cols-2 gap-2">

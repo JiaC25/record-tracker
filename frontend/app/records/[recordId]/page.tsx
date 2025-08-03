@@ -21,7 +21,7 @@ const RecordPage = () => {
 
   useEffect(() => {
     if (record) {
-      setHeader(<h6>{record.name}</h6>);
+      setHeader(<small>{record.name}</small>);
     } else {
       setHeader(<Skeleton className="h-4 w-24"/>);
     }

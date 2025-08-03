@@ -26,7 +26,12 @@ export const DataTable = <TData, TValue>({ columns, data }: DataTableProps<TData
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="rounded-sm border overflow-y-auto max-h-[60vh] relative thin-scrollbar">
+      {/* Table */}
+      <div
+        data-slot="table-container"
+        className="relative w-full overflow-x-auto
+          rounded-sm border max-h-[60vh] overflow-y-auto thin-scrollbar"
+      >
         <Table>
           <TableHeader
             className="bg-muted sticky top-0 z-10">
@@ -78,6 +83,7 @@ export const DataTable = <TData, TValue>({ columns, data }: DataTableProps<TData
           </TableBody>
         </Table>
       </div>
+      {/* Pagination controls UI */}
       <DataTablePagination table={table} />
     </div>
   );
