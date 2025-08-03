@@ -11,8 +11,7 @@ type RecordDataTableProps = {
 };
 
 export const RecordDataTable = ({ record }: RecordDataTableProps) => {
-
-  const data: RecordItem[] = [...record.recordItems, ...record.recordItems];
+  const data: RecordItem[] = record.recordItems;
 
   const buildRecordValueCell = (value: any, fieldType: string) => {
     if (!value || value.trim() === '') {
