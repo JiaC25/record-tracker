@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
-import { groupRecordSummariesByLetter } from './recordHelpers';
-import { RecordSummary } from '@/lib/types/records';
+import { areAllRecordFieldsValid, getRecordFieldErrorMessage, groupRecordSummariesByLetter } from './recordHelpers';
+import { RecordField, RecordSummary } from '@/lib/types/records';
 
 describe('RecordHelper', () => {
   describe('groupRecordSummariesByLetter', () => {
@@ -50,6 +50,56 @@ describe('RecordHelper', () => {
       expect(Object.keys(grouped)).toStrictEqual(['$', 'A']);
       expect(grouped['A']).toEqual([{ name: 'Alice', id: 2 }]);
       expect(grouped['$']).toEqual([{ name: '$$$', id: 3 }]);
+    });
+  });
+
+  describe('getRecordFieldErrorMessage', () => {
+    it('returns error when name is empty string', () => {
+      expect(getRecordFieldErrorMessage('name', '')).toBe('Field name is required.');
+    });
+
+    it('returns error when name is only spaces', () => {
+      expect(getRecordFieldErrorMessage('name', '   ')).toBe('Field name is required.');
+    });
+
+    it('returns empty string when name is valid', () => {
+      expect(getRecordFieldErrorMessage('name', 'Valid Name')).toBe('');
+    });
+
+    it('returns empty string for non-name keys', () => {
+      expect(getRecordFieldErrorMessage('other', '')).toBe('');
+      expect(getRecordFieldErrorMessage('id', null)).toBe('');
+    });
+  });
+
+  describe('areAllRecordFieldsValid', () => {
+    it('returns true for all valid fields', () => {
+      const fields = [
+        { name: 'First' },
+        { name: 'Second' }
+      ] as RecordField[];
+      expect(areAllRecordFieldsValid(fields)).toBe(true);
+    });
+
+    it('returns false when at least one field has empty name', () => {
+      const fields = [
+        { name: 'Valid ' },
+        { name: '' }
+      ] as RecordField[];
+      expect(areAllRecordFieldsValid(fields)).toBe(false);
+    });
+
+    it('returns false when at least one field has name of only spaces', () => {
+      const fields = [
+        { name: ' Valid' },
+        { name: '   ' }
+      ]  as RecordField[];;
+      expect(areAllRecordFieldsValid(fields)).toBe(false);
+    });
+
+    it('returns true when fields are empty', () => {
+      const fields = [] as RecordField[];
+      expect(areAllRecordFieldsValid(fields)).toBe(true);
     });
   });
 });

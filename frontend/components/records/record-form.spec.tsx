@@ -3,16 +3,35 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RecordForm } from './record-form';
 
+jest.mock('@/lib/helpers/recordHelpers', () => ({
+  ...jest.requireActual('@/lib/helpers/recordHelpers'),
+  areAllRecordFieldsValid: jest.fn().mockReturnValue(true)
+}));
+
 describe('CreateOrEditRecordForm', () => {
   const mockOnFormChange = jest.fn();
   console.error = jest.fn(); // Mock console.error to avoid act() warnings due to watch() reapeated calls
 
-  it('should disable the submit button when form is invalid', async () => {
+  it('should disable the submit button when the record name is empty', async () => {
+    render(<RecordForm onFormChange={mockOnFormChange} />);
+
+    // add and fill in record field
+    userEvent.click(screen.getByTestId('add-primary-field-button'));
+    expect(await screen.findByTestId('field-name')).toBeVisible();
+    userEvent.type(screen.getByTestId('field-name'), 'field a');
+
+    await waitFor(() => {
+      expect(screen.getByTestId('field-name')).toHaveValue('field a');
+      expect(mockOnFormChange).toHaveBeenLastCalledWith(false, { name: '', description: '' });
+    });
+  });
+
+  it('should disable the submit button when there is no minimum 1 record field created', async () => {
     render(<RecordForm onFormChange={mockOnFormChange} />);
     userEvent.type(screen.getByTestId('record-name'), 'Test Record');
     await waitFor(() => {
       expect(screen.getByTestId('record-name')).toHaveValue('Test Record');
-      expect(mockOnFormChange).toHaveBeenLastCalledWith(true, { name: 'Test Record', description: '' });
+      expect(mockOnFormChange).toHaveBeenLastCalledWith(false, { name: 'Test Record', description: '' });
     });
   });
 

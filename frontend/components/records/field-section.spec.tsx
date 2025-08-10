@@ -5,6 +5,10 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RecordField } from '@/lib/types/records';
 
+jest.mock('@/components/ui/form', () => ({
+  FormMessage: () => <p />
+}));
+
 describe('FieldSection', () => {
 
   let mockState: any[] = [];
@@ -94,7 +98,7 @@ describe('FieldSection', () => {
         primaryFields={[initialField]}
         secondaryFields={[]}
         setPrimaryFields={mockSetPrimaryFields}
-        setSecondaryFields={mockSetSecondaryFields}
+        setSecondaryFields={mockSetSecondaryFields} 
       />
     );
 

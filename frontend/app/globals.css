@@ -178,12 +178,14 @@
 }
 
 @layer components {
-  .hover-bg {
-    &:hover {
-      @apply !bg-secondary dark:!bg-secondary;
-    }
-  }
   .modal-md {
     @apply sm:!min-w-[90vw] md:!min-w-[40rem] h-auto max-h-[63vh];
   }
+
+  .list-item {
+    @apply sm:block sm:m-0 gap-0 md:!flex md:flex-row md:items-center md:justify-between md:gap-4 md:p-4 transition-all rounded-xl;
+    &:hover {
+          @apply !bg-secondary dark:!bg-secondary;
+        }
+      }
 }

@@ -1,4 +1,10 @@
-import { GroupedRecordSummaries, RecordSummary } from '@/lib/types/records';
+import { GroupedRecordSummaries, RecordField, RecordSummary } from '@/lib/types/records';
+
+export type RecordFieldValidation = {
+  errors: {
+    name : string,
+  }
+}
 
 export const groupRecordSummariesByLetter = (recordTypes: RecordSummary[]) : GroupedRecordSummaries => {
   // Sort alphabetically by name
@@ -15,4 +21,27 @@ export const groupRecordSummariesByLetter = (recordTypes: RecordSummary[]) : Gro
   }, {} as GroupedRecordSummaries);
 
   return grouped;
+};
+
+export const getRecordFieldErrorMessage = (input: string, value: any): string => {
+  let errorMessage = '';
+  switch(input) {
+  case 'name': {
+    if (value.trim().length === 0) {
+      errorMessage = 'Field name is required.';
+    }
+  }
+    break;
+  default:
+    errorMessage = ''; 
+    break;
+  }
+  return errorMessage;
+};
+
+export const areAllRecordFieldsValid = (fields: RecordField[]): boolean => {
+  return fields.every((field) => {
+    const keys = Object.keys(field) as string[];
+    return keys.every((key) => !getRecordFieldErrorMessage(key, (field as any)[key]));
+  });
 };

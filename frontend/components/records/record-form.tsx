@@ -5,6 +5,7 @@ import { Form, FormMessage } from '@/components/ui/form';
 import { useEffect, useState } from 'react';
 import { FieldSection } from './field-section';
 import { RecordField } from '@/lib/types/records';
+import { areAllRecordFieldsValid } from '@/lib/helpers/recordHelpers';
 
 export type RecordFormField ={
   name: string;
@@ -31,16 +32,18 @@ export const RecordForm = ({ onFormChange }: RecordFormProps) => {
   const values = watch();
 
   useEffect(() => {
+
     const isFormValid = (values: Partial<RecordFormField>): boolean => {
       const hasErrors = Object.keys(errors).length > 0;
       const nameHasValue = values?.name && values.name.trim().length > 0;
       const hasAtLeastOnePrimaryField = primaryFields.length > 0;
-      return !!nameHasValue && !!hasAtLeastOnePrimaryField && !hasErrors;
+      return !!nameHasValue && !!hasAtLeastOnePrimaryField && !hasErrors
+          && areAllRecordFieldsValid(primaryFields) && areAllRecordFieldsValid(secondaryFields);
     };
   
     const isValid = isFormValid(values);
     onFormChange(isValid, values);
-  }, [values, errors, onFormChange, primaryFields]);
+  }, [values, errors, onFormChange, primaryFields, secondaryFields]);
 
   useEffect(() => {
     reset();

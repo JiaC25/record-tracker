@@ -92,6 +92,7 @@ export const FieldSection: React.FC<FieldSectionProps> = (props) => {
             onUpdate={(id, updated) => updateField('secondary', id, updated)}
             onDelete={(id) => deleteField('secondary', id)}
             index={index}
+            className="pb-4"
           />
         ))}
       </div>

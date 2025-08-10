@@ -16,3 +16,14 @@ window.PointerEvent = MockPointerEvent as any;
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
 window.HTMLElement.prototype.releasePointerCapture = jest.fn();
 window.HTMLElement.prototype.hasPointerCapture = jest.fn();
+
+global.ResizeObserver = class {
+  callback: any;
+
+  constructor(callback: any) {
+    this.callback = callback;
+  }
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
