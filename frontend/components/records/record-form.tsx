@@ -2,12 +2,15 @@ import { useForm } from 'react-hook-form';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Form, FormMessage } from '@/components/ui/form';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { FieldSection } from './field-section';
+import { RecordField } from '@/lib/types/records';
 
 export type RecordFormField ={
   name: string;
   description: string;
 }
+
 type RecordFormProps = {
   onFormChange: (isFormValid: boolean, data: Partial<RecordFormField>) => void;
 }
@@ -19,18 +22,25 @@ export const RecordForm = ({ onFormChange }: RecordFormProps) => {
   const {register, reset, watch,
     formState: {errors}} = form;
 
+  const [primaryFields, setPrimaryFields] = useState<RecordField[]>([
+  ]);
+  
+  const [secondaryFields, setSecondaryFields] = useState<RecordField[]>([
+  ]);
+
   const values = watch();
 
   useEffect(() => {
     const isFormValid = (values: Partial<RecordFormField>): boolean => {
       const hasErrors = Object.keys(errors).length > 0;
       const nameHasValue = values?.name && values.name.trim().length > 0;
-      return !!nameHasValue && !hasErrors;
+      const hasAtLeastOnePrimaryField = primaryFields.length > 0;
+      return !!nameHasValue && !!hasAtLeastOnePrimaryField && !hasErrors;
     };
   
     const isValid = isFormValid(values);
     onFormChange(isValid, values);
-  }, [values, errors, onFormChange]);
+  }, [values, errors, onFormChange, primaryFields]);
 
   useEffect(() => {
     reset();
@@ -66,6 +76,8 @@ export const RecordForm = ({ onFormChange }: RecordFormProps) => {
       <fieldset className='grid gap-4'>
         {renderNameInput()}
         {renderDescriptionInput()}
+        <FieldSection primaryFields={primaryFields} setPrimaryFields={setPrimaryFields}
+          secondaryFields={secondaryFields} setSecondaryFields={setSecondaryFields} />
       </fieldset>
     </form>
   </Form>;

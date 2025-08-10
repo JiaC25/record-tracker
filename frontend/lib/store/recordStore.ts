@@ -43,6 +43,9 @@ export const useRecordStore = create<RecordStore>()(
 
       // Actions
       loadRecordSummaries: async () => {
+        if (get().isLoadingRecordSummaries) {
+          return;
+        }
         set({ isLoadingRecordSummaries: true });
 
         try {

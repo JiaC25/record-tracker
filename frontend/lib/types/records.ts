@@ -15,12 +15,20 @@ export type RecordSummary = {
     recordFields: RecordField[]
 }
 
+export enum FieldTypeEnum {
+    Text = 'Text',
+    Number = 'Number',
+    Date = 'Date',
+    TextArea = 'TextArea'
+}
+
 export type RecordField = {
-    id: string
-    name: string
-    fieldType: 'Text' | 'Number' | 'Date'
-    isRequired: boolean
-    order: number
+    id: string;
+    name: string;
+    fieldType: FieldTypeEnum;
+    isRequired: boolean;
+    order: number;
+    isPrimary: boolean;
 }
 
 export type RecordItem = {

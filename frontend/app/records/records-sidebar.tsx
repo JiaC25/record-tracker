@@ -1,13 +1,13 @@
 'use client';
 
-import { CreateNewRecordButton } from '@/components/records/create-record-button';
+import { CreateRecordButton } from '@/components/records/create-record-button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useRecordStore } from '@/lib/store/recordStore';
 import { LayoutDashboard } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from '../../components/ui/sidebar';
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from '@/components/ui/sidebar';
 import { ROUTES } from '../../lib/routes.config';
 
 const RecordsSidebar = () => {
@@ -76,6 +76,9 @@ const RecordsSidebar = () => {
     <Sidebar className="top-[var(--header-height)]" variant="inset">
       <SidebarHeader>
         <SidebarMenu>
+          <div className="px-1 my-3 md:mt-0">
+            <CreateRecordButton />
+          </div>
           <SidebarMenuItem>
             <div className="flex items-center justify-between">
               Records
@@ -84,9 +87,6 @@ const RecordsSidebar = () => {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent className="pb-16">
-        
-        <CreateNewRecordButton />
-
         {sortedLetters.map((letter) => (
           <SidebarGroup key={letter}>
             <SidebarGroupLabel>{letter}</SidebarGroupLabel>
