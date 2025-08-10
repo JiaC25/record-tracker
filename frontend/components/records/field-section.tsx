@@ -1,7 +1,6 @@
 import React, { SetStateAction } from 'react';
 import { Button } from '@/components/ui/button';
 import { FieldRow } from './field-row';
-import './record.css';
 import { Guid } from 'guid-ts';
 import { FieldTypeEnum, RecordField } from '@/lib/types/records';
 import { PlusCircleIcon } from 'lucide-react';
