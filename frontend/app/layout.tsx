@@ -1,6 +1,5 @@
 import AppHeader from '@/app/app-header';
 import { ThemeProvider } from '@/components/app-theme/theme-provider';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import type { Metadata } from 'next';
 import './globals.css';
 
@@ -26,9 +25,9 @@ export default function RootLayout({
           {/* Global top bar for all pages */}
           <AppHeader />
           {/* Main page content */}
-          <ScrollArea>
+          <div>
             {children}
-          </ScrollArea>
+          </div>
         </ThemeProvider>
       </body>
     </html>

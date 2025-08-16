@@ -41,10 +41,18 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
+  /* custom */
   --font-main: 'Noto Sans Mende Kikakui', 'sans-serif';
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
+}
+
+@utility scrollbar-none {
+  @apply [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
+}
+@utility scrollbar-thin {
+  @apply [scrollbar-width:thin];
 }
 
 :root {
@@ -81,12 +89,13 @@
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.606 0.25 292.717);
 
-  --header-height: 4rem;
+  /* custom */
+  --header-height: 3.5rem;
 }
 
 .dark {
   --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.985 0 0);
+  --foreground: oklch(0.92 0.005 85);
   --card: oklch(0.21 0.006 285.885);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.21 0.006 285.885);

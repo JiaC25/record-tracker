@@ -31,13 +31,15 @@ export type RecordItem = {
 }
 
 /** Request */
+export type RecordValueInput = {
+    recordFieldId: string
+    value: string
+}
+export type RecordItemInput = {
+    values: RecordValueInput[]
+}
 export type CreateRecordItemsRequest = {
-    items: {
-        values: {
-            recordFieldId: string
-            value: string
-        }[]
-    }[]
+    items: RecordItemInput[]
 }
 
 /** Response */

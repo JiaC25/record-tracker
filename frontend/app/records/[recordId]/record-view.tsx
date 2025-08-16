@@ -1,128 +1,55 @@
 'use client';
 
-import { recordApi } from '@/lib/api/recordApi';
+import { Card } from '@/components/ui/card';
 import { useRecordStore } from '@/lib/store/recordStore';
-import { CreateRecordItemsRequest, RecordEntity } from '@/lib/types/records';
-import { useState } from 'react';
+import { RecordDataTable } from './record-data-table';
 
 type RecordViewProps = {
-  record: RecordEntity;
+  recordId: string;
 }
 
-export const RecordView = ({ record }: RecordViewProps) => {
-  const [inputValues, setInputValues] = useState<{ [fieldId: string]: string }>(
-    () => Object.fromEntries(record.recordFields.map((f) => [f.id, '']))
-  );
+export const RecordView = ({recordId} : RecordViewProps) => {
+  const record = useRecordStore((state) => state.getRecord(recordId));
+  const { fetchRecord } = useRecordStore();
 
-  const handleInputChange = (fieldId: string, value: string) => {
-    setInputValues((prev) => ({ ...prev, [fieldId]: value }));
+  const handleItemCreated = () => {
+    fetchRecord(recordId);
   };
 
-  const handleSubmit = async () => {
-    const requestBody: CreateRecordItemsRequest = {
-      items: [
-        {
-          values: record.recordFields
-            .filter((f) => inputValues[f.id])
-            .map((field) => ({
-              recordFieldId: field.id,
-              value: inputValues[field.id] ?? '',
-            })),
-        },
-      ],
-    };
-
-    try {
-      await recordApi.createRecordItems(record.id, requestBody);
-
-      // reset inputs after successful submit
-      const emptyValues = Object.fromEntries(
-        record.recordFields.map((field) => [field.id, ''])
-      );
-      setInputValues(emptyValues);
-
-      // Refresh the record to show new items
-      await useRecordStore.getState().fetchRecord(record.id);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  return (
-    <div className="p-5 text-sm">
-      {/* Record name & description */}
-      <h3>{record.name}</h3>
-      {record.description && ( <small>{record.description}</small> )}
-      {/* Table with items */}
-      <table className="table-auto border-collapse border border-gray-400 text-sm w-full lg:w-1/2 mt-5">
-        <thead>
-          <tr>
-            {record.recordFields.map((field) => (
-              <th
-                key={field.id}
-                className="border border-gray-300 px-2 py-1 text-left"
-              >
-                {field.name}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {record.recordItems.length ? (
-            record.recordItems.map((item) => (
-              <tr key={item.id}>
-                {record.recordFields.map((field) => (
-                  <td
-                    key={field.id}
-                    className="border border-gray-200 px-2 py-1"
-                  >
-                    {item[field.id] ?? ''}
-                  </td>
-                ))}
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td
-                colSpan={record.recordFields.length || 1}
-                className="border border-gray-200 px-2 py-1 text-center text-gray-500"
-              >
-                No items available.
-              </td>
-            </tr>
-          )}
-
-          {/* Inline input row */}
-          <tr className="h-8">
-            {record.recordFields.map((field) => (
-              <td
-                key={field.id}
-                className="border border-gray-200 text-center px-2 py-1"
-              >
-                <input
-                  type="text"
-                  className="border px-1 text-xs w-full"
-                  value={inputValues[field.id] ?? ''}
-                  onChange={(e) => handleInputChange(field.id, e.target.value)}
-                />
-              </td>
-            ))}
-          </tr>
-        </tbody>
-
-        {/* Submit footer */}
-        <tfoot>
-          <tr className="bg-secondary hover:bg-primary hover:text-primary-foreground">
-            <td
-              colSpan={record.recordFields.length}
-              className="text-center border border-gray-200 cursor-pointer h-8"
-              onClick={handleSubmit}
-            >
-              Add Item
-            </td>
-          </tr>
-        </tfoot>
-      </table>
+  return (record &&
+    <div className="flex flex-wrap pb-1 lg:p-3 lg:gap-2">
+      {/* Data Table */}
+      <div className="w-full min-w-[49%] max-w-screen max-h-full p-1 lg:flex-1">
+        <RecordDataTable
+          record={record}
+          onItemCreated={handleItemCreated}
+        />
+      </div>
+      {/* Analytics */}
+      <div className="w-full min-w-[49%] max-w-screen max-h-full p-1 lg:flex-1">
+        <div className="p-3 border-2 rounded-sm">
+          <h3 className="mb-2">Analytics Placeholder</h3>
+          <div className="grid grid-cols-2 gap-2">
+            <Card className="p-4 rounded-sm">
+              <div className="flex flex-col gap-1">
+                <div className="text-sm text-gray-500">Average spending per entry</div>
+                <div className="flex justify-between items-center">
+                  <span className="text-2xl font-semibold">$55.20</span>
+                </div>
+              </div>
+            </Card>
+            <Card className="p-4 rounded-sm">
+              <div className="flex flex-col gap-1">
+                <div className="text-sm text-gray-500">Average spending per month</div>
+                <div className="flex justify-between items-center flex-wrap gap-1">
+                  <span className="text-2xl font-semibold">$1,230.00</span>
+                  <span className="text-xs font-semibold border-2 border-foreground rounded-md bg-accent px-2 py-0">+ 12.5%</span>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
