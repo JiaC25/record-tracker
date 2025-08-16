@@ -48,10 +48,10 @@
 
 }
 
-@utility no-scrollbar {
+@utility scrollbar-none {
   @apply [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
 }
-@utility thin-scrollbar {
+@utility scrollbar-thin {
   @apply [scrollbar-width:thin];
 }
 
@@ -129,7 +129,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50 font-main text-foreground;
+    @apply border-border outline-ring/50 font-main;
   }
 
   html {

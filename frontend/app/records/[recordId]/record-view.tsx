@@ -1,19 +1,29 @@
 'use client';
 
 import { Card } from '@/components/ui/card';
-import { RecordEntity } from '@/lib/types/records';
+import { useRecordStore } from '@/lib/store/recordStore';
 import { RecordDataTable } from './record-data-table';
 
 type RecordViewProps = {
-  record: RecordEntity;
+  recordId: string;
 }
 
-export const RecordView = ({ record }: RecordViewProps) => {
-  return (
-    <div className="flex flex-wrap pb-1">
+export const RecordView = ({recordId} : RecordViewProps) => {
+  const record = useRecordStore((state) => state.getRecord(recordId));
+  const { fetchRecord } = useRecordStore();
+
+  const handleItemCreated = () => {
+    fetchRecord(recordId);
+  };
+
+  return (record &&
+    <div className="flex flex-wrap pb-1 lg:p-3 lg:gap-2">
       {/* Data Table */}
       <div className="w-full min-w-[49%] max-w-screen max-h-full p-1 lg:flex-1">
-        <RecordDataTable record={record}></RecordDataTable>
+        <RecordDataTable
+          record={record}
+          onItemCreated={handleItemCreated}
+        />
       </div>
       {/* Analytics */}
       <div className="w-full min-w-[49%] max-w-screen max-h-full p-1 lg:flex-1">

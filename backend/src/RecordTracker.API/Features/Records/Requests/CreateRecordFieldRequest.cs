@@ -11,7 +11,7 @@ public record CreateRecordFieldRequest
     public int Order { get; set; }
 }
 
-public class CreateRecordFieldValidator : AbstractValidator<Records.Requests.CreateRecordFieldRequest>
+public class CreateRecordFieldValidator : AbstractValidator<CreateRecordFieldRequest>
 {
     public CreateRecordFieldValidator()
     {

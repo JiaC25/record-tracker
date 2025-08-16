@@ -1,6 +1,6 @@
 import { CirclePlus } from 'lucide-react';
-import { Button } from '../ui/button';
 import { useState } from 'react';
+import { Button } from '../ui/button';
 import { CreateRecordDialog } from './create-record-dialog';
 
 export const CreateNewRecordButton = () => {

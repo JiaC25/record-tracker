@@ -1,17 +1,22 @@
+'use client';
+
 import { DataTable } from '@/components/data-table/data-table';
+import { CreateRecordItemButton } from '@/components/records/create-record-item-button';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { RecordEntity, RecordItem } from '@/lib/types/records';
 import { ColumnDef, Row } from '@tanstack/react-table';
-import { Columns3Cog, MoreVertical, Plus } from 'lucide-react';
+import { Columns3Cog, MoreVertical } from 'lucide-react';
 
 type RecordDataTableProps = {
     record: RecordEntity;
+    onItemCreated?: () => void;
 };
 
-export const RecordDataTable = ({ record }: RecordDataTableProps) => {
-  const data: RecordItem[] = record.recordItems;
+export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps) => {
+  // const [tableData, setTableData] = useState<RecordItem[]>(record.recordItems);
+  const tableData = record.recordItems;
 
   const buildRecordValueCell = (value: any, fieldType: string) => {
     if (!value || value.trim() === '') {
@@ -67,6 +72,18 @@ export const RecordDataTable = ({ record }: RecordDataTableProps) => {
     },
   ];
 
+  // Create RecordItem
+  const handleItemCreated = (item: RecordItem | null) => {
+    // Trigger parent to refetch data
+    onItemCreated?.();
+
+    // Todo: update api to return record item on created and do optimistic update
+    // if (item) {
+    //   setTableData((prev) => [...prev, item]);
+    // }
+  };
+
+
   return (
     <Card className="text-sm rounded-sm gap-3 pt-4 max-h-[85vh] overflow-y-auto">
       <CardHeader className="space-y-1 px-3">
@@ -76,13 +93,18 @@ export const RecordDataTable = ({ record }: RecordDataTableProps) => {
             {record.description && (<small>{record.description}</small>)}
           </div>
           <div className="flex gap-2">
+            {/* Table Columns Config */}
             <Button variant="outline" size="sm"><Columns3Cog /></Button>
-            <Button size="sm"><Plus className='mx-1'/></Button>
+            {/* Add RecordItem button */}
+            <CreateRecordItemButton
+              record={record}
+              onCreated={handleItemCreated}
+            />
           </div>
         </div>
       </CardHeader>
       <CardContent className="px-3">
-        <DataTable columns={columns} data={data}/>
+        <DataTable columns={columns} data={tableData}/>
       </CardContent>
     </Card>
   );
