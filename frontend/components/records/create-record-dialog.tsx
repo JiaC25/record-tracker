@@ -1,36 +1,65 @@
-import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
-import { RecordForm, RecordFormField } from './record-form';
+import { useCallback, useState } from 'react';
+import { RecordForm } from './record-form';
+import { recordApi } from '@/lib/api/recordApi';
+import { useRecordStore } from '@/lib/store/recordStore';
+import { CreateRecordRequest } from '@/lib/types/records';
 
 type CreateRecordDialogProps = {
-    open: boolean;
-    onDialogClose: () => void;
+  open: boolean;
+  onDialogClose: () => void;
 }
-export const CreateRecordDialog = (props: CreateRecordDialogProps) => {
+
+export const CreateRecordDialog = ({ open, onDialogClose }: CreateRecordDialogProps) => {
   const [isFormValid, setIsFormValid] = useState(false);
-  const handleSave = () => {
+  const [formData, setFormData] = useState<CreateRecordRequest | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    if (!isFormValid || !formData) return;
+    setIsSaving(true);
+
+    try {
+      await recordApi.createRecord(formData);
+      // Refresh list after successful create
+      await useRecordStore.getState().loadRecordSummaries();
+      onDialogClose();
+    } catch (error) {
+      console.error('Create record failed', error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const handleFormChange = (isFormValid: boolean, data: Partial<RecordFormField>) => {
+  const handleFormChange = useCallback((isFormValid: boolean, data: CreateRecordRequest) => {
     setIsFormValid(isFormValid);
-  };
+    setFormData(data);
+  }, []);
 
   return (
-    <AlertDialog open={props.open} onOpenChange={props.onDialogClose}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>{'Create New Record'}</AlertDialogTitle>
-        </AlertDialogHeader>
-        <AlertDialogDescription />
+    <Dialog open={open} onOpenChange={onDialogClose}>
+      <DialogContent className="sm:max-w-3xl">
+        <DialogHeader>
+          <DialogTitle>Create New Record</DialogTitle>
+          <DialogDescription />
+        </DialogHeader>
 
         <RecordForm onFormChange={handleFormChange} />
 
-        <AlertDialogFooter>
-          <Button variant="secondary" onClick={props.onDialogClose}>Cancel</Button>
-          <Button disabled={!isFormValid} onClick={handleSave} type="submit">Save</Button>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+        <DialogFooter>
+          <Button variant="secondary" onClick={onDialogClose}>
+            Cancel
+          </Button>
+          <Button
+            disabled={!isFormValid || isSaving}
+            onClick={handleSave}
+            type="submit"
+          >
+            {isSaving ? 'Saving…' : 'Save'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
