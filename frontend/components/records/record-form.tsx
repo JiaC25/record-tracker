@@ -217,7 +217,7 @@ export const RecordForm = ({ onFormChange }: RecordFormProps) => {
             <ArrowDown className="size-4" />
           </Button>
           <Button type="button" variant="ghost" size="icon" onClick={() => removeRow(row.id)}>
-            <Trash2 className="size-4" />
+            <Trash2 className="size-4 text-destructive" />
           </Button>
         </div>
       </div>

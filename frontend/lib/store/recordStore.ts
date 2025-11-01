@@ -22,6 +22,7 @@ type RecordStore = {
     // Actions
     loadRecordSummaries: () => Promise<void>
     fetchRecord: (recordId: string) => Promise<RecordEntity | undefined>
+    deleteRecord: (recordId: string) => Promise<void>
     clearAll: () => void
     setHydrated: () => void
 }
@@ -79,6 +80,26 @@ export const useRecordStore = create<RecordStore>()(
           return undefined;
         } finally {
           set({ isLoadingRecord: false });
+        }
+      },
+
+      deleteRecord: async (recordId: string) => {
+        try {
+          await recordApi.deleteRecord(recordId);
+          // Remove record from local state
+          set((state) => {
+            const { [recordId]: deleted, ...remainingRecords } = state.records;
+            const updatedSummaries = state.recordSummaries.filter(r => r.id !== recordId);
+            const updatedGrouped = groupRecordSummariesByLetter(updatedSummaries);
+            return {
+              records: remainingRecords,
+              recordSummaries: updatedSummaries,
+              groupedRecordSummaries: updatedGrouped,
+            };
+          });
+        } catch (error) {
+          console.error('Failed to delete record', error);
+          throw error;
         }
       },
 
