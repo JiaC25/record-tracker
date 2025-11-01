@@ -2,12 +2,15 @@
 
 import { DataTable } from '@/components/data-table/data-table';
 import { CreateRecordItemButton } from '@/components/records/create-record-item-button';
+import { DeleteRecordItemDialog } from '@/components/records/delete-record-item-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { useRecordStore } from '@/lib/store/recordStore';
 import { RecordEntity, RecordItem } from '@/lib/types/records';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import { Columns3Cog, MoreVertical } from 'lucide-react';
+import { useState } from 'react';
 
 type RecordDataTableProps = {
     record: RecordEntity;
@@ -17,6 +20,9 @@ type RecordDataTableProps = {
 export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps) => {
   // const [tableData, setTableData] = useState<RecordItem[]>(record.recordItems);
   const tableData = record.recordItems;
+  const { deleteRecordItem } = useRecordStore();
+  const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const buildRecordValueCell = (value: any, fieldType: string) => {
     if (!value || value.trim() === '') {
@@ -47,9 +53,10 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
         <DropdownMenuContent align="end">
           <DropdownMenuItem>Action 1</DropdownMenuItem>
           <DropdownMenuItem>Action 2</DropdownMenuItem>
-          <DropdownMenuItem variant="destructive"
-            onClick={() => console.log(`delete ${item.id}`)}>
-                Delete
+          <DropdownMenuItem 
+            variant="destructive"
+            onClick={() => handleDeleteClick(item.id)}>
+            Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -83,29 +90,56 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
     // }
   };
 
+  const handleDeleteClick = (itemId: string) => {
+    setDeleteItemId(itemId);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteItemId) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteRecordItem(record.id, deleteItemId);
+      setDeleteItemId(null);
+    } catch (error) {
+      console.error('Failed to delete record item', error);
+      // Dialog will stay open on error so user can retry or cancel
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
 
   return (
-    <Card className="text-sm rounded-sm gap-3 pt-4 max-h-[85vh] overflow-y-auto">
-      <CardHeader className="space-y-1 px-3">
-        <div className="flex justify-between items-center">
-          <div>
-            <h4>{record.name}</h4>
-            {record.description && (<small>{record.description}</small>)}
+    <>
+      <Card className="text-sm rounded-sm gap-3 pt-4 max-h-[85vh] overflow-y-auto">
+        <CardHeader className="space-y-1 px-3">
+          <div className="flex justify-between items-center">
+            <div>
+              <h4>{record.name}</h4>
+              {record.description && (<small>{record.description}</small>)}
+            </div>
+            <div className="flex gap-2">
+              {/* Table Columns Config */}
+              <Button variant="outline" size="sm"><Columns3Cog /></Button>
+              {/* Add RecordItem button */}
+              <CreateRecordItemButton
+                record={record}
+                onCreated={handleItemCreated}
+              />
+            </div>
           </div>
-          <div className="flex gap-2">
-            {/* Table Columns Config */}
-            <Button variant="outline" size="sm"><Columns3Cog /></Button>
-            {/* Add RecordItem button */}
-            <CreateRecordItemButton
-              record={record}
-              onCreated={handleItemCreated}
-            />
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="px-3">
-        <DataTable columns={columns} data={tableData}/>
-      </CardContent>
-    </Card>
+        </CardHeader>
+        <CardContent className="px-3">
+          <DataTable columns={columns} data={tableData}/>
+        </CardContent>
+      </Card>
+      <DeleteRecordItemDialog
+        open={deleteItemId !== null}
+        onClose={() => setDeleteItemId(null)}
+        onConfirm={handleDeleteConfirm}
+        isDeleting={isDeleting}
+      />
+    </>
   );
 };

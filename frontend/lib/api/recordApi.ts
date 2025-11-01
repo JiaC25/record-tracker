@@ -18,4 +18,7 @@ export const recordApi = {
 
   deleteRecord: (recordId: string) : Promise<void> =>
     apiClient.delete<void>(`records/${recordId}`),
+
+  deleteRecordItem: (recordId: string, itemId: string) : Promise<void> =>
+    apiClient.delete<void>(`records/${recordId}/items/${itemId}`),
 };

@@ -56,6 +56,14 @@ public class RecordsEndpoints : IEndpointDefinition
         {
             return await handler.HandleAsync(request, ct);
         });
+
+        group.MapDelete("/{recordId:guid}/items/{itemId:guid}", async (
+            [AsParameters] DeleteRecordItemRequest request,
+            DeleteRecordItemHandler handler,
+            CancellationToken ct) =>
+        {
+            return await handler.HandleAsync(request, ct);
+        });
         #endregion
     }
 }
