@@ -15,10 +15,12 @@ export type RecordSummary = {
     recordFields: RecordField[]
 }
 
+export type RecordFieldType = 'Text' | 'Number' | 'Date';
+
 export type RecordField = {
     id: string
     name: string
-    fieldType: 'Text' | 'Number' | 'Date'
+    fieldType: RecordFieldType
     isRequired: boolean
     order: number
 }
@@ -31,13 +33,27 @@ export type RecordItem = {
 }
 
 /** Request */
+export type CreateRecordRequest = {
+    name: string
+    description?: string
+    recordFields: CreateRecordFieldRequest[]
+}
+export type CreateRecordFieldRequest = {
+    name: string
+    fieldType: RecordFieldType
+    isRequired: boolean
+    order: number
+}
+
 export type CreateRecordItemsRequest = {
-    items: {
-        values: {
-            recordFieldId: string
-            value: string
-        }[]
-    }[]
+    items: RecordItemInput[]
+}
+export type RecordItemInput = {
+    values: RecordValueInput[]
+}
+export type RecordValueInput = {
+    recordFieldId: string
+    value: string
 }
 
 /** Response */

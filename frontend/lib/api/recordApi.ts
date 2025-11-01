@@ -1,4 +1,4 @@
-import { CreateRecordItemsRequest, GetAllRecordsResponse, RecordEntity, RecordSummary } from '@/lib/types/records';
+import { CreateRecordItemsRequest, CreateRecordRequest, GetAllRecordsResponse, RecordEntity, RecordSummary } from '@/lib/types/records';
 import { apiClient } from './apiClient';
 
 export const recordApi = {
@@ -9,6 +9,9 @@ export const recordApi = {
 
   getRecord: (recordId: string) : Promise<RecordEntity> =>
     apiClient.get<RecordEntity>(`records/${recordId}`),
+
+  createRecord: (requestBody: CreateRecordRequest) : Promise<RecordSummary> =>
+    apiClient.post<RecordSummary>('records', requestBody),
 
   createRecordItems: (recordId: string, requestBody: CreateRecordItemsRequest) : Promise<void> =>
     apiClient.post<void>(`records/${recordId}/items`, requestBody),

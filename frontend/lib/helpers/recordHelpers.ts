@@ -1,4 +1,4 @@
-import { GroupedRecordSummaries, RecordSummary } from '@/lib/types/records';
+import { CreateRecordItemsRequest, GroupedRecordSummaries, RecordField, RecordItem, RecordItemInput, RecordSummary, RecordValueInput } from '@/lib/types/records';
 
 export const groupRecordSummariesByLetter = (recordTypes: RecordSummary[]) : GroupedRecordSummaries => {
   // Sort alphabetically by name
@@ -15,4 +15,24 @@ export const groupRecordSummariesByLetter = (recordTypes: RecordSummary[]) : Gro
   }, {} as GroupedRecordSummaries);
 
   return grouped;
+};
+
+export const toCreateRecordItemsRequest = (
+  items: RecordItem | RecordItem[],
+  fields: RecordField[]
+) : CreateRecordItemsRequest => {
+  const itemsArray = Array.isArray(items) ? items : [items];
+
+  const recordItemInputs: RecordItemInput[] = itemsArray.map(item => {
+    const values: RecordValueInput[] = fields
+      .filter(field => item[field.id])
+      .map(field => ({
+        recordFieldId: field.id,
+        value: item[field.id] || ''
+      }));
+
+    return { values };
+  });
+
+  return { items: recordItemInputs };
 };
