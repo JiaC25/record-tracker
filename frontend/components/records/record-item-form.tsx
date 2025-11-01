@@ -4,13 +4,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { DatePicker } from '@/components/ui/date-picker';
 import { RecordEntity, RecordItem } from '@/lib/types/records';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { RegisterOptions, useForm } from 'react-hook-form';
 
 type RecordItemFormProps = {
   record: RecordEntity;
   formId: string;
-  onFormChange?: (isValid: boolean) => void;
+  onFormChange?: (isValid: boolean, data: RecordItem) => void;
   onFormSubmit?: (data: RecordItem) => void;
 };
 
@@ -24,11 +24,24 @@ export const RecordItemForm = ({
     mode: 'onChange',
     defaultValues: {},
   });
-  const { formState } = form;
+  const { formState, watch } = form;
+  const values = watch();
+
+  // Cache last emitted validity/payload to avoid redundant onFormChange calls
+  const lastEmittedRef = useRef<{ valid: boolean; payloadJson: string } | null>(null);
 
   useEffect(() => {
-    onFormChange?.(formState.isValid);
-  }, [formState.isValid, onFormChange]);
+    const formData: RecordItem = { ...values } as RecordItem;
+    const payloadJson = JSON.stringify(formData);
+
+    // Call onFormChange only if the form actually changed
+    const last = lastEmittedRef.current;
+    const changed = !last || last.valid !== formState.isValid || last.payloadJson !== payloadJson;
+    if (changed) {
+      onFormChange?.(formState.isValid, formData);
+      lastEmittedRef.current = { valid: formState.isValid, payloadJson };
+    }
+  }, [formState.isValid, values, onFormChange]);
 
   const handleSubmit = (data: RecordItem) => {
     onFormSubmit?.(data);
