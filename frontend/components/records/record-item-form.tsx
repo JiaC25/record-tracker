@@ -2,6 +2,7 @@
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { DatePicker } from '@/components/ui/date-picker';
 import { RecordEntity, RecordItem } from '@/lib/types/records';
 import { useEffect } from 'react';
 import { RegisterOptions, useForm } from 'react-hook-form';
@@ -48,6 +49,16 @@ export const RecordItemForm = ({
       };
     }
 
+    if (field.fieldType === 'Date') {
+      rules.validate = {
+        isValidDate: (value: string) => {
+          if (!value) return field.isRequired ? `${field.name} is required` : true;
+          const date = new Date(value);
+          return !isNaN(date.getTime()) || `${field.name} must be a valid date.`;
+        }
+      };
+    }
+
     return rules;
   };
 
@@ -68,11 +79,24 @@ export const RecordItemForm = ({
               <FormItem>
                 <FormLabel>{field.name}{field.isRequired && <span className="text-red-400">*</span>}</FormLabel>
                 <FormControl>
-                  <Input
-                    {...fieldProps}
-                    value={fieldProps.value || ''}
-                    placeholder={`Enter ${field.name.toLowerCase()}`}
-                  />
+                  {field.fieldType === 'Date' ? (
+                    <DatePicker
+                      value={fieldProps.value ? new Date(fieldProps.value) : undefined}
+                      onChange={(date) => {
+                        // Convert Date to ISO string format for form storage
+                        fieldProps.onChange(date ? date.toISOString() : '');
+                      }}
+                      placeholder={`Select ${field.name.toLowerCase()}`}
+                      className="w-full justify-between font-normal"
+                      id={`${field.id}-datepicker`}
+                    />
+                  ) : (
+                    <Input
+                      {...fieldProps}
+                      value={fieldProps.value || ''}
+                      placeholder={`Enter ${field.name.toLowerCase()}`}
+                    />
+                  )}
                 </FormControl>
                 <FormMessage className="text-xs -mt-1"/>
               </FormItem>

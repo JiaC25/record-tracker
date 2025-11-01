@@ -52,7 +52,7 @@ export const CreateRecordItemButton = ({ record, onCreated }: CreateRecordItemBu
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="md:min-w-[35%]">
+        <DialogContent className="md:min-w-[20%]">
           <DialogHeader>
             <DialogTitle>Create Record Item</DialogTitle>
             <DialogDescription></DialogDescription>
