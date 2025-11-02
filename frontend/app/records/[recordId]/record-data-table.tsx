@@ -3,6 +3,7 @@
 import { DataTable } from '@/components/data-table/data-table';
 import { CreateRecordItemButton } from '@/components/records/create-record-item-button';
 import { DeleteRecordItemDialog } from '@/components/records/delete-record-item-dialog';
+import { EditRecordItemDialog } from '@/components/records/edit-record-item-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -23,6 +24,7 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
   const { deleteRecordItem } = useRecordStore();
   const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [editItem, setEditItem] = useState<RecordItem | null>(null);
 
   const buildRecordValueCell = (value: any, fieldType: string) => {
     if (!value || value.trim() === '') {
@@ -51,8 +53,9 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem>Action 1</DropdownMenuItem>
-          <DropdownMenuItem>Action 2</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => handleEditClick(item)}>
+            Edit
+          </DropdownMenuItem>
           <DropdownMenuItem 
             variant="destructive"
             onClick={() => handleDeleteClick(item.id)}>
@@ -109,6 +112,16 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
     }
   };
 
+  const handleEditClick = (item: RecordItem) => {
+    setEditItem(item);
+  };
+
+  const handleEditUpdated = async () => {
+    // The dialog handles the API call internally via updateRecordItem from useRecordStore
+    // We just need to trigger parent refresh here
+    onItemCreated?.();
+  };
+
 
   return (
     <>
@@ -140,6 +153,15 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
         onConfirm={handleDeleteConfirm}
         isDeleting={isDeleting}
       />
+      {editItem && (
+        <EditRecordItemDialog
+          open={!!editItem}
+          onDialogClose={() => setEditItem(null)}
+          record={record}
+          item={editItem}
+          onUpdated={handleEditUpdated}
+        />
+      )}
     </>
   );
 };

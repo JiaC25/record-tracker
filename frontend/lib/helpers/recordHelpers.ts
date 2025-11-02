@@ -17,6 +17,7 @@ export const groupRecordSummariesByLetter = (recordTypes: RecordSummary[]) : Gro
   return grouped;
 };
 
+// Helper to convert RecordItem(s) to CreateRecordItemsRequest
 export const toCreateRecordItemsRequest = (
   items: RecordItem | RecordItem[],
   fields: RecordField[]
@@ -35,4 +36,19 @@ export const toCreateRecordItemsRequest = (
   });
 
   return { items: recordItemInputs };
+};
+
+// Helper to convert a single RecordItem to RecordItemInput for update
+export const toRecordItemInput = (
+  item: RecordItem,
+  fields: RecordField[]
+) : RecordItemInput => {
+  const values: RecordValueInput[] = fields
+    .filter(field => item[field.id])
+    .map(field => ({
+      recordFieldId: field.id,
+      value: item[field.id] || ''
+    }));
+
+  return { values };
 };

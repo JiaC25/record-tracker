@@ -10,6 +10,7 @@ import { RegisterOptions, useForm } from 'react-hook-form';
 type RecordItemFormProps = {
   record: RecordEntity;
   formId: string;
+  defaultItem?: RecordItem;
   onFormChange?: (isValid: boolean, data: RecordItem) => void;
   onFormSubmit?: (data: RecordItem) => void;
 };
@@ -17,15 +18,23 @@ type RecordItemFormProps = {
 export const RecordItemForm = ({
   record,
   formId,
+  defaultItem,
   onFormChange,
-  onFormSubmit
+  onFormSubmit,
 }: RecordItemFormProps) => {
   const form = useForm<RecordItem>({
     mode: 'onChange',
-    defaultValues: {},
+    defaultValues: defaultItem || {},
   });
-  const { formState, watch } = form;
+  const { formState, watch, reset } = form;
   const values = watch();
+
+  // Reset form when defaultItem changes (for edit mode)
+  useEffect(() => {
+    if (defaultItem) {
+      reset(defaultItem);
+    }
+  }, [defaultItem, reset]);
 
   // Cache last emitted validity/payload to avoid redundant onFormChange calls
   const lastEmittedRef = useRef<{ valid: boolean; payloadJson: string } | null>(null);

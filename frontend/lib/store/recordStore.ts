@@ -1,4 +1,4 @@
-import { groupRecordSummariesByLetter } from '@/lib/helpers/recordHelpers';
+import { groupRecordSummariesByLetter, toRecordItemInput } from '@/lib/helpers/recordHelpers';
 import { GroupedRecordSummaries, RecordEntity, RecordSummary } from '@/lib/types/records';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -24,6 +24,7 @@ type RecordStore = {
     fetchRecord: (recordId: string) => Promise<RecordEntity | undefined>
     deleteRecord: (recordId: string) => Promise<void>
     deleteRecordItem: (recordId: string, itemId: string) => Promise<void>
+    updateRecordItem: (recordId: string, itemId: string, updatedItem: RecordEntity['recordItems'][number]) => Promise<void>
     clearAll: () => void
     setHydrated: () => void
 }
@@ -126,6 +127,41 @@ export const useRecordStore = create<RecordStore>()(
           });
         } catch (error) {
           console.error('Failed to delete record item', error);
+          throw error;
+        }
+      },
+
+      updateRecordItem: async (recordId: string, itemId: string, updatedItem: RecordEntity['recordItems'][number]) => {
+        try {
+          const record = get().records[recordId];
+          if (!record) throw new Error('Record not found');
+
+          // Convert to API format
+          const requestBody = toRecordItemInput(updatedItem, record.recordFields);
+
+          await recordApi.updateRecordItem(recordId, itemId, requestBody);
+
+          // Update item in the record's recordItems array
+          set((state) => {
+            const recordState = state.records[recordId];
+            if (!recordState) return state;
+
+            const updatedRecord = {
+              ...recordState,
+              recordItems: recordState.recordItems.map(item => 
+                item.id === itemId ? updatedItem : item
+              ),
+            };
+
+            return {
+              records: {
+                ...state.records,
+                [recordId]: updatedRecord,
+              },
+            };
+          });
+        } catch (error) {
+          console.error('Failed to update record item', error);
           throw error;
         }
       },

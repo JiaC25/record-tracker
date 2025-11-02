@@ -48,6 +48,19 @@ public class RecordsEndpoints : IEndpointDefinition
         });
         #endregion
 
+        #region Put
+        group.MapPut("/{recordId:guid}/items/{itemId:guid}", async (
+            Guid recordId,
+            Guid itemId,
+            CreateRecordItemsRequest.RecordItemInput item,
+            UpdateRecordItemHandler handler,
+            CancellationToken ct) =>
+        {
+            var request = new UpdateRecordItemRequest(recordId, itemId) { Item = item };
+            return await handler.HandleAsync(request, ct);
+        });
+        #endregion
+
         #region Delete
         group.MapDelete("/{id:guid}", async (
             [AsParameters] DeleteRecordRequest request,
