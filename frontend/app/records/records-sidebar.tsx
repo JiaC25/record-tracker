@@ -82,16 +82,16 @@ const RecordsSidebar = () => {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <div className="flex items-center justify-between">
-              Records
+            <div className="flex items-center justify-between w-full">
+              <span className="font-semibold">Records</span>
             </div>
+          </SidebarMenuItem>
+          <SidebarMenuItem className="mx-3 mt-1">
+            <CreateNewRecordButton />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent className="pb-16">
-        
-        <CreateNewRecordButton />
-
         {sortedLetters.map((letter) => (
           <SidebarGroup key={letter}>
             <SidebarGroupLabel>{letter}</SidebarGroupLabel>
