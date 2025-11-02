@@ -6,11 +6,15 @@ export const groupRecordSummariesByLetter = (recordTypes: RecordSummary[]) : Gro
 
   // Group by first letter
   const grouped = sorted.reduce((acc, recordType) => {
-    const firstLetter = recordType.name.charAt(0).toUpperCase();
+    const firstChar = recordType.name.charAt(0).toUpperCase();
+    
+    // Check if the first character is a letter (A-Z)
+    const isLetter = /^[A-Z]$/.test(firstChar);
+    const groupKey = isLetter ? firstChar : '#';
 
-    if (!acc[firstLetter]) acc[firstLetter] = [];
+    if (!acc[groupKey]) acc[groupKey] = [];
 
-    acc[firstLetter].push(recordType);
+    acc[groupKey].push(recordType);
     return acc;
   }, {} as GroupedRecordSummaries);
 

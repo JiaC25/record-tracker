@@ -71,7 +71,12 @@ const RecordsSidebar = () => {
     );
   }
 
-  const sortedLetters = Object.keys(groupedRecordSummaries).sort();
+  const sortedLetters = Object.keys(groupedRecordSummaries).sort((a, b) => {
+    // Put '#' at the end, otherwise sort alphabetically
+    if (a === '#') return 1;
+    if (b === '#') return -1;
+    return a.localeCompare(b);
+  });
   return (
     <Sidebar className="top-[var(--header-height)]" variant="inset">
       <SidebarHeader>

@@ -39,17 +39,22 @@ describe('RecordHelper', () => {
       expect(grouped['B']).toHaveLength(2);
     });
 
-    it('should handle symbolic name', () => {
+    it('should group non-alphabetic names under #', () => {
       const records = [
-        { name: 'Alice', id: 2 },
-        { name: '$$$', id: 3 },
-      ];
+        { name: 'Alice', id: '1' },
+        { name: '$$$', id: '2' },
+        { name: '123 Records', id: '3' },
+        { name: '@test', id: '4' },
+      ] as RecordSummary[];
 
-      const grouped = groupRecordSummariesByLetter(records as any);
+      const grouped = groupRecordSummariesByLetter(records);
       
-      expect(Object.keys(grouped)).toStrictEqual(['$', 'A']);
-      expect(grouped['A']).toEqual([{ name: 'Alice', id: 2 }]);
-      expect(grouped['$']).toEqual([{ name: '$$$', id: 3 }]);
+      expect(Object.keys(grouped)).toStrictEqual(['#', 'A']);
+      expect(grouped['A']).toEqual([{ name: 'Alice', id: '1' }]);
+      expect(grouped['#']).toHaveLength(3);
+      expect(grouped['#'][0].name).toEqual('$$$');
+      expect(grouped['#'][1].name).toEqual('123 Records');
+      expect(grouped['#'][2].name).toEqual('@test');
     });
   });
 });
