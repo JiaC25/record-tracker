@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
-using RecordTracker.API.Features.Auth.Dtos;
+using RecordTracker.API.Features.Auth.Models;
 using RecordTracker.API.Services;
 using RecordTracker.API.Services.Interfaces;
 

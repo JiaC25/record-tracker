@@ -5,15 +5,15 @@ using RecordTracker.Infrastructure.Repositories.Interfaces;
 
 namespace RecordTracker.API.Features.Records;
 
-public record DeleteRecordRequest(Guid Id);
+public record DeleteRecordRequest(Guid RecordId);
 
 public class DeleteRecordValidator : AbstractValidator<DeleteRecordRequest>
 {
     public DeleteRecordValidator()
     {
-        RuleFor(x => x.Id)
+        RuleFor(x => x.RecordId)
             .NotEmpty()
-            .WithMessage("Record Type ID is required and cannot be an empty GUID.");
+            .WithMessage("Record ID is required and cannot be an empty GUID.");
     }
 }
 
@@ -44,7 +44,7 @@ public class DeleteRecordHandler
 
         var userId = _currentUserService.GetUserId();
 
-        var record = await _recordRepository.GetRecordByIdFullAsync(request.Id, userId, ct);
+        var record = await _recordRepository.GetRecordByIdFullAsync(request.RecordId, userId, ct);
         if (record == null)
             return Results.NotFound(new { Message = "Record Type not found." });
 

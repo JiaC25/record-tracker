@@ -6,8 +6,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useCallback, useState, useId } from 'react';
 import { RecordItemForm } from '@/components/records/record-item-form';
 import { recordApi } from '@/lib/api/recordApi';
-import { toCreateRecordItemsRequest } from '@/lib/helpers/recordHelpers';
-import { RecordEntity, RecordItem } from '@/lib/types/records';
+import { toRecordItemInput } from '@/lib/helpers/recordHelpers';
+import { RecordEntity, RecordItem, RecordItemInput } from '@/lib/types/records';
 import { Loader2Icon } from 'lucide-react';
 
 type CreateRecordItemDialogProps = {
@@ -34,8 +34,8 @@ export const CreateRecordItemDialog = ({
 
     try {
       // Convert form data to API request format and submit
-      const requestBody = toCreateRecordItemsRequest(formData, record.recordFields);
-      await recordApi.createRecordItems(record.id, requestBody);
+      const items = toRecordItemInput([formData], record.recordFields) as RecordItemInput[];
+      await recordApi.createRecordItems(record.id, items);
 
       // Create successful
       handleDialogClose();

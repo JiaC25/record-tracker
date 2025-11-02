@@ -1,4 +1,4 @@
-﻿using RecordTracker.API.Features.Auth.Dtos;
+﻿using RecordTracker.API.Features.Auth.Models;
 
 namespace RecordTracker.API.Services.Interfaces;
 

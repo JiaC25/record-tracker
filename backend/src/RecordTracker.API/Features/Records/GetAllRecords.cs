@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
-using RecordTracker.API.Features.Records.Dtos;
+using RecordTracker.API.Features.Records.Models;
 using RecordTracker.API.Services.Interfaces;
 using RecordTracker.Infrastructure.Repositories.Interfaces;
 

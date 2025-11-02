@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using RecordTracker.API.Configuration;
-using RecordTracker.API.Features.Auth.Dtos;
+using RecordTracker.API.Features.Auth.Models;
 using RecordTracker.API.Services.Interfaces;
 using RecordTracker.Infrastructure.Entities;
 using RecordTracker.Infrastructure.Repositories.Interfaces;

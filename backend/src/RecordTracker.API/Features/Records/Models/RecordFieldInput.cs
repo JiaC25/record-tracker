@@ -1,9 +1,9 @@
-﻿using FluentValidation;
+using FluentValidation;
 using RecordTracker.Infrastructure.Entities;
 
-namespace RecordTracker.API.Features.Records.Requests;
+namespace RecordTracker.API.Features.Records.Models;
 
-public record CreateRecordFieldRequest
+public record RecordFieldInput
 {
     public string Name { get; set; } = default!;
     public FieldType FieldType { get; set; }
@@ -11,9 +11,9 @@ public record CreateRecordFieldRequest
     public int Order { get; set; }
 }
 
-public class CreateRecordFieldValidator : AbstractValidator<CreateRecordFieldRequest>
+public class RecordFieldInputValidator : AbstractValidator<RecordFieldInput>
 {
-    public CreateRecordFieldValidator()
+    public RecordFieldInputValidator()
     {
         RuleFor(x => x.Name)
             .NotEmpty()
@@ -26,3 +26,4 @@ public class CreateRecordFieldValidator : AbstractValidator<CreateRecordFieldReq
             .GreaterThanOrEqualTo(0);
     }
 }
+

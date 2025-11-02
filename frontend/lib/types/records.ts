@@ -45,9 +45,6 @@ export type CreateRecordFieldRequest = {
     order: number
 }
 
-export type CreateRecordItemsRequest = {
-    items: RecordItemInput[]
-}
 export type RecordItemInput = {
     values: RecordValueInput[]
 }

@@ -1,7 +1,5 @@
 ﻿using RecordTracker.API.Common;
 using RecordTracker.API.Features.Auth;
-using RecordTracker.API.Features.Auth.Dtos;
-using RecordTracker.API.Services.Interfaces;
 
 namespace RecordTracker.API.Endpoints;
 

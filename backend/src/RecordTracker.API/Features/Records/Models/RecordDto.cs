@@ -1,4 +1,4 @@
-﻿namespace RecordTracker.API.Features.Records.Dtos;
+﻿namespace RecordTracker.API.Features.Records.Models;
 
 public class RecordDto
 {

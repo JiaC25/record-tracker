@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RecordTracker.API.Common;
 using RecordTracker.API.Features.Records;
+using RecordTracker.API.Features.Records.Models;
 
 namespace RecordTracker.API.Endpoints;
 
@@ -20,7 +22,7 @@ public class RecordsEndpoints : IEndpointDefinition
         });
 
         // Returns RecordDto : Full Record object (with Items)
-        group.MapGet("/{id:guid}", async (
+        group.MapGet("/{recordId:guid}", async (
             [AsParameters] GetRecordByIdRequest request,
             GetRecordByIdHandler handler,
             CancellationToken ct) =>
@@ -38,13 +40,14 @@ public class RecordsEndpoints : IEndpointDefinition
             return await handler.HandleAsync(request, ct);
         });
 
-        group.MapPost("/{id:guid}/items", async (
-            Guid id,
-            CreateRecordItemsRequest request,
+        group.MapPost("/{recordId:guid}/items", async (
+            Guid recordId,
+            [FromBody] List<RecordItemInput> items,
             CreateRecordItemsHandler handler,
             CancellationToken ct) =>
         {
-            return await handler.HandleAsync(id, request, ct);
+            var request = new CreateRecordItemsRequest(recordId) { Items = items };
+            return await handler.HandleAsync(request, ct);
         });
         #endregion
 
@@ -52,7 +55,7 @@ public class RecordsEndpoints : IEndpointDefinition
         group.MapPut("/{recordId:guid}/items/{itemId:guid}", async (
             Guid recordId,
             Guid itemId,
-            CreateRecordItemsRequest.RecordItemInput item,
+            [FromBody] RecordItemInput item,
             UpdateRecordItemHandler handler,
             CancellationToken ct) =>
         {
@@ -62,7 +65,7 @@ public class RecordsEndpoints : IEndpointDefinition
         #endregion
 
         #region Delete
-        group.MapDelete("/{id:guid}", async (
+        group.MapDelete("/{recordId:guid}", async (
             [AsParameters] DeleteRecordRequest request,
             DeleteRecordHandler handler,
             CancellationToken ct) =>

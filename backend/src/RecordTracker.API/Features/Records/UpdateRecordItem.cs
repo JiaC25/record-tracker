@@ -1,4 +1,5 @@
 using FluentValidation;
+using RecordTracker.API.Features.Records.Models;
 using RecordTracker.API.Services.Interfaces;
 using RecordTracker.Infrastructure.Persistence;
 using RecordTracker.Infrastructure.Repositories.Interfaces;
@@ -7,7 +8,7 @@ namespace RecordTracker.API.Features.Records;
 
 public record UpdateRecordItemRequest(Guid RecordId, Guid ItemId)
 {
-    public CreateRecordItemsRequest.RecordItemInput Item { get; init; } = default!;
+    public RecordItemInput Item { get; init; } = default!;
 }
 
 public class UpdateRecordItemValidator : AbstractValidator<UpdateRecordItemRequest>
@@ -24,22 +25,8 @@ public class UpdateRecordItemValidator : AbstractValidator<UpdateRecordItemReque
 
         RuleFor(x => x.Item)
             .NotEmpty()
-            .WithMessage("Item is required");
-
-        RuleFor(x => x.Item.Values)
-            .NotEmpty()
-            .WithMessage("Item must have at least one Value");
-
-        RuleForEach(x => x.Item.Values).SetValidator(new RecordValueInputValidator());
-    }
-
-    private class RecordValueInputValidator : AbstractValidator<CreateRecordItemsRequest.RecordValueInput>
-    {
-        public RecordValueInputValidator()
-        {
-            RuleFor(x => x.RecordFieldId).NotEmpty().WithMessage("Value must have an associated Field");
-            RuleFor(x => x.Value).NotEmpty().WithMessage("Value must not be empty");
-        }
+            .WithMessage("Item is required")
+            .SetValidator(new RecordItemInputValidator());
     }
 }
 

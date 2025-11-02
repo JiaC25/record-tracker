@@ -1,20 +1,20 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using RecordTracker.API.Features.Records.Dtos;
+using RecordTracker.API.Features.Records.Models;
 using RecordTracker.API.Services.Interfaces;
 using RecordTracker.Infrastructure.Repositories.Interfaces;
 
 namespace RecordTracker.API.Features.Records;
 
-public record GetRecordByIdRequest(Guid Id);
+public record GetRecordByIdRequest(Guid RecordId);
 
 public class GetRecordByIdValidator : AbstractValidator<GetRecordByIdRequest>
 {
     public GetRecordByIdValidator()
     {
-        RuleFor(x => x.Id)
+        RuleFor(x => x.RecordId)
             .NotEmpty()
-            .WithMessage("Record Type ID is required and cannot be an empty GUID.");
+            .WithMessage("Record ID is required and cannot be an empty GUID.");
     }
 }
 
@@ -45,7 +45,7 @@ public class GetRecordByIdHandler
 
         var userId = _currentUserService.GetUserId();
 
-        var record = await _recordRepository.GetRecordByIdFullAsync(request.Id, userId, ct);
+        var record = await _recordRepository.GetRecordByIdFullAsync(request.RecordId, userId, ct);
         if (record == null)
             return Results.NotFound(new { Message = "Record Type not found." });
 

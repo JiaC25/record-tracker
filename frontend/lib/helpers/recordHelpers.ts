@@ -1,4 +1,4 @@
-import { CreateRecordItemsRequest, GroupedRecordSummaries, RecordField, RecordItem, RecordItemInput, RecordSummary, RecordValueInput } from '@/lib/types/records';
+import { GroupedRecordSummaries, RecordField, RecordItem, RecordItemInput, RecordSummary, RecordValueInput } from '@/lib/types/records';
 
 export const groupRecordSummariesByLetter = (recordTypes: RecordSummary[]) : GroupedRecordSummaries => {
   // Sort alphabetically by name
@@ -17,14 +17,14 @@ export const groupRecordSummariesByLetter = (recordTypes: RecordSummary[]) : Gro
   return grouped;
 };
 
-// Helper to convert RecordItem(s) to CreateRecordItemsRequest
-export const toCreateRecordItemsRequest = (
+// Helper to convert RecordItem(s) to RecordItemInput(s)
+export const toRecordItemInput = (
   items: RecordItem | RecordItem[],
   fields: RecordField[]
-) : CreateRecordItemsRequest => {
+) : RecordItemInput | RecordItemInput[] => {
   const itemsArray = Array.isArray(items) ? items : [items];
 
-  const recordItemInputs: RecordItemInput[] = itemsArray.map(item => {
+  const result = itemsArray.map(item => {
     const values: RecordValueInput[] = fields
       .filter(field => item[field.id])
       .map(field => ({
@@ -35,20 +35,6 @@ export const toCreateRecordItemsRequest = (
     return { values };
   });
 
-  return { items: recordItemInputs };
-};
-
-// Helper to convert a single RecordItem to RecordItemInput for update
-export const toRecordItemInput = (
-  item: RecordItem,
-  fields: RecordField[]
-) : RecordItemInput => {
-  const values: RecordValueInput[] = fields
-    .filter(field => item[field.id])
-    .map(field => ({
-      recordFieldId: field.id,
-      value: item[field.id] || ''
-    }));
-
-  return { values };
+  // Return single item if input was single, array if input was array
+  return Array.isArray(items) ? result : result[0];
 };
