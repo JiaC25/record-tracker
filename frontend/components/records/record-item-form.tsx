@@ -9,18 +9,14 @@ import { RegisterOptions, useForm } from 'react-hook-form';
 
 type RecordItemFormProps = {
   record: RecordEntity;
-  formId: string;
   defaultItem?: RecordItem;
   onFormChange?: (isValid: boolean, data: RecordItem) => void;
-  onFormSubmit?: (data: RecordItem) => void;
 };
 
 export const RecordItemForm = ({
   record,
-  formId,
   defaultItem,
   onFormChange,
-  onFormSubmit,
 }: RecordItemFormProps) => {
   const form = useForm<RecordItem>({
     mode: 'onChange',
@@ -52,10 +48,6 @@ export const RecordItemForm = ({
     }
   }, [formState.isValid, values, onFormChange]);
 
-  const handleSubmit = (data: RecordItem) => {
-    onFormSubmit?.(data);
-  };
-
   // Validation rules
   const getValidationRules = (field: RecordEntity['recordFields'][number]) => {
     const rules: RegisterOptions = {};
@@ -86,11 +78,7 @@ export const RecordItemForm = ({
 
   return (
     <Form {...form}>
-      <form
-        id={formId}
-        className="grid gap-4"
-        onSubmit={form.handleSubmit(handleSubmit)}
-      >
+      <form className="grid gap-4">
         {record.recordFields.map((field) => (
           <FormField
             key={field.id}

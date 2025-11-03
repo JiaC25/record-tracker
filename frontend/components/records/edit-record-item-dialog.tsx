@@ -3,7 +3,7 @@
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useCallback, useState, useId } from 'react';
+import { useCallback, useState } from 'react';
 import { RecordItemForm } from '@/components/records/record-item-form';
 import { useRecordStore } from '@/lib/store/recordStore';
 import { RecordEntity, RecordItem } from '@/lib/types/records';
@@ -27,7 +27,6 @@ export const EditRecordItemDialog = ({
   const [isFormValid, setIsFormValid] = useState(false);
   const [formData, setFormData] = useState<RecordItem | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const formId = useId(); // Unique id to use in the form
   const { updateRecordItem } = useRecordStore();
 
   const handleSave = async () => {
@@ -72,7 +71,6 @@ export const EditRecordItemDialog = ({
           <div className="m-2">
             <RecordItemForm
               record={record}
-              formId={formId}
               onFormChange={handleFormChange}
               defaultItem={item}
             />

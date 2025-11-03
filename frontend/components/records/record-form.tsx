@@ -238,7 +238,7 @@ export const RecordForm = ({ onFormChange }: RecordFormProps) => {
                 You’ve reached the maximum of {MAX_FIELDS_PER_RECORD} fields per record
               </span>
             )}
-            <Button type="button" variant="secondary" onClick={addRow} disabled={fieldRows.length >= MAX_FIELDS_PER_RECORD}>
+            <Button type="button" variant="secondary" size="sm" onClick={addRow} disabled={fieldRows.length >= MAX_FIELDS_PER_RECORD}>
               <Plus className="size-4" /> Add field
             </Button>
           </div>
