@@ -45,6 +45,21 @@ export type CreateRecordFieldRequest = {
     order: number
 }
 
+export type UpdateRecordRequest = {
+    recordId: string
+    name: string
+    description?: string
+    recordFields: UpdateRecordFieldInput[]
+}
+
+export type UpdateRecordFieldInput = {
+    id?: string
+    name: string
+    order: number
+    fieldType: RecordFieldType
+    isRequired: boolean
+}
+
 export type RecordItemInput = {
     values: RecordValueInput[]
 }

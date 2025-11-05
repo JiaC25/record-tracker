@@ -52,6 +52,20 @@ public class RecordsEndpoints : IEndpointDefinition
         #endregion
 
         #region Put
+        // Update Record (metadata + fields)
+        group.MapPut("/{recordId:guid}", async (
+            Guid recordId,
+            [FromBody] UpdateRecordRequest request,
+            UpdateRecordHandler handler,
+            CancellationToken ct) =>
+        {
+            // Verify that the recordId in route matches the RecordId in request body
+            if (recordId != request.RecordId)
+                return Results.BadRequest(new { Message = "The recordId in the route does not match the RecordId in the request body." });
+
+            return await handler.HandleAsync(request, ct);
+        });
+
         group.MapPut("/{recordId:guid}/items/{itemId:guid}", async (
             Guid recordId,
             Guid itemId,

@@ -8,13 +8,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Trash2, Plus, ArrowDown, ArrowUp } from 'lucide-react';
-import { CreateRecordFieldRequest, CreateRecordRequest, RecordFieldType } from '@/lib/types/records';
+import { CreateRecordFieldRequest, CreateRecordRequest, RecordFieldType, RecordSummary, UpdateRecordRequest } from '@/lib/types/records';
 
 type RecordFormProps = {
-  onFormChange: (isValid: boolean, data: CreateRecordRequest) => void;
+  initialRecord?: RecordSummary;
+  onFormChange: (isValid: boolean, data: CreateRecordRequest | UpdateRecordRequest) => void;
 };
 
-export const RecordForm = ({ onFormChange }: RecordFormProps) => {
+export const RecordForm = ({ initialRecord, onFormChange }: RecordFormProps) => {
   const MAX_NAME_LENGTH = 50;
   const MAX_DESCRIPTION_LENGTH = 200;
   const MAX_FIELD_NAME_LENGTH = 50;
@@ -23,13 +24,19 @@ export const RecordForm = ({ onFormChange }: RecordFormProps) => {
   // ReactHookForm only handles name and description fields, RecordFields is dynamic and managed separately (FieldRow)
   type RecordFormValues = Pick<CreateRecordRequest, 'name' | 'description'>;
 
-  const form = useForm<RecordFormValues>({ mode: 'onChange' });
+  const form = useForm<RecordFormValues>({ 
+    mode: 'onChange',
+    defaultValues: initialRecord ? {
+      name: initialRecord.name,
+      description: initialRecord.description || ''
+    } : {}
+  });
   const { register, reset, watch, formState: { errors } } = form;
   const values = watch();
 
-  // Local UI row with client-only id
+  // Local UI row - uses field ID for edit mode, or generated UUID for create mode
   type FieldRow = {
-    id: string;
+    id: string; // Field ID for edit mode, UUID for create mode
     name: string;
     fieldType: RecordFieldType;
     isRequired: boolean
@@ -57,7 +64,20 @@ export const RecordForm = ({ onFormChange }: RecordFormProps) => {
     return issues;
   }
 
-  const [fieldRows, setFieldRows] = useState<FieldRow[]>([]);
+  // Initialize fieldRows from initialRecord if provided
+  const initializeFieldRows = useMemo((): FieldRow[] => {
+    if (!initialRecord) return [];
+    return initialRecord.recordFields
+      .sort((a, b) => a.order - b.order)
+      .map(field => ({
+        id: field.id, // Use actual field ID for edit mode
+        name: field.name,
+        fieldType: field.fieldType,
+        isRequired: field.isRequired
+      }));
+  }, [initialRecord]);
+
+  const [fieldRows, setFieldRows] = useState<FieldRow[]>(initializeFieldRows);
 
   const createEmptyRow = (): FieldRow => ({
     id: crypto.randomUUID(),
@@ -93,15 +113,26 @@ export const RecordForm = ({ onFormChange }: RecordFormProps) => {
   };
 
   // Map UI FieldRows to Request payload
-  const recordFieldsForSubmit = useMemo<CreateRecordFieldRequest[]>(
-    () => fieldRows.map((r, idx) => ({
-      name: r.name.trim(),
-      fieldType: r.fieldType,
-      isRequired: r.isRequired,
-      order: idx,
-    })),
-    [fieldRows]
-  );
+  const recordFieldsForSubmit = useMemo(() => {
+    if (initialRecord) {
+      // Edit mode: return UpdateRecordFieldInput[]
+      return fieldRows.map((r, idx) => ({
+        id: initialRecord.recordFields.some(f => f.id === r.id) ? r.id : undefined, // Only include ID if it's an existing field
+        name: r.name.trim(),
+        order: idx,
+        fieldType: r.fieldType,
+        isRequired: r.isRequired,
+      }));
+    } else {
+      // Create mode: return CreateRecordFieldRequest[]
+      return fieldRows.map((r, idx) => ({
+        name: r.name.trim(),
+        fieldType: r.fieldType,
+        isRequired: r.isRequired,
+        order: idx,
+      }));
+    }
+  }, [fieldRows, initialRecord]);
 
   // Cache last emitted validity/payload to avoid redundant onFormChange calls
   const lastEmittedRef = useRef<{ valid: boolean; payloadJson: string } | null>(null);
@@ -116,11 +147,19 @@ export const RecordForm = ({ onFormChange }: RecordFormProps) => {
 
     const isValid = isFormValid(values);
 
-    const payload: CreateRecordRequest = {
-      name: values.name?.trim() ?? '',
-      description: values.description?.trim() ?? '',
-      recordFields: recordFieldsForSubmit,
-    };
+    const payload = initialRecord 
+      ? {
+          recordId: initialRecord.id,
+          name: values.name?.trim() ?? '',
+          description: values.description?.trim() ?? '',
+          recordFields: recordFieldsForSubmit,
+        } as UpdateRecordRequest
+      : {
+          name: values.name?.trim() ?? '',
+          description: values.description?.trim() ?? '',
+          recordFields: recordFieldsForSubmit,
+        } as CreateRecordRequest;
+    
     const payloadJson = JSON.stringify(payload);
 
     // Call onFormChange only if the form actually changed
@@ -130,12 +169,21 @@ export const RecordForm = ({ onFormChange }: RecordFormProps) => {
       onFormChange(isValid, payload);
       lastEmittedRef.current = { valid: isValid, payloadJson };
     }
-  }, [values, errors, fieldRows, recordFieldsForSubmit, onFormChange]);
+  }, [values, errors, fieldRows, recordFieldsForSubmit, onFormChange, initialRecord]);
 
+  // Reset form when initialRecord changes (for edit mode)
   useEffect(() => {
-    reset();
-    setFieldRows([]);
-  }, [reset]);
+    if (initialRecord) {
+      reset({
+        name: initialRecord.name,
+        description: initialRecord.description || ''
+      });
+      setFieldRows(initializeFieldRows);
+    } else {
+      reset();
+      setFieldRows([]);
+    }
+  }, [initialRecord, reset, initializeFieldRows]);
 
   const renderNameInput = () => {
     return (
@@ -188,6 +236,7 @@ export const RecordForm = ({ onFormChange }: RecordFormProps) => {
           <Select
             value={row.fieldType}
             onValueChange={(v: RecordFieldType) => updateRow(row.id, { fieldType: v })}
+            disabled={!!initialRecord && initialRecord.recordFields.some(f => f.id === row.id)} // Disable for existing fields
           >
             <SelectTrigger id={`field-type-${row.id}`} className="bg-background">
               <SelectValue placeholder="Type" />
@@ -206,6 +255,7 @@ export const RecordForm = ({ onFormChange }: RecordFormProps) => {
             id={`field-required-${row.id}`}
             checked={row.isRequired}
             onCheckedChange={(checked) => updateRow(row.id, { isRequired: !!checked })}
+            disabled={!!initialRecord && initialRecord.recordFields.some(f => f.id === row.id)} // Disable for existing fields
           />
         </div>
         {/* Row actions */}

@@ -53,6 +53,7 @@ public class GetRecordByIdHandler
 
         // Mapping to the flattened RecordItems representation
         dto.RecordItems = record.RecordItems
+            .Where(item => item.RecordValues.Any()) // Filter out items with no RecordValues (orphaned items)
             .OrderByDescending(item => item.CreatedAt)
             .Select(item =>
             {

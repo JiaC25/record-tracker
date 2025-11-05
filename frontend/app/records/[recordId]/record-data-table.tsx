@@ -6,6 +6,7 @@ import { DeleteRecordItemDialog } from '@/components/records/delete-record-item-
 import { EditRecordItemDialog } from '@/components/records/edit-record-item-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useRecordStore } from '@/lib/store/recordStore';
 import { RecordEntity, RecordItem } from '@/lib/types/records';
@@ -19,8 +20,12 @@ type RecordDataTableProps = {
 };
 
 export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps) => {
-  // const [tableData, setTableData] = useState<RecordItem[]>(record.recordItems);
-  const tableData = record.recordItems;
+  // Filter out items with no values (defensive - should be handled by backend, but just in case)
+  // An item has values if it has any keys other than 'id' and 'createdAt' with non-empty values
+  const tableData = record.recordItems.filter(item => {
+    const fieldKeys = Object.keys(item).filter(key => key !== 'id' && key !== 'createdAt');
+    return fieldKeys.some(key => item[key] && item[key].trim() !== '');
+  });
   const { deleteRecordItem } = useRecordStore();
   const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -128,8 +133,13 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
       <Card className="text-sm rounded-sm gap-3 pt-4 max-h-[85vh] overflow-y-auto">
         <CardHeader className="space-y-1 px-3">
           <div className="flex justify-between items-center">
-            <div>
-              <h4>{record.name}</h4>
+            <div className="min-w-0">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <h4 className="truncate max-w-[24rem]" title={record.name}>{record.name}</h4>
+                </TooltipTrigger>
+                <TooltipContent sideOffset={6}>{record.name}</TooltipContent>
+              </Tooltip>
               {record.description && (<small>{record.description}</small>)}
             </div>
             <div className="flex gap-2">

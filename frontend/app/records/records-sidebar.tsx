@@ -2,6 +2,7 @@
 
 import { CreateNewRecordButton } from '@/components/records/create-record-button';
 import { DeleteRecordDialog } from '@/components/records/delete-record-dialog';
+import { EditRecordDialog } from '@/components/records/edit-record-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -9,7 +10,7 @@ import { useAuthStore } from '@/lib/store/authStore';
 import { useRecordStore } from '@/lib/store/recordStore';
 import { LayoutDashboard, MoreVertical } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from '../../components/ui/sidebar';
 import { ROUTES } from '../../lib/routes.config';
 
@@ -25,10 +26,11 @@ const RecordsSidebar = () => {
   const isLoading = useRecordStore((state) => state.isLoadingRecordSummaries);
   const isHydrated = useRecordStore((state) => state.isHydrated);
 
-  const { loadRecordSummaries, deleteRecord } = useRecordStore();
+  const { loadRecordSummaries, deleteRecord, fetchRecord } = useRecordStore();
   const [deleteRecordId, setDeleteRecordId] = useState<string | null>(null);
   const [deleteRecordName, setDeleteRecordName] = useState<string>('');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [editRecordId, setEditRecordId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authIsHydrated || !isHydrated || !isLoggedIn ) return;
@@ -64,9 +66,29 @@ const RecordsSidebar = () => {
 
   const handleEditClick = (recordId: string, e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent navigating to the record
-    // TODO: Implement edit record functionality
-    console.log('Edit record', recordId);
+    setEditRecordId(recordId);
   };
+
+  const handleEditDialogClose = () => {
+    setEditRecordId(null);
+  };
+
+  const handleEditUpdated = () => {
+    // Refresh the record summaries list
+    loadRecordSummaries();
+    // If the user is currently viewing the edited record, refresh full record
+    if (editRecordId && currentRecordId === editRecordId) {
+      fetchRecord(editRecordId);
+    }
+  };
+
+  // Find the record being edited from all groups
+  const recordToEdit = useMemo(() => {
+    if (!editRecordId) return null;
+    return Object.values(groupedRecordSummaries)
+      .flat()
+      .find(r => r.id === editRecordId) || null;
+  }, [editRecordId, groupedRecordSummaries]);
 
   // Show loading skeleton
   if (!authIsHydrated || !isHydrated || isLoading) {
@@ -185,6 +207,14 @@ const RecordsSidebar = () => {
         onConfirm={handleDeleteConfirm}
         isDeleting={isDeleting}
       />
+      {recordToEdit && (
+        <EditRecordDialog
+          open={editRecordId !== null}
+          record={recordToEdit}
+          onDialogClose={handleEditDialogClose}
+          onUpdated={handleEditUpdated}
+        />
+      )}
     </Sidebar>
   );
 };

@@ -1,4 +1,4 @@
-import { CreateRecordRequest, GetAllRecordsResponse, RecordEntity, RecordItemInput, RecordSummary } from '@/lib/types/records';
+import { CreateRecordRequest, GetAllRecordsResponse, RecordEntity, RecordItemInput, RecordSummary, UpdateRecordRequest } from '@/lib/types/records';
 import { apiClient } from './apiClient';
 
 export const recordApi = {
@@ -12,6 +12,9 @@ export const recordApi = {
 
   createRecord: (requestBody: CreateRecordRequest) : Promise<RecordSummary> =>
     apiClient.post<RecordSummary>('records', requestBody),
+
+  updateRecord: (recordId: string, requestBody: UpdateRecordRequest) : Promise<void> =>
+    apiClient.put<void>(`records/${recordId}`, requestBody),
 
   createRecordItems: (recordId: string, items: RecordItemInput[]) : Promise<void> =>
     apiClient.post<void>(`records/${recordId}/items`, items),
