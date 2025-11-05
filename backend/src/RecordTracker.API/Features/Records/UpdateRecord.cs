@@ -204,6 +204,7 @@ public class UpdateRecordHandler
         {
             var newField = new RecordField
             {
+                // Don't generate GUID here to avoid EF tracking new field as Modified
                 Name = fieldInput.Name,
                 FieldType = fieldInput.FieldType,
                 IsRequired = fieldInput.IsRequired,

@@ -158,42 +158,83 @@
     @apply cursor-pointer;
   }
 
-  /* Modern scrollbar styling for sidebar */
+  /* Sidebar uses the reusable scrollbar-styled utility */
+  [data-sidebar="content"] {
+    /* Firefox scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: oklch(0.552 0.016 285.938 / 0.4) transparent;
+  }
+  
   /* Webkit browsers (Chrome, Edge, Safari) */
   [data-sidebar="content"]::-webkit-scrollbar {
     width: 6px;
   }
-
+  
   [data-sidebar="content"]::-webkit-scrollbar-track {
     background: transparent;
   }
-
+  
   [data-sidebar="content"]::-webkit-scrollbar-thumb {
     background: oklch(0.552 0.016 285.938 / 0.4);
     border-radius: 3px;
     transition: background 0.15s ease;
   }
-
+  
   [data-sidebar="content"]::-webkit-scrollbar-thumb:hover {
     background: oklch(0.552 0.016 285.938 / 0.6);
   }
-
-  /* Dark mode scrollbar */
+  
+  /* Dark mode support */
+  .dark [data-sidebar="content"] {
+    scrollbar-color: oklch(0.705 0.015 286.067 / 0.3) transparent;
+  }
+  
   .dark [data-sidebar="content"]::-webkit-scrollbar-thumb {
     background: oklch(0.705 0.015 286.067 / 0.3);
   }
-
+  
   .dark [data-sidebar="content"]::-webkit-scrollbar-thumb:hover {
     background: oklch(0.705 0.015 286.067 / 0.5);
   }
+}
 
-  /* Firefox scrollbar styling */
-  [data-sidebar="content"] {
+@layer utilities {
+  /* Modern styled scrollbar - thin, elegant, with hover effects */
+  .scrollbar-styled {
+    /* Firefox scrollbar styling */
     scrollbar-width: thin;
     scrollbar-color: oklch(0.552 0.016 285.938 / 0.4) transparent;
   }
-
-  .dark [data-sidebar="content"] {
+  
+  /* Webkit browsers (Chrome, Edge, Safari) */
+  .scrollbar-styled::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .scrollbar-styled::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-styled::-webkit-scrollbar-thumb {
+    background: oklch(0.552 0.016 285.938 / 0.4);
+    border-radius: 3px;
+    transition: background 0.15s ease;
+  }
+  
+  .scrollbar-styled::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.552 0.016 285.938 / 0.6);
+  }
+  
+  /* Dark mode support */
+  .dark .scrollbar-styled {
     scrollbar-color: oklch(0.705 0.015 286.067 / 0.3) transparent;
+  }
+  
+  .dark .scrollbar-styled::-webkit-scrollbar-thumb {
+    background: oklch(0.705 0.015 286.067 / 0.3);
+  }
+  
+  .dark .scrollbar-styled::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.705 0.015 286.067 / 0.5);
   }
 }

@@ -30,7 +30,7 @@ export const DataTable = <TData, TValue>({ columns, data }: DataTableProps<TData
       <div
         data-slot="table-container"
         className="relative w-full overflow-x-auto
-          rounded-sm border max-h-[60vh] overflow-y-auto scrollbar-thin"
+          rounded-sm border max-h-[60vh] overflow-y-auto scrollbar-styled"
       >
         <Table>
           <TableHeader

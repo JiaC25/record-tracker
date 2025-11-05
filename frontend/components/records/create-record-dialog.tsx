@@ -49,9 +49,9 @@ export const CreateRecordDialog = ({ open, onDialogClose }: CreateRecordDialogPr
           <DialogTitle>Create New Record</DialogTitle>
           <DialogDescription />
         </DialogHeader>
-
-        <RecordForm onFormChange={handleFormChange} />
-
+        <div className="max-h-[65vh] overflow-auto p-2 scrollbar-styled">
+          <RecordForm onFormChange={handleFormChange} />
+        </div>
         <DialogFooter>
           <Button variant="secondary" onClick={onDialogClose}>
             Cancel
