@@ -8,6 +8,7 @@ type DataTableProps<TData, TValue> = {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
     getRowClassName?: (row: TData) => string;
+    getFirstCellClassName?: (row: TData) => string;
 };
 
 declare module '@tanstack/react-table' {
@@ -17,7 +18,7 @@ declare module '@tanstack/react-table' {
   }
 }
 
-export const DataTable = <TData, TValue>({ columns, data, getRowClassName }: DataTableProps<TData, TValue>) => {
+export const DataTable = <TData, TValue>({ columns, data, getRowClassName, getFirstCellClassName }: DataTableProps<TData, TValue>) => {
   const table = useReactTable({
     data,
     columns,
@@ -59,25 +60,30 @@ export const DataTable = <TData, TValue>({ columns, data, getRowClassName }: Dat
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow 
-                  key={row.id} 
-                  data-state={row.getIsSelected() && 'selected'}
-                  className={getRowClassName?.(row.original)}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className={
-                        'py-0.5 text-[0.85rem] '
-                        + cell.column.columnDef.meta?.cellClassName
-                      }
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              table.getRowModel().rows.map((row) => {
+                const visibleCells = row.getVisibleCells();
+                const isFirstCell = (index: number) => index === 0;
+                return (
+                  <TableRow 
+                    key={row.id} 
+                    data-state={row.getIsSelected() && 'selected'}
+                    className={getRowClassName?.(row.original)}
+                  >
+                    {visibleCells.map((cell, cellIndex) => (
+                      <TableCell
+                        key={cell.id}
+                        className={
+                          'py-0.5 text-[0.85rem] '
+                          + cell.column.columnDef.meta?.cellClassName
+                          + (isFirstCell(cellIndex) && getFirstCellClassName ? ' ' + getFirstCellClassName(row.original) : '')
+                        }
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                );
+              })
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">

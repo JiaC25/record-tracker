@@ -218,7 +218,7 @@ export const RecordForm = ({ initialRecord, onFormChange }: RecordFormProps) => 
     const canMoveDown = index < fieldRows.length - 1;
 
     return (
-      <div key={row.id} className="grid grid-cols-12 gap-2 items-center bg-accent p-2 border-l-4 rounded-sm">
+      <div key={row.id} className="grid grid-cols-12 gap-2 items-center bg-accent/80 p-2 border-l-4 rounded-sm">
         {/* Name */}
         <div className="col-span-12 md:col-span-6">
           <Label className="sr-only" htmlFor={`field-name-${row.id}`}>Field name</Label>

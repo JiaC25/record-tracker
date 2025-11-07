@@ -135,7 +135,15 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
   // Get row className to highlight the row being edited
   const getRowClassName = (item: RecordItem) => {
     if (editItem && editItem.id === item.id) {
-      return 'bg-primary/10 border-l-3 border-l-primary';
+      return 'bg-primary/10';
+    }
+    return '';
+  };
+
+  // Get first cell className to add left border for edited row
+  const getFirstCellClassName = (item: RecordItem) => {
+    if (editItem && editItem.id === item.id) {
+      return 'border-l-2 border-l-primary';
     }
     return '';
   };
@@ -167,6 +175,7 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
             columns={columns} 
             data={tableData}
             getRowClassName={getRowClassName}
+            getFirstCellClassName={getFirstCellClassName}
           />
         </CardContent>
       </Card>
