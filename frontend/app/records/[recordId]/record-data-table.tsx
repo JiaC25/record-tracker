@@ -1,9 +1,8 @@
 'use client';
 
 import { DataTable } from '@/components/data-table/data-table';
-import { CreateRecordItemButton } from '@/components/records/create-record-item-button';
 import { DeleteRecordItemDialog } from '@/components/records/delete-record-item-dialog';
-import { EditRecordItemDialog } from '@/components/records/edit-record-item-dialog';
+import { EditRecordItemPopover } from '@/components/records/edit-record-item-popover';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -11,8 +10,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useRecordStore } from '@/lib/store/recordStore';
 import { RecordEntity, RecordItem } from '@/lib/types/records';
 import { ColumnDef, Row } from '@tanstack/react-table';
-import { Columns3Cog, MoreVertical } from 'lucide-react';
+import { Columns3Cog, MoreVertical, Plus } from 'lucide-react';
 import { useState } from 'react';
+import { CreateRecordItemPopover } from '@/components/records/create-record-item-popover';
 
 type RecordDataTableProps = {
     record: RecordEntity;
@@ -49,10 +49,15 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
 
   const buildActionsCell = (row: Row<RecordItem>) => {
     const item = row.original;
+    
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
+          <Button 
+            variant="ghost" 
+            className="h-8 w-8 p-0"
+            id={`actions-button-${item.id}`}
+          >
             <span className="sr-only">Open menu</span>
             <MoreVertical className="h-4 w-4" />
           </Button>
@@ -122,11 +127,18 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
   };
 
   const handleEditUpdated = async () => {
-    // The dialog handles the API call internally via updateRecordItem from useRecordStore
+    // The Edit component handles the API call internally via updateRecordItem from useRecordStore
     // We just need to trigger parent refresh here
     onItemCreated?.();
   };
 
+  // Get row className to highlight the row being edited
+  const getRowClassName = (item: RecordItem) => {
+    if (editItem && editItem.id === item.id) {
+      return 'bg-primary/10 border-l-3 border-l-primary';
+    }
+    return '';
+  };
 
   return (
     <>
@@ -143,18 +155,19 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
               {record.description && (<small>{record.description}</small>)}
             </div>
             <div className="flex gap-2">
-              {/* Table Columns Config */}
               <Button variant="outline" size="sm"><Columns3Cog /></Button>
-              {/* Add RecordItem button */}
-              <CreateRecordItemButton
-                record={record}
-                onCreated={handleItemCreated}
-              />
+              <CreateRecordItemPopover record={record} onCreated={handleItemCreated}>
+                <Button size="sm" className="w-12"><Plus /></Button>
+              </CreateRecordItemPopover>
             </div>
           </div>
         </CardHeader>
         <CardContent className="px-3">
-          <DataTable columns={columns} data={tableData}/>
+          <DataTable 
+            columns={columns} 
+            data={tableData}
+            getRowClassName={getRowClassName}
+          />
         </CardContent>
       </Card>
       <DeleteRecordItemDialog
@@ -163,13 +176,19 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
         onConfirm={handleDeleteConfirm}
         isDeleting={isDeleting}
       />
+      {/* Edit RecordItem Popover - will be positioned to the corresponding table row using anchorId */}
       {editItem && (
-        <EditRecordItemDialog
+        <EditRecordItemPopover
           open={!!editItem}
-          onDialogClose={() => setEditItem(null)}
+          onOpenChange={(open) => {
+            if (!open) {
+              setEditItem(null);
+            }
+          }}
           record={record}
           item={editItem}
           onUpdated={handleEditUpdated}
+          anchorId={`actions-button-${editItem.id}`}
         />
       )}
     </>

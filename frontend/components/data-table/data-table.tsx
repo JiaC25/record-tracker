@@ -7,6 +7,7 @@ import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, RowData,
 type DataTableProps<TData, TValue> = {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
+    getRowClassName?: (row: TData) => string;
 };
 
 declare module '@tanstack/react-table' {
@@ -16,7 +17,7 @@ declare module '@tanstack/react-table' {
   }
 }
 
-export const DataTable = <TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) => {
+export const DataTable = <TData, TValue>({ columns, data, getRowClassName }: DataTableProps<TData, TValue>) => {
   const table = useReactTable({
     data,
     columns,
@@ -59,7 +60,11 @@ export const DataTable = <TData, TValue>({ columns, data }: DataTableProps<TData
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                <TableRow 
+                  key={row.id} 
+                  data-state={row.getIsSelected() && 'selected'}
+                  className={getRowClassName?.(row.original)}
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}

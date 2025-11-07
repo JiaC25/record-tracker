@@ -45,7 +45,7 @@ const AppHeader = () => {
   }
 
   return (
-    <header className="flex h-[var(--header-height)] shrink-0 items-center gap-2 border-b px-4">
+    <header className="flex h-[var(--header-height)] shrink-0 items-center gap-2 border-b border-secondary-foreground/20 px-4">
       <div className="flex w-full h-[var(--header-height)] items-center justify-between z-50">
         <div className="flex items-center gap-2">
           {/* Logo and App name */}
