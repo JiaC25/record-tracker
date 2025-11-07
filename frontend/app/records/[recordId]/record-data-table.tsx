@@ -94,13 +94,9 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
 
   // Create RecordItem
   const handleItemCreated = (item: RecordItem | null) => {
-    // Trigger parent to refetch data
+    // Store updates automatically after server response, no need to refresh
+    // Just notify parent if needed for other side effects
     onItemCreated?.();
-
-    // Todo: update api to return record item on created and do optimistic update
-    // if (item) {
-    //   setTableData((prev) => [...prev, item]);
-    // }
   };
 
   const handleDeleteClick = (itemId: string) => {
@@ -128,7 +124,8 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
 
   const handleEditUpdated = async () => {
     // The Edit component handles the API call internally via updateRecordItem from useRecordStore
-    // We just need to trigger parent refresh here
+    // Store updates automatically after server response, no need to refresh
+    // Just notify parent if needed for other side effects
     onItemCreated?.();
   };
 

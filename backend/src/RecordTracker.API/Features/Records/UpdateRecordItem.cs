@@ -95,7 +95,24 @@ public class UpdateRecordItemHandler
         await _dbContext.RecordValue.AddRangeAsync(newRecordValues, ct);
         await _dbContext.SaveChangesAsync(ct);
 
-        return Results.NoContent();
+        // Reload the record item with its values to build the response
+        await _dbContext.Entry(recordItem).Collection(r => r.RecordValues).LoadAsync(ct);
+
+        // Build response in the same flattened format as GetRecordById
+        var responseItem = new Dictionary<string, string>
+        {
+            ["id"] = recordItem.Id.ToString(),
+            ["createdAt"] = recordItem.CreatedAt.ToString("o")
+        };
+
+        // Populate all fields according to RecordFields order
+        foreach (var field in record.RecordFields.OrderBy(f => f.Order))
+        {
+            var matchingValue = recordItem.RecordValues.FirstOrDefault(v => v.RecordFieldId == field.Id);
+            responseItem[field.Id.ToString()] = matchingValue?.Value ?? "";
+        }
+
+        return Results.Ok(responseItem);
     }
 }
 
