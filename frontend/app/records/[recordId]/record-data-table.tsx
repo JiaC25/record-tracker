@@ -4,13 +4,12 @@ import { DataTable } from '@/components/data-table/data-table';
 import { DeleteRecordItemDialog } from '@/components/records/delete-record-item-dialog';
 import { EditRecordItemPopover } from '@/components/records/edit-record-item-popover';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Card, CardContent } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useRecordStore } from '@/lib/store/recordStore';
 import { RecordEntity, RecordItem } from '@/lib/types/records';
 import { ColumnDef, Row } from '@tanstack/react-table';
-import { Columns3Cog, MoreVertical, Plus } from 'lucide-react';
+import { MoreVertical, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { CreateRecordItemPopover } from '@/components/records/create-record-item-popover';
 
@@ -78,15 +77,51 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
 
   const columns: ColumnDef<RecordItem>[] = [
     // Dynamic RecordFields columns
-    ...record.recordFields.map((field) => ({
-      accessorKey: field.id,
-      header: field.name,
-      cell: ({ row }: any) => { return buildRecordValueCell(row.getValue(field.id), field.fieldType); },
-    })),
+    ...record.recordFields.map((field) => {
+      // Custom sorting function based on field type
+      const sortingFn = (rowA: Row<RecordItem>, rowB: Row<RecordItem>) => {
+        const valueA = rowA.getValue(field.id) as string | undefined;
+        const valueB = rowB.getValue(field.id) as string | undefined;
+        
+        // Handle empty values (treat as null/undefined)
+        if (!valueA || (typeof valueA === 'string' && valueA.trim() === '')) return 1; // Empty values go to the end
+        if (!valueB || (typeof valueB === 'string' && valueB.trim() === '')) return -1;
+        
+        switch (field.fieldType) {
+        case 'Date': {
+          const dateA = new Date(valueA as string).getTime();
+          const dateB = new Date(valueB as string).getTime();
+          if (isNaN(dateA)) return 1; // Invalid dates go to the end
+          if (isNaN(dateB)) return -1;
+          return dateA - dateB;
+        }
+        case 'Number': {
+          const numA = parseFloat(valueA as string);
+          const numB = parseFloat(valueB as string);
+          if (isNaN(numA)) return 1; // Invalid numbers go to the end
+          if (isNaN(numB)) return -1;
+          return numA - numB;
+        }
+        default: // Text
+          return (valueA as string).localeCompare(valueB as string);
+        }
+      };
+
+      return {
+        accessorKey: field.id,
+        header: field.name,
+        enableSorting: true,
+        enableHiding: true,
+        sortingFn: sortingFn,
+        cell: ({ row }: any) => { return buildRecordValueCell(row.getValue(field.id), field.fieldType); },
+      };
+    }),
     // Actions buttons Column
     {
       id: 'actions',
       header: '',
+      enableSorting: false, // Disable sorting for actions column
+      enableHiding: false, // Don't allow hiding the actions column
       meta: { headerClassName: 'w-[20px]' },
       cell: ({ row }) => { return buildActionsCell(row); },
     },
@@ -148,31 +183,19 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
   return (
     <>
       <Card className="text-sm rounded-sm gap-3 pt-4 max-h-[85vh] overflow-y-auto">
-        <CardHeader className="space-y-1 px-3">
-          <div className="flex justify-between items-center">
-            <div className="min-w-0">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <h4 className="truncate max-w-[24rem]" title={record.name}>{record.name}</h4>
-                </TooltipTrigger>
-                <TooltipContent sideOffset={6}>{record.name}</TooltipContent>
-              </Tooltip>
-              {record.description && (<small>{record.description}</small>)}
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm"><Columns3Cog /></Button>
-              <CreateRecordItemPopover record={record} onCreated={handleItemCreated}>
-                <Button size="sm" className="w-12"><Plus /></Button>
-              </CreateRecordItemPopover>
-            </div>
-          </div>
-        </CardHeader>
         <CardContent className="px-3">
           <DataTable 
             columns={columns} 
             data={tableData}
             getRowClassName={getRowClassName}
             getFirstCellClassName={getFirstCellClassName}
+            title={record.name}
+            description={record.description}
+            headerActions={
+              <CreateRecordItemPopover record={record} onCreated={handleItemCreated}>
+                <Button size="sm" className="w-12" variant="default"><Plus /></Button>
+              </CreateRecordItemPopover>
+            }
           />
         </CardContent>
       </Card>

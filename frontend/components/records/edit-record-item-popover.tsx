@@ -130,7 +130,7 @@ export const EditRecordItemPopover = ({
           }}
         />
       </PopoverAnchor>
-      <PopoverContent side="bottom" align="end" className="w-[50vh] md:w-[45vh] p-0">
+      <PopoverContent side="bottom" align="end" className="min-w-[300px] max-w-full p-0">
           <div className="max-h-[40vh] overflow-y-auto scrollbar-styled p-4">
             <RecordItemForm
               record={record}
