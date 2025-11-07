@@ -2,7 +2,7 @@
 
 public class RecordValue
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; }
     public string Value { get; set; } = default!;
 
     // FK

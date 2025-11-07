@@ -45,7 +45,7 @@ const UserStatus = () => {
                 </DropdownMenuItem> */}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={logoutUser} className="flex justify-center text-xs">
-                    Log out
+          Log out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

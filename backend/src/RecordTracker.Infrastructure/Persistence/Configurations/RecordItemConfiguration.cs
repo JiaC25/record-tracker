@@ -13,6 +13,9 @@ public class RecordItemConfiguration : IEntityTypeConfiguration<RecordItem>
 
         builder.HasKey(x => x.Id);
         
+        builder.Property(x => x.Id)
+            .ValueGeneratedOnAdd();
+        
         builder.Property(x => x.CreatedAt)
             .IsRequired();
 

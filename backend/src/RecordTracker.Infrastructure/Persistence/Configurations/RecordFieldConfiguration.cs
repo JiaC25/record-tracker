@@ -12,6 +12,9 @@ public class RecordFieldConfiguration : IEntityTypeConfiguration<RecordField>
 
         builder.HasKey(x => x.Id);
         
+        builder.Property(x => x.Id)
+            .ValueGeneratedOnAdd();
+        
         builder.Property(x => x.Name)
             .HasMaxLength(100)
             .IsRequired();

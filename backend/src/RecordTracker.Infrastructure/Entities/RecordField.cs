@@ -2,7 +2,7 @@
 
 public class RecordField
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; }
     public string Name { get; set; } = default!;
     public FieldType FieldType { get; set; }
     public bool IsRequired { get; set; } = false;

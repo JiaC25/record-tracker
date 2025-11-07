@@ -71,7 +71,7 @@ export const useAuthStore = create<AuthStore>()(
         clearSession();
                 
         authApi.logoutUser();
-        window.location.href = ROUTES.HOME; // Redirect to home page
+        window.location.href = ROUTES.LOGIN; // Redirect to login page
       },
 
       /** Check user authentication & update store */
