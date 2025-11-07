@@ -3,7 +3,6 @@ export const ROUTES = {
   LOGIN: '/login',
   SIGNUP: '/signup',
   RECORDS: '/records',
-  ANALYTICS: '/analytics',
 
   RECORD_VIEW: (id: string) => `/records/${id}`,
   
@@ -18,5 +17,4 @@ export const PUBLIC_AUTH_ROUTES = [
 
 export const PROTECTED_ROUTES = [
   ROUTES.RECORDS,
-  ROUTES.ANALYTICS,
 ];
