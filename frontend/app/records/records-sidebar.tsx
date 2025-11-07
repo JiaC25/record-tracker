@@ -11,13 +11,15 @@ import { useRecordStore } from '@/lib/store/recordStore';
 import { LayoutDashboard, MoreVertical } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from '../../components/ui/sidebar';
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail, useSidebar } from '../../components/ui/sidebar';
 import { ROUTES } from '../../lib/routes.config';
 
 const RecordsSidebar = () => {
   const params = useParams<{ recordId: string }>();
   const currentRecordId = params.recordId;
   const router = useRouter();
+
+  const { isMobile, setOpenMobile } = useSidebar();
 
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const authIsHydrated = useAuthStore((state) => state.isHydrated);
@@ -39,6 +41,10 @@ const RecordsSidebar = () => {
 
   const handleSelectRecord = (recordId: string) => {
     router.push(ROUTES.RECORD_VIEW(recordId));
+    // Close sidebar on mobile after navigation
+    if (isMobile) {
+      setOpenMobile(false);
+    }
   };
 
   const handleDeleteClick = (recordId: string, recordName: string, e: React.MouseEvent) => {
@@ -150,7 +156,7 @@ const RecordsSidebar = () => {
       </SidebarHeader>
       <SidebarContent className="pb-16">
         {sortedLetters.map((letter) => (
-          <SidebarGroup key={letter}>
+          <SidebarGroup key={letter} className="py-0 px-1">
             <SidebarGroupLabel>{letter}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
@@ -169,7 +175,7 @@ const RecordsSidebar = () => {
                         <DropdownMenuTrigger asChild>
                           <Button 
                             variant="ghost" 
-                            className="h-8 w-8 p-0 shrink-0 opacity-0 group-hover/record:opacity-100 transition-opacity"
+                            className="h-8 w-8 p-0 shrink-0 opacity-100 md:opacity-0 md:group-hover/record:opacity-100 transition-opacity"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <span className="sr-only">Open menu</span>
