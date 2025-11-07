@@ -132,18 +132,18 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
     onItemCreated?.();
   };
 
-  // Get row className to highlight the row being edited
   const getRowClassName = (item: RecordItem) => {
+    // Highlight the row being edited
     if (editItem && editItem.id === item.id) {
       return 'bg-primary/10';
     }
     return '';
   };
 
-  // Get first cell className to add left border for edited row
   const getFirstCellClassName = (item: RecordItem) => {
+    // Add a left border to the first cell of the row being edited (using pseudo-element to avoid layout shift)
     if (editItem && editItem.id === item.id) {
-      return 'border-l-2 border-l-primary';
+      return 'relative before:absolute before:left-0 before:top-0 before:bottom-0 before:w-0.5 before:bg-primary before:content-[""]';
     }
     return '';
   };
