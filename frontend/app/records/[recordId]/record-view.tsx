@@ -10,10 +10,10 @@ type RecordViewProps = {
 
 export const RecordView = ({recordId} : RecordViewProps) => {
   const record = useRecordStore((state) => state.getRecord(recordId));
-  const { fetchRecord } = useRecordStore();
 
   const handleItemCreated = () => {
-    fetchRecord(recordId);
+    // Store updates automatically after server response, no need to refetch
+    // This callback can be used for other side effects if needed
   };
 
   return (record &&

@@ -1,7 +1,9 @@
 ﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using RecordTracker.API.Features.Records.Models;
 using RecordTracker.API.Services.Interfaces;
 using RecordTracker.Infrastructure.Entities;
+using RecordTracker.Infrastructure.Persistence;
 using RecordTracker.Infrastructure.Repositories.Interfaces;
 
 namespace RecordTracker.API.Features.Records;
@@ -33,15 +35,18 @@ public class CreateRecordItemsHandler
     private readonly IValidator<CreateRecordItemsRequest> _validator;
     private readonly IRecordRepository _recordRepository;
     private readonly ICurrentUserService _currentUserService;
+    private readonly RecordTrackerDbContext _dbContext;
 
     public CreateRecordItemsHandler(
         IValidator<CreateRecordItemsRequest> validator,
         IRecordRepository recordRepository,
-        ICurrentUserService currentUserService)
+        ICurrentUserService currentUserService,
+        RecordTrackerDbContext dbContext)
     {
         _validator = validator;
         _recordRepository = recordRepository;
         _currentUserService = currentUserService;
+        _dbContext = dbContext;
     }
 
     public async Task<IResult> HandleAsync(CreateRecordItemsRequest request, CancellationToken ct = default)
@@ -68,6 +73,7 @@ public class CreateRecordItemsHandler
             return TypedResults.BadRequest($"Invalid field ID: {string.Join(", ", invalidIds)}");
 
         // Create RecordItems with RecordValues
+        var createdItems = new List<RecordItem>();
         foreach (var itemInput in request.Items)
         {           
             var recordItem = new RecordItem
@@ -85,11 +91,37 @@ public class CreateRecordItemsHandler
             };
 
             await _recordRepository.AddRecordItemAsync(recordItem, ct);
+            createdItems.Add(recordItem);
         }
 
         await _recordRepository.SaveChangesAsync(ct);
 
-        return TypedResults.NoContent();
+        // Reload RecordValues to ensure we have the latest data from the database
+        foreach (var item in createdItems)
+        {
+            await _dbContext.Entry(item).Collection(r => r.RecordValues).LoadAsync(ct);
+        }
+
+        // Build response in the same flattened format as GetRecordById
+        var responseItems = createdItems.Select(item =>
+        {
+            var dict = new Dictionary<string, string>
+            {
+                ["id"] = item.Id.ToString(),
+                ["createdAt"] = item.CreatedAt.ToString("o")
+            };
+
+            // Populate all fields according to RecordFields order
+            foreach (var field in record.RecordFields.OrderBy(f => f.Order))
+            {
+                var matchingValue = item.RecordValues.FirstOrDefault(v => v.RecordFieldId == field.Id);
+                dict[field.Id.ToString()] = matchingValue?.Value ?? "";
+            }
+
+            return dict;
+        }).ToList();
+
+        return TypedResults.Ok(responseItems);
     }
 
 }

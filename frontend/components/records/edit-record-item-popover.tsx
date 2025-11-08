@@ -3,7 +3,7 @@
 import { Popover, PopoverContent, PopoverAnchor } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { RecordItemForm } from '@/components/records/record-item-form';
 import { useRecordStore } from '@/lib/store/recordStore';
 import { RecordEntity, RecordItem } from '@/lib/types/records';
@@ -32,6 +32,15 @@ export const EditRecordItemPopover = ({
   const [anchorElement, setAnchorElement] = useState<HTMLElement | null>(null);
   const [anchorPosition, setAnchorPosition] = useState<{ left: number; top: number; width: number; height: number } | null>(null);
   const { updateRecordItem } = useRecordStore();
+  const isMountedRef = useRef(true);
+
+  // Track if popover is mounted/open to ignore results if closed
+  useEffect(() => {
+    isMountedRef.current = open;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, [open]);
 
   // Position the Popover based on the anchor element's position
   useEffect(() => {
@@ -69,17 +78,25 @@ export const EditRecordItemPopover = ({
     setIsSaving(true);
 
     try {
-      // The store method will handle API call and state update
+      // Call API and update store with server response
       await updateRecordItem(record.id, item.id, formData);
 
-      // Update successful
-      handlePopoverClose();
-      onUpdated?.();
+      // Only update UI if popover is still open
+      if (isMountedRef.current) {
+        handlePopoverClose();
+        onUpdated?.();
+      }
     } catch (error) {
-      console.error('Error updating record item', error);
-      // TODO: Show toast notification when toast system is implemented
+      // Only handle error if popover is still open
+      if (isMountedRef.current) {
+        console.error('Error updating record item', error);
+        // TODO: Show toast notification when toast system is implemented
+      }
     } finally {
-      setIsSaving(false);
+      // Always reset loading state if popover is still open
+      if (isMountedRef.current) {
+        setIsSaving(false);
+      }
     }
   };
 
@@ -92,6 +109,7 @@ export const EditRecordItemPopover = ({
   const handlePopoverClose = () => {
     setIsFormValid(false);
     setFormData(null);
+    setIsSaving(false); // Reset loading state if user closes during save
     onOpenChange(false);
   };
 
@@ -112,17 +130,15 @@ export const EditRecordItemPopover = ({
           }}
         />
       </PopoverAnchor>
-      <PopoverContent side="bottom" align="end" className="w-[45vh]">
-        <ScrollArea className="max-h-[65vh]">
-          <div className="p-2">
+      <PopoverContent side="bottom" align="end" className="min-w-[300px] max-w-full p-0">
+          <div className="max-h-[40vh] overflow-y-auto scrollbar-styled p-4">
             <RecordItemForm
               record={record}
               onFormChange={handleFormChange}
               defaultItem={item}
             />
           </div>
-        </ScrollArea>
-        <div className="flex justify-end mt-2">
+        <div className="flex justify-end p-2 border-t bg-secondary/30">
           <Button size="sm" disabled={!isFormValid || isSaving} onClick={handleSave}>
             {isSaving ? <Loader2Icon className="animate-spin"/> : 'Save'}
           </Button>

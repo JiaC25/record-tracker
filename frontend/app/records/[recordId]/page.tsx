@@ -8,7 +8,7 @@ import { useSidebarHeader } from '../../../contexts/sidebar-header-context';
 import { RecordView } from './record-view';
 import { DeleteRecordDialog } from '@/components/records/delete-record-dialog';
 import { Button } from '@/components/ui/button';
-import { Trash2 } from 'lucide-react';
+import { Cog, CogIcon, Settings, Settings2Icon, TableConfig, Trash2 } from 'lucide-react';
 import { ROUTES } from '@/lib/routes.config';
 
 const RecordPage = () => {
@@ -51,17 +51,9 @@ const RecordPage = () => {
       setHeader(<Skeleton className="h-4 w-24" />);
     } else if (record) {
       setHeader(
-        <div className="flex items-center justify-between w-full pr-2">
-          <small>{record.name}</small>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleDeleteClick}
-            className="h-7 text-destructive hover:text-destructive hover:bg-destructive/10"
-          >
-            <Trash2 className="h-4 w-4 mr-1.5" />
-            Delete
-          </Button>
+        <div className="flex items-center justify-between w-full pr-2 overflow-x-hidden">
+          <span className="max-w-[calc(100%-3rem)] truncate">{record.name}</span>
+          <div><Button variant="ghost" size="sm"><Settings2Icon />Config</Button></div>
         </div>
       );
     } else {
