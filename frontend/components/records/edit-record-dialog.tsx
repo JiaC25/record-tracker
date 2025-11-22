@@ -65,12 +65,12 @@ export const EditRecordDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
-      <DialogContent className="sm:max-w-3xl">
-        <DialogHeader>
+      <DialogContent className="max-w-full sm:max-w-3xl">
+        <DialogHeader className="border-b border-accent">
           <DialogTitle>Edit Record</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
-        <div className="max-h-[65vh] overflow-auto p-2 scrollbar-styled">
+        <div className="max-h-[70vh] overflow-auto p-2 scrollbar-styled">
           <RecordForm
             initialRecord={record}
             onFormChange={handleFormChange}
