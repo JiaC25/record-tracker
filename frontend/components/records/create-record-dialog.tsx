@@ -44,12 +44,12 @@ export const CreateRecordDialog = ({ open, onDialogClose }: CreateRecordDialogPr
 
   return (
     <Dialog open={open} onOpenChange={onDialogClose}>
-      <DialogContent className="sm:max-w-3xl">
-        <DialogHeader>
+      <DialogContent className="max-w-full sm:max-w-3xl">
+        <DialogHeader className="border-b border-accent">
           <DialogTitle>Create New Record</DialogTitle>
           <DialogDescription />
         </DialogHeader>
-        <div className="max-h-[65vh] overflow-auto p-2 scrollbar-styled">
+        <div className="max-h-[70vh] overflow-auto p-2 scrollbar-styled">
           <RecordForm onFormChange={handleFormChange} />
         </div>
         <DialogFooter>

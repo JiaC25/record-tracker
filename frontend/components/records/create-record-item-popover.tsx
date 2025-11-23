@@ -1,14 +1,12 @@
 'use client';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { RecordEntity, RecordItem, RecordItemInput } from '@/lib/types/records';
+import { RecordEntity, RecordItem } from '@/lib/types/records';
 import { Button } from '../ui/button';
 import { Loader2Icon } from 'lucide-react';
 import { RecordItemForm } from './record-item-form';
-import { useCallback, useState } from 'react';
-import { toRecordItemInput } from '@/lib/helpers/recordHelpers';
-import { recordApi } from '@/lib/api/recordApi';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRecordStore } from '@/lib/store/recordStore';
 
 type CreateRecordItemPopoverProps = {
   record: RecordEntity;
@@ -25,26 +23,43 @@ export const CreateRecordItemPopover = ({
   const [isFormValid, setIsFormValid] = useState(false);
   const [formData, setFormData] = useState<RecordItem | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const { createRecordItems } = useRecordStore();
+  const isMountedRef = useRef(true);
+
+  // Track if popover is mounted/open to ignore results if closed
+  useEffect(() => {
+    isMountedRef.current = open;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, [open]);
 
   const handleSave = async () => {
     if (!isFormValid || !formData) return;
     setIsSaving(true);
 
     try {
-      // Convert form data to API request format and submit
-      const items = toRecordItemInput([formData], record.recordFields) as RecordItemInput[];
-      await recordApi.createRecordItems(record.id, items);
+      // Call API and update store with server response
+      const createdItems = await createRecordItems(record.id, [formData]);
 
-      // Create successful
-      setIsFormValid(false);
-      setFormData(null);
-      setOpen(false);
-      onCreated?.(null); // Maybe return created item?
+      // Only update UI if popover is still open
+      if (isMountedRef.current) {
+        setIsFormValid(false);
+        setFormData(null);
+        setOpen(false);
+        onCreated?.(createdItems[0] || null);
+      }
     } catch (error) {
-      console.error('Error submitting form', error);
-      // TODO: Show toast notification when toast system is implemented
+      // Only handle error if popover is still open
+      if (isMountedRef.current) {
+        console.error('Error submitting form', error);
+        // TODO: Show toast notification when toast system is implemented
+      }
     } finally {
-      setIsSaving(false);
+      // Always reset loading state
+      if (isMountedRef.current) {
+        setIsSaving(false);
+      }
     }
   };
 
@@ -57,8 +72,10 @@ export const CreateRecordItemPopover = ({
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
     if (!newOpen) {
+      // Reset all state when closing
       setIsFormValid(false);
       setFormData(null);
+      setIsSaving(false); // Reset loading state if user closes during save
     }
   };
 
@@ -67,16 +84,14 @@ export const CreateRecordItemPopover = ({
       <PopoverTrigger asChild>
         {children}
       </PopoverTrigger>
-      <PopoverContent side="bottom" align="end" className="w-[45vh]">
-        <ScrollArea className="max-h-[65vh]">
-          <div className="p-2">
+      <PopoverContent side="bottom" align="end" className="min-w-[300px] max-w-full p-0">
+        <div className="max-h-[40vh] overflow-y-auto scrollbar-styled p-4">
             <RecordItemForm
               record={record}
               onFormChange={handleFormChange}
             />
-          </div>
-        </ScrollArea>
-        <div className="flex justify-end mt-2">
+        </div>
+        <div className="flex justify-end p-2 border-t bg-secondary/30">
           <Button size="sm" disabled={!isFormValid || isSaving} onClick={handleSave}>
             {isSaving ? <Loader2Icon className="animate-spin" /> : 'Add'}
           </Button>

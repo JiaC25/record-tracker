@@ -1,5 +1,5 @@
 import { groupRecordSummariesByLetter, toRecordItemInput } from '@/lib/helpers/recordHelpers';
-import { GroupedRecordSummaries, RecordEntity, RecordSummary } from '@/lib/types/records';
+import { GroupedRecordSummaries, RecordEntity, RecordItemInput, RecordSummary } from '@/lib/types/records';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { recordApi } from '../api/recordApi';
@@ -24,7 +24,8 @@ type RecordStore = {
     fetchRecord: (recordId: string) => Promise<RecordEntity | undefined>
     deleteRecord: (recordId: string) => Promise<void>
     deleteRecordItem: (recordId: string, itemId: string) => Promise<void>
-    updateRecordItem: (recordId: string, itemId: string, updatedItem: RecordEntity['recordItems'][number]) => Promise<void>
+    updateRecordItem: (recordId: string, itemId: string, updatedItem: RecordEntity['recordItems'][number]) => Promise<RecordEntity['recordItems'][number]>
+    createRecordItems: (recordId: string, items: RecordEntity['recordItems'][number][]) => Promise<RecordEntity['recordItems'][number][]>
     clearAll: () => void
     setHydrated: () => void
 }
@@ -132,38 +133,67 @@ export const useRecordStore = create<RecordStore>()(
       },
 
       updateRecordItem: async (recordId: string, itemId: string, updatedItem: RecordEntity['recordItems'][number]) => {
-        try {
-          const record = get().records[recordId];
-          if (!record) throw new Error('Record not found');
+        const record = get().records[recordId];
+        if (!record) throw new Error('Record not found');
 
-          // Convert to API format
-          const requestBody = toRecordItemInput(updatedItem, record.recordFields);
+        // Convert to API format - single item, so result is single RecordItemInput
+        const requestBody = toRecordItemInput(updatedItem, record.recordFields) as RecordItemInput;
 
-          await recordApi.updateRecordItem(recordId, itemId, requestBody);
+        // Call API and get the server response
+        const serverItem = await recordApi.updateRecordItem(recordId, itemId, requestBody);
 
-          // Update item in the record's recordItems array
-          set((state) => {
-            const recordState = state.records[recordId];
-            if (!recordState) return state;
+        // Update with server response
+        set((state) => {
+          const recordState = state.records[recordId];
+          if (!recordState) return state;
 
-            const updatedRecord = {
-              ...recordState,
-              recordItems: recordState.recordItems.map(item => 
-                item.id === itemId ? updatedItem : item
-              ),
-            };
+          const updatedRecord = {
+            ...recordState,
+            recordItems: recordState.recordItems.map(item => 
+              item.id === itemId ? serverItem : item
+            ),
+          };
 
-            return {
-              records: {
-                ...state.records,
-                [recordId]: updatedRecord,
-              },
-            };
-          });
-        } catch (error) {
-          console.error('Failed to update record item', error);
-          throw error;
-        }
+          return {
+            records: {
+              ...state.records,
+              [recordId]: updatedRecord,
+            },
+          };
+        });
+
+        return serverItem;
+      },
+
+      createRecordItems: async (recordId: string, items: RecordEntity['recordItems'][number][]) => {
+        const record = get().records[recordId];
+        if (!record) throw new Error('Record not found');
+
+        // Convert to API format - array of items, so result is RecordItemInput[]
+        const requestBody = toRecordItemInput(items, record.recordFields) as RecordItemInput[];
+
+        // Call API and get the server response
+        const serverItems = await recordApi.createRecordItems(recordId, requestBody);
+
+        // Update with server response - add items at the beginning (newest first)
+        set((state) => {
+          const recordState = state.records[recordId];
+          if (!recordState) return state;
+
+          const updatedRecord = {
+            ...recordState,
+            recordItems: [...serverItems, ...recordState.recordItems],
+          };
+
+          return {
+            records: {
+              ...state.records,
+              [recordId]: updatedRecord,
+            },
+          };
+        });
+
+        return serverItems;
       },
 
       clearAll: () => {

@@ -58,8 +58,10 @@ export const RecordItemForm = ({
 
     if (field.fieldType === 'Number') {
       rules.validate = {
-        isNumber: (value: string) =>
-          !isNaN(Number(value)) || `${field.name} must be a number.`
+        isNumber: (value: string) => {
+          if (!value) return field.isRequired ? `${field.name} is required` : true;
+          return !isNaN(Number(value)) || `${field.name} must be a number.`;
+        }
       };
     }
 
