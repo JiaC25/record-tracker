@@ -1,12 +1,12 @@
 'use client';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { RecordEntity, RecordItem } from '@/lib/types/records';
-import { Button } from '../ui/button';
-import { Loader2Icon } from 'lucide-react';
-import { RecordItemForm } from './record-item-form';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRecordStore } from '@/lib/store/recordStore';
+import { RecordEntity, RecordItem } from '@/lib/types/records';
+import { Loader2Icon } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Button } from '../ui/button';
+import { RecordItemForm } from './record-item-form';
 
 type CreateRecordItemPopoverProps = {
   record: RecordEntity;
@@ -86,10 +86,10 @@ export const CreateRecordItemPopover = ({
       </PopoverTrigger>
       <PopoverContent side="bottom" align="end" className="min-w-[300px] max-w-full p-0">
         <div className="max-h-[40vh] overflow-y-auto scrollbar-styled p-4">
-            <RecordItemForm
-              record={record}
-              onFormChange={handleFormChange}
-            />
+          <RecordItemForm
+            record={record}
+            onFormChange={handleFormChange}
+          />
         </div>
         <div className="flex justify-end p-2 border-t bg-secondary/30">
           <Button size="sm" disabled={!isFormValid || isSaving} onClick={handleSave}>
@@ -99,4 +99,4 @@ export const CreateRecordItemPopover = ({
       </PopoverContent>
     </Popover>
   );
-}
+};

@@ -21,4 +21,5 @@ public class Record
     public User? DeletedByUser { get; set; }
     public ICollection<RecordField> RecordFields { get; set; } = [];
     public ICollection<RecordItem> RecordItems { get; set; } = [];
+    public ICollection<Analytic> Analytics { get; set; } = [];
 }

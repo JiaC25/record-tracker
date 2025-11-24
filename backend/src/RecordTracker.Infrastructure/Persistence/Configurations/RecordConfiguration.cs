@@ -49,6 +49,11 @@ public class RecordConfiguration : IEntityTypeConfiguration<Record>
             .HasForeignKey(x => x.RecordId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasMany(x => x.Analytics)
+            .WithOne(x => x.Record)
+            .HasForeignKey(x => x.RecordId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         // Global filter to exclude soft-deleted records
         builder.HasQueryFilter(x => !x.IsDeleted);
     }

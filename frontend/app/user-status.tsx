@@ -1,11 +1,11 @@
 'use client';
 
-import { Skeleton } from '@/components/ui/skeleton';
-import { useAuthStore } from '@/lib/store/authStore';
-import { User } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useAuthStore } from '@/lib/store/authStore';
+import { User } from 'lucide-react';
 
 const UserStatus = () => {
   const { logoutUser } = useAuthStore();
@@ -44,7 +44,10 @@ const UserStatus = () => {
                     Appearance <ThemeToggleInline />
                 </DropdownMenuItem> */}
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={logoutUser} className="flex justify-center text-xs">
+        <DropdownMenuItem 
+          onClick={() => logoutUser().catch(console.error)} 
+          className="flex justify-center text-xs"
+        >
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>

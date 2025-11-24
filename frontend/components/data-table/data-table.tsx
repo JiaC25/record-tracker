@@ -1,6 +1,17 @@
 'use client';
 
-import * as React from 'react';
+import { DataTablePagination } from '@/components/data-table/data-table-pagination';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { cn } from '@/lib/utils';
 import {
   ColumnDef,
   flexRender,
@@ -12,19 +23,8 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { DataTablePagination } from '@/components/data-table/data-table-pagination';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { ArrowUpDown, ArrowUp, ArrowDown, Columns3Cog } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { ArrowDown, ArrowUp, ArrowUpDown, Columns3Cog } from 'lucide-react';
+import * as React from 'react';
 
 type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
@@ -137,8 +137,7 @@ export const DataTable = <TData, TValue>({ columns, data, getRowClassName, getFi
       {/* Table */}
       <div
         data-slot="table-container"
-        className="relative w-full overflow-x-auto
-          rounded-sm border max-h-[60vh] overflow-y-auto scrollbar-styled"
+        className="relative w-full overflow-auto rounded-sm border max-h-[61vh] scrollbar-styled"
       >
         <Table>
           <TableHeader
@@ -226,7 +225,7 @@ export const DataTable = <TData, TValue>({ columns, data, getRowClassName, getFi
         </Table>
       </div>
       {/* Pagination controls UI */}
-      <DataTablePagination table={table} />
+      <DataTablePagination table={table} showRowPerPageOption={true}/>
     </div>
   );
 };

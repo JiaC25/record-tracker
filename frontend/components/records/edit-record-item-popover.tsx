@@ -1,13 +1,12 @@
 'use client';
 
-import { Popover, PopoverContent, PopoverAnchor } from '@/components/ui/popover';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { RecordItemForm } from '@/components/records/record-item-form';
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover';
 import { useRecordStore } from '@/lib/store/recordStore';
 import { RecordEntity, RecordItem } from '@/lib/types/records';
 import { Loader2Icon } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 type EditRecordItemPopoverProps = {
   open: boolean;
@@ -131,13 +130,13 @@ export const EditRecordItemPopover = ({
         />
       </PopoverAnchor>
       <PopoverContent side="bottom" align="end" className="min-w-[300px] max-w-full p-0">
-          <div className="max-h-[40vh] overflow-y-auto scrollbar-styled p-4">
-            <RecordItemForm
-              record={record}
-              onFormChange={handleFormChange}
-              defaultItem={item}
-            />
-          </div>
+        <div className="max-h-[40vh] overflow-y-auto scrollbar-styled p-4">
+          <RecordItemForm
+            record={record}
+            onFormChange={handleFormChange}
+            defaultItem={item}
+          />
+        </div>
         <div className="flex justify-end p-2 border-t bg-secondary/30">
           <Button size="sm" disabled={!isFormValid || isSaving} onClick={handleSave}>
             {isSaving ? <Loader2Icon className="animate-spin"/> : 'Save'}

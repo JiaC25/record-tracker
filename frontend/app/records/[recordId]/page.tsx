@@ -1,15 +1,15 @@
 'use client';
 
+import { DeleteRecordDialog } from '@/components/records/delete-record-dialog';
+import { RecordLayoutConfigPopover } from '@/components/records/record-layout-config-popover';
+import { useRecordLayout } from '@/hooks/use-record-layout';
+import { ROUTES } from '@/lib/routes.config';
 import { useRecordStore } from '@/lib/store/recordStore';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Skeleton } from '../../../components/ui/skeleton';
 import { useSidebarHeader } from '../../../contexts/sidebar-header-context';
 import { RecordView } from './record-view';
-import { DeleteRecordDialog } from '@/components/records/delete-record-dialog';
-import { Button } from '@/components/ui/button';
-import { Cog, CogIcon, Settings, Settings2Icon, TableConfig, Trash2 } from 'lucide-react';
-import { ROUTES } from '@/lib/routes.config';
 
 const RecordPage = () => {
   const params = useParams<{ recordId: string }>();
@@ -22,7 +22,8 @@ const RecordPage = () => {
   const router = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  
+  const [layout, setLayout] = useRecordLayout();
+
   useEffect(() => {
     if (!record) fetchRecord(recordId);
   }, [recordId]);
@@ -33,7 +34,7 @@ const RecordPage = () => {
 
   const handleDeleteConfirm = async () => {
     if (!record) return;
-    
+
     setIsDeleting(true);
     try {
       await deleteRecord(recordId);
@@ -53,18 +54,22 @@ const RecordPage = () => {
       setHeader(
         <div className="flex items-center justify-between w-full pr-2 overflow-x-hidden">
           <span className="max-w-[calc(100%-3rem)] truncate">{record.name}</span>
-          <div><Button variant="ghost" size="sm"><Settings2Icon />Config</Button></div>
+          <div>
+            <RecordLayoutConfigPopover layout={layout} onLayoutChange={setLayout} />
+          </div>
         </div>
       );
     } else {
       setHeader(<small className="text-red-400">Failed to load record</small>);
     }
-  }, [record, isLoadingRecord, setHeader, handleDeleteClick]);
+    // setHeader is stable from useState, so we can omit it from dependencies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [record?.name, isLoadingRecord, layout]);
 
   return (
     <>
       {record ? (
-        <RecordView recordId={recordId} />
+        <RecordView recordId={recordId} layout={layout} />
       ) : (
         <div className="p-5 text-gray-500">Loading record...</div>
       )}

@@ -1,13 +1,13 @@
 'use client';
 
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useCallback, useState } from 'react';
-import { RecordForm } from './record-form';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { recordApi } from '@/lib/api/recordApi';
 import { useRecordStore } from '@/lib/store/recordStore';
 import { CreateRecordRequest, RecordSummary, UpdateRecordRequest } from '@/lib/types/records';
 import { Loader2Icon } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import { RecordForm } from './record-form';
 
 type EditRecordDialogProps = {
   open: boolean;
