@@ -15,7 +15,7 @@ type AuthStore = {
     setUserInfo: (userInfo: UserInfo | null) => void;
     loginUser: (email: string, password: string) => Promise<void>;
     clearSession: () => void;
-    logoutUser: () => void;
+    logoutUser: () => Promise<void>;
     checkAuth: () => Promise<void>;
 };
 
@@ -66,12 +66,43 @@ export const useAuthStore = create<AuthStore>()(
         // Clear any other persisted stores
         useRecordStore.getState().clearAll();
       },
-      logoutUser: () => {
+      logoutUser: async () => {
+        // Try to call backend logout API with retries
+        // The auth cookie is HttpOnly, so it can only be cleared by the backend
+        let backendLogoutSucceeded = false;
+        const maxRetries = 2;
+        const retryDelay = 300; // 300ms between retries
+        
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+          try {
+            await authApi.logoutUser();
+            backendLogoutSucceeded = true;
+            break; // Success, exit retry loop
+          } catch (error) {
+            if (attempt < maxRetries) {
+              // Wait before retrying (exponential backoff)
+              await new Promise(resolve => setTimeout(resolve, retryDelay * (attempt + 1)));
+              continue;
+            }
+            // Final attempt failed - log warning but continue with local logout
+            console.warn(
+              `Logout API call failed after ${maxRetries + 1} attempts. ` +
+              'Proceeding with local logout. The auth cookie may still be valid on the backend.',
+              error
+            );
+          }
+        }
+        
+        // Clear local session state regardless of backend logout result
+        // This ensures users aren't stuck if the backend is down
         const { clearSession } = get();
         clearSession();
-                
-        authApi.logoutUser();
-        window.location.href = ROUTES.LOGIN; // Redirect to login page
+        
+        // Use setTimeout to allow React to finish current render cycle before redirect
+        // This prevents STATUS_ACCESS_VIOLATION errors from components trying to access cleared state
+        setTimeout(() => {
+          window.location.replace(ROUTES.LOGIN); // Use replace instead of href to avoid adding to history
+        }, 0);
       },
 
       /** Check user authentication & update store */

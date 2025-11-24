@@ -44,7 +44,10 @@ const UserStatus = () => {
                     Appearance <ThemeToggleInline />
                 </DropdownMenuItem> */}
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={logoutUser} className="flex justify-center text-xs">
+        <DropdownMenuItem 
+          onClick={() => logoutUser().catch(console.error)} 
+          className="flex justify-center text-xs"
+        >
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>
