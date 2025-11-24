@@ -1,15 +1,15 @@
 'use client';
 
+import { DeleteRecordDialog } from '@/components/records/delete-record-dialog';
+import { Button } from '@/components/ui/button';
+import { ROUTES } from '@/lib/routes.config';
 import { useRecordStore } from '@/lib/store/recordStore';
+import { Settings2Icon } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Skeleton } from '../../../components/ui/skeleton';
 import { useSidebarHeader } from '../../../contexts/sidebar-header-context';
 import { RecordView } from './record-view';
-import { DeleteRecordDialog } from '@/components/records/delete-record-dialog';
-import { Button } from '@/components/ui/button';
-import { Cog, CogIcon, Settings, Settings2Icon, TableConfig, Trash2 } from 'lucide-react';
-import { ROUTES } from '@/lib/routes.config';
 
 const RecordPage = () => {
   const params = useParams<{ recordId: string }>();
@@ -22,7 +22,7 @@ const RecordPage = () => {
   const router = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  
+
   useEffect(() => {
     if (!record) fetchRecord(recordId);
   }, [recordId]);
@@ -33,7 +33,7 @@ const RecordPage = () => {
 
   const handleDeleteConfirm = async () => {
     if (!record) return;
-    
+
     setIsDeleting(true);
     try {
       await deleteRecord(recordId);

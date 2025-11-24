@@ -1,11 +1,11 @@
 import { registerAnalyticType } from '../../registry';
-import { lineChartTypeDefinition } from './type-definition';
 import { LineChartConfigForm } from './config-form';
+import { lineChartTypeDefinition } from './type-definition';
 import { LineChartVisualization } from './visualization';
 
 registerAnalyticType({
-    typeDefinition: lineChartTypeDefinition,
-    ConfigForm: LineChartConfigForm,
-    Visualization: LineChartVisualization,
+  typeDefinition: lineChartTypeDefinition,
+  ConfigForm: LineChartConfigForm,
+  Visualization: LineChartVisualization,
 });
 

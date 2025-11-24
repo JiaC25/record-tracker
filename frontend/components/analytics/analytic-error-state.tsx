@@ -8,34 +8,34 @@ type AnalyticErrorStateProps = {
 }
 
 export const AnalyticErrorState = ({ message, onEdit, onDelete }: AnalyticErrorStateProps) => {
-    return (
-        <Alert variant="destructive" className="border-destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Analytic Error</AlertTitle>
-            <AlertDescription>
-                {message}
-                {(onEdit || onDelete) && (
-                    <div className="mt-2 flex gap-2">
-                        {onEdit && (
-                            <button
-                                onClick={onEdit}
-                                className="text-sm underline hover:no-underline"
-                            >
+  return (
+    <Alert variant="destructive" className="border-destructive">
+      <AlertCircle className="h-4 w-4" />
+      <AlertTitle>Analytic Error</AlertTitle>
+      <AlertDescription>
+        {message}
+        {(onEdit || onDelete) && (
+          <div className="mt-2 flex gap-2">
+            {onEdit && (
+              <button
+                onClick={onEdit}
+                className="text-sm underline hover:no-underline"
+              >
                                 Edit
-                            </button>
-                        )}
-                        {onDelete && (
-                            <button
-                                onClick={onDelete}
-                                className="text-sm underline hover:no-underline"
-                            >
+              </button>
+            )}
+            {onDelete && (
+              <button
+                onClick={onDelete}
+                className="text-sm underline hover:no-underline"
+              >
                                 Delete
-                            </button>
-                        )}
-                    </div>
-                )}
-            </AlertDescription>
-        </Alert>
-    );
+              </button>
+            )}
+          </div>
+        )}
+      </AlertDescription>
+    </Alert>
+  );
 };
 

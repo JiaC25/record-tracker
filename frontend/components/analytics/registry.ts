@@ -1,5 +1,5 @@
 import { AnalyticType } from '@/lib/types/analytics';
-import { RecordFieldType, RecordField } from '@/lib/types/records';
+import { RecordField, RecordFieldType } from '@/lib/types/records';
 import { ReactNode } from 'react';
 
 export type AnalyticTypeDefinition = {
@@ -43,14 +43,14 @@ export type AnalyticVisualizationProps = {
 const registry = new Map<AnalyticType, AnalyticTypeComponents>();
 
 export const registerAnalyticType = (components: AnalyticTypeComponents) => {
-    registry.set(components.typeDefinition.id, components);
+  registry.set(components.typeDefinition.id, components);
 };
 
 export const getAnalyticType = (type: AnalyticType): AnalyticTypeComponents | undefined => {
-    return registry.get(type);
+  return registry.get(type);
 };
 
 export const getAllAnalyticTypes = (): AnalyticTypeDefinition[] => {
-    return Array.from(registry.values()).map(c => c.typeDefinition);
+  return Array.from(registry.values()).map(c => c.typeDefinition);
 };
 

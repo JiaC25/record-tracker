@@ -1,17 +1,17 @@
-import { useForm } from 'react-hook-form';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Form, FormMessage } from '@/components/ui/form';
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Form, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { Trash2, Plus, ArrowDown, ArrowUp, GripVertical } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
 import { CreateRecordRequest, RecordFieldType, RecordSummary, UpdateRecordRequest } from '@/lib/types/records';
 import { closestCorners, DndContext } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
+import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { GripVertical, Plus, Trash2 } from 'lucide-react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 
 type RecordFormProps = {
@@ -69,7 +69,7 @@ export const RecordForm = ({ initialRecord, onFormChange }: RecordFormProps) => 
       issues.push('Field names must be unique.');
 
     return issues;
-  }
+  };
 
   // Initialize fieldRows from initialRecord if provided
   const initializeFieldRows = useMemo((): FieldRow[] => {
@@ -96,9 +96,9 @@ export const RecordForm = ({ initialRecord, onFormChange }: RecordFormProps) => 
   const addRow = () => {
     setFieldRows(prev => {
       if (prev.length >= MAX_FIELDS_PER_RECORD) return prev;
-      return [...prev, createEmptyRow()]
+      return [...prev, createEmptyRow()];
     });
-  }
+  };
 
   const removeRow = useCallback((id: string) =>
     setFieldRows(prev => prev.filter(r => r.id !== id)), [setFieldRows]);
@@ -201,9 +201,9 @@ export const RecordForm = ({ initialRecord, onFormChange }: RecordFormProps) => 
           maxLength: { value: MAX_NAME_LENGTH, message: `Name cannot exceed ${MAX_NAME_LENGTH} characters.` }
         }
         )}
-          data-testid="record-name" placeholder="Enter a name for your record"
-          aria-invalid={!!errors.name}
-          autoFocus />
+        data-testid="record-name" placeholder="Enter a name for your record"
+        aria-invalid={!!errors.name}
+        autoFocus />
         <FormMessage>{errors?.name?.message ?? ''}</FormMessage>
       </div>
     );
@@ -214,7 +214,7 @@ export const RecordForm = ({ initialRecord, onFormChange }: RecordFormProps) => 
       <Input {...register('description', {
         maxLength: { value: MAX_DESCRIPTION_LENGTH, message: `Description cannot exceed ${MAX_DESCRIPTION_LENGTH} characters.` }
       })}
-        data-testid="record-description" placeholder="Enter a description for your record" />
+      data-testid="record-description" placeholder="Enter a description for your record" />
       <FormMessage>{errors?.description?.message ?? ''}</FormMessage>
     </div>;
   };
@@ -233,12 +233,12 @@ export const RecordForm = ({ initialRecord, onFormChange }: RecordFormProps) => 
       newRows.splice(newIndex, 0, movedItem);
       return newRows;
     });
-  }
+  };
 
   useEffect(() => {
-    if (isDraggingFields) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "";
-    return () => { document.body.style.overflow = ""; };
+    if (isDraggingFields) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = '';
+    return () => { document.body.style.overflow = ''; };
   }, [isDraggingFields]);
 
   const renderFieldsBuilder = () => {
