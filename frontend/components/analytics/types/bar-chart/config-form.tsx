@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AnalyticConfigFormProps } from '../../registry';
-import { BarChartConfig, GroupByPeriod } from '@/lib/types/analytics';
+import { BarChartConfig, GroupByPeriod, AggregationType } from '@/lib/types/analytics';
+import { filterFieldsByType, filterFieldsByTypes, isFieldType, parseConfig, X_AXIS_FIELD_TYPES, FIELD_TYPES } from '@/lib/utils/analytics';
 
 export const BarChartConfigForm = ({
     recordFields,
@@ -13,39 +14,37 @@ export const BarChartConfigForm = ({
 }: AnalyticConfigFormProps) => {
     const [xAxisFieldId, setXAxisFieldId] = useState<string>('');
     const [xAxisGroupByPeriod, setXAxisGroupByPeriod] = useState<GroupByPeriod | null>(null);
-    const [yAxisAggregation, setYAxisAggregation] = useState<'count' | 'sum' | 'average' | 'max' | 'min'>('count');
+    const [yAxisAggregation, setYAxisAggregation] = useState<AggregationType>('count');
     const [yAxisFieldId, setYAxisFieldId] = useState<string>('');
     const [chartOrientation, setChartOrientation] = useState<'vertical' | 'horizontal'>('vertical');
     const isInitialLoad = useRef(true);
 
-    const xAxisFields = recordFields.filter(f => ['Date', 'Text', 'Number'].includes(f.fieldType));
-    const numberFields = recordFields.filter(f => f.fieldType === 'Number');
-    const dateFields = recordFields.filter(f => f.fieldType === 'Date');
+    const xAxisFields = filterFieldsByTypes(recordFields, X_AXIS_FIELD_TYPES);
+    const numberFields = filterFieldsByType(recordFields, FIELD_TYPES.NUMBER);
+    const dateFields = filterFieldsByType(recordFields, FIELD_TYPES.DATE);
 
     const selectedXAxisField = recordFields.find(f => f.id === xAxisFieldId);
-    const isXAxisDate = selectedXAxisField?.fieldType === 'Date';
+    const isXAxisDate = isFieldType(selectedXAxisField, FIELD_TYPES.DATE);
 
     useEffect(() => {
         if (initialConfig) {
-            try {
-                const config: BarChartConfig = JSON.parse(initialConfig);
-                isInitialLoad.current = true;
-                setXAxisFieldId(config.xAxisFieldId || '');
-                // Parse xAxisGroupByPeriod - it can be undefined, null, or a valid period
-                setXAxisGroupByPeriod(config.xAxisGroupByPeriod ?? null);
-                setYAxisAggregation(config.yAxisAggregation || 'count');
-                setYAxisFieldId(config.yAxisFieldId || '');
-                setChartOrientation(config.chartOrientation || 'vertical');
-                // Mark initial load as complete after a brief delay to allow state to settle
-                setTimeout(() => {
-                    isInitialLoad.current = false;
-                }, 0);
-            } catch {
-                // Invalid config, use defaults
+            const defaultConfig: BarChartConfig = {
+                configVersion: 1,
+                xAxisFieldId: '',
+                yAxisAggregation: 'count',
+                chartOrientation: 'vertical',
+            };
+            const config = parseConfig<BarChartConfig>(initialConfig, defaultConfig);
+            isInitialLoad.current = true;
+            setXAxisFieldId(config.xAxisFieldId || '');
+            setXAxisGroupByPeriod(config.xAxisGroupByPeriod ?? null);
+            setYAxisAggregation(config.yAxisAggregation || 'count');
+            setYAxisFieldId(config.yAxisFieldId || '');
+            setChartOrientation(config.chartOrientation || 'vertical');
+            setTimeout(() => {
                 isInitialLoad.current = false;
-            }
+            }, 0);
         } else {
-            // Reset to defaults if no initial config
             isInitialLoad.current = false;
             setXAxisFieldId('');
             setXAxisGroupByPeriod(null);
@@ -61,7 +60,7 @@ export const BarChartConfigForm = ({
         if (isInitialLoad.current || !xAxisFieldId) return;
         
         const field = recordFields.find(f => f.id === xAxisFieldId);
-        if (field && field.fieldType !== 'Date' && xAxisGroupByPeriod !== null) {
+        if (field && !isFieldType(field, FIELD_TYPES.DATE) && xAxisGroupByPeriod !== null) {
             setXAxisGroupByPeriod(null);
         }
     }, [xAxisFieldId, recordFields, xAxisGroupByPeriod]);
@@ -90,17 +89,6 @@ export const BarChartConfigForm = ({
             onConfigChange(JSON.stringify(config));
         }
     }, [xAxisFieldId, xAxisGroupByPeriod, yAxisAggregation, yAxisFieldId, chartOrientation, xAxisFields, numberFields, isXAxisDate, onConfigChange, onValidationChange]);
-
-    const getAggregationLabel = (agg: typeof yAxisAggregation) => {
-        switch (agg) {
-            case 'count': return 'Count';
-            case 'sum': return 'Sum';
-            case 'average': return 'Average';
-            case 'max': return 'Maximum';
-            case 'min': return 'Minimum';
-            default: return agg;
-        }
-    };
 
     return (
         <div className="space-y-4">

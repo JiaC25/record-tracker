@@ -1,4 +1,5 @@
 import { AnalyticType } from '@/lib/types/analytics';
+import { RecordFieldType, RecordField } from '@/lib/types/records';
 import { ReactNode } from 'react';
 
 export type AnalyticTypeDefinition = {
@@ -7,10 +8,10 @@ export type AnalyticTypeDefinition = {
     description: string
     icon?: ReactNode
     supportedFieldTypes?: {
-        xAxis?: ('Text' | 'Number' | 'Date')[]
-        yAxis?: ('Text' | 'Number' | 'Date')[]
-        value?: ('Text' | 'Number' | 'Date')[]
-        groupBy?: ('Text' | 'Number' | 'Date')[]
+        xAxis?: RecordFieldType[]
+        yAxis?: RecordFieldType[]
+        value?: RecordFieldType[]
+        groupBy?: RecordFieldType[]
     }
 }
 
@@ -21,7 +22,7 @@ export type AnalyticTypeComponents = {
 }
 
 export type AnalyticConfigFormProps = {
-    recordFields: Array<{ id: string; name: string; fieldType: 'Text' | 'Number' | 'Date' }>
+    recordFields: RecordField[]
     initialConfig?: string // JSON string
     onConfigChange: (config: string) => void
     onValidationChange: (isValid: boolean) => void
@@ -34,7 +35,7 @@ export type AnalyticVisualizationProps = {
         type: AnalyticType
         configuration: string
     }
-    recordFields: Array<{ id: string; name: string; fieldType: 'Text' | 'Number' | 'Date' }>
+    recordFields: RecordField[]
     recordItems: Array<Record<string, string>>
 }
 

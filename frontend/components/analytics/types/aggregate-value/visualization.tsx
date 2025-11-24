@@ -2,6 +2,7 @@
 
 import { AnalyticVisualizationProps } from '../../registry';
 import { AggregateValueConfig, AggregateFunction } from '@/lib/types/analytics';
+import { parseConfig, getDateGroupKey, calculateAggregate, getAggregationLabel, formatNumber, isValidNumericValue } from '@/lib/utils/analytics';
 import { useMemo } from 'react';
 import { Dot } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
@@ -11,12 +12,14 @@ export const AggregateValueVisualization = ({
     recordFields,
     recordItems,
 }: AnalyticVisualizationProps) => {
+    const defaultConfig: AggregateValueConfig = {
+        configVersion: 1,
+        aggregationFunction: 'average',
+        valueFieldId: '',
+    };
+    
     const config = useMemo<AggregateValueConfig>(() => {
-        try {
-            return JSON.parse(analytic.configuration);
-        } catch {
-            return { configVersion: 1, aggregationFunction: 'average' as AggregateFunction, valueFieldId: '' };
-        }
+        return parseConfig<AggregateValueConfig>(analytic.configuration, defaultConfig);
     }, [analytic.configuration]);
 
     const valueField = recordFields.find(f => f.id === config.valueFieldId);
@@ -24,39 +27,14 @@ export const AggregateValueVisualization = ({
         ? recordFields.find(f => f.id === config.groupByFieldId)
         : null;
 
-    const getFunctionLabel = (func: AggregateFunction) => {
-        switch (func) {
-            case 'average': return 'Average';
-            case 'max': return 'Maximum';
-            case 'min': return 'Minimum';
-            case 'sum': return 'Sum';
-            default: return func;
-        }
-    };
-
-    const calculateAggregate = (values: number[], func: AggregateFunction): number => {
-        if (values.length === 0) return 0;
-        switch (func) {
-            case 'average':
-                return values.reduce((acc, val) => acc + val, 0) / values.length;
-            case 'max':
-                return Math.max(...values);
-            case 'min':
-                return Math.min(...values);
-            case 'sum':
-                return values.reduce((acc, val) => acc + val, 0);
-            default:
-                return 0;
-        }
-    };
+    // Removed getFunctionLabel and calculateAggregate - using centralized utilities
 
     const result = useMemo(() => {
         if (!valueField) return null;
 
         // Filter items that have the value field
         const validItems = recordItems.filter(item => {
-            const value = item[config.valueFieldId];
-            return value && value.trim() !== '' && !isNaN(parseFloat(value));
+            return isValidNumericValue(item[config.valueFieldId]);
         });
 
         if (validItems.length === 0) return null;
@@ -83,25 +61,8 @@ export const AggregateValueVisualization = ({
             const date = new Date(dateStr);
             if (isNaN(date.getTime())) return;
 
-            let key: string;
-            switch (config.groupByPeriod) {
-                case 'day':
-                    key = date.toISOString().split('T')[0];
-                    break;
-                case 'week':
-                    const weekStart = new Date(date);
-                    weekStart.setDate(date.getDate() - date.getDay());
-                    key = weekStart.toISOString().split('T')[0];
-                    break;
-                case 'month':
-                    key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-                    break;
-                case 'year':
-                    key = String(date.getFullYear());
-                    break;
-                default:
-                    return;
-            }
+            if (!config.groupByPeriod) return;
+            const key = getDateGroupKey(date, config.groupByPeriod);
 
             const value = parseFloat(item[config.valueFieldId]);
             const existing = groups.get(key) || [];
@@ -164,14 +125,7 @@ export const AggregateValueVisualization = ({
         );
     }
 
-    const formatNumber = (num: number) => {
-        return num.toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        });
-    };
-
-    const functionLabel = getFunctionLabel(config.aggregationFunction);
+    const functionLabel = getAggregationLabel(config.aggregationFunction);
     const supportsGrouping = config.aggregationFunction === 'average';
 
     return (

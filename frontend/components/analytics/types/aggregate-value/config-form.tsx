@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AnalyticConfigFormProps } from '../../registry';
 import { AggregateValueConfig, AggregateFunction, GroupByPeriod } from '@/lib/types/analytics';
+import { filterFieldsByType, parseConfig, FIELD_TYPES } from '@/lib/utils/analytics';
 
 export const AggregateValueConfigForm = ({
     recordFields,
@@ -17,20 +18,21 @@ export const AggregateValueConfigForm = ({
     const [groupByFieldId, setGroupByFieldId] = useState<string>('__none__');
     const [groupByPeriod, setGroupByPeriod] = useState<GroupByPeriod | null>(null);
 
-    const numberFields = recordFields.filter(f => f.fieldType === 'Number');
-    const dateFields = recordFields.filter(f => f.fieldType === 'Date');
+    const numberFields = filterFieldsByType(recordFields, FIELD_TYPES.NUMBER);
+    const dateFields = filterFieldsByType(recordFields, FIELD_TYPES.DATE);
 
     useEffect(() => {
         if (initialConfig) {
-            try {
-                const config: AggregateValueConfig = JSON.parse(initialConfig);
-                setAggregationFunction(config.aggregationFunction || 'average');
-                setValueFieldId(config.valueFieldId || '');
-                setGroupByFieldId(config.groupByFieldId || '__none__');
-                setGroupByPeriod(config.groupByPeriod || null);
-            } catch {
-                // Invalid config, use defaults
-            }
+            const defaultConfig: AggregateValueConfig = {
+                configVersion: 1,
+                aggregationFunction: 'average',
+                valueFieldId: '',
+            };
+            const config = parseConfig<AggregateValueConfig>(initialConfig, defaultConfig);
+            setAggregationFunction(config.aggregationFunction || 'average');
+            setValueFieldId(config.valueFieldId || '');
+            setGroupByFieldId(config.groupByFieldId || '__none__');
+            setGroupByPeriod(config.groupByPeriod || null);
         }
     }, [initialConfig]);
 
@@ -59,15 +61,7 @@ export const AggregateValueConfigForm = ({
         }
     }, [aggregationFunction, valueFieldId, groupByFieldId, groupByPeriod, numberFields, onConfigChange, onValidationChange]);
 
-    const getFunctionLabel = (func: AggregateFunction) => {
-        switch (func) {
-            case 'average': return 'Average';
-            case 'max': return 'Maximum';
-            case 'min': return 'Minimum';
-            case 'sum': return 'Sum';
-            default: return func;
-        }
-    };
+    // Removed getFunctionLabel - use getAggregationLabel from utils instead
 
     return (
         <div className="space-y-4">

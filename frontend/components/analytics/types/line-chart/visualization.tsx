@@ -4,6 +4,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { AnalyticVisualizationProps } from '../../registry';
 import { LineChartConfig } from '@/lib/types/analytics';
+import { parseConfig, formatDate, sortByFieldType, isValidNumericValue, FIELD_TYPES } from '@/lib/utils/analytics';
 import { useMemo } from 'react';
 
 export const LineChartVisualization = ({
@@ -12,11 +13,7 @@ export const LineChartVisualization = ({
     recordItems,
 }: AnalyticVisualizationProps) => {
     const config = useMemo<LineChartConfig>(() => {
-        try {
-            return JSON.parse(analytic.configuration);
-        } catch {
-            return { configVersion: 1, xAxisFieldId: '', yAxisFieldId: '' };
-        }
+        return parseConfig<LineChartConfig>(analytic.configuration, { configVersion: 1, xAxisFieldId: '', yAxisFieldId: '' });
     }, [analytic.configuration]);
 
     const xAxisField = recordFields.find(f => f.id === config.xAxisFieldId);
@@ -30,43 +27,26 @@ export const LineChartVisualization = ({
             .filter(item => {
                 const xValue = item[config.xAxisFieldId];
                 const yValue = item[config.yAxisFieldId];
-                return xValue && yValue && yValue.trim() !== '' && !isNaN(parseFloat(yValue));
+                return xValue && isValidNumericValue(yValue);
             })
             .map(item => {
                 const xValue = item[config.xAxisFieldId];
                 const yValue = parseFloat(item[config.yAxisFieldId]);
 
                 // Format X-axis value based on field type
-                let formattedX: string;
-                if (xAxisField.fieldType === 'Date') {
-                    const date = new Date(xValue);
-                    if (!isNaN(date.getTime())) {
-                        formattedX = date.toLocaleDateString();
-                    } else {
-                        formattedX = xValue;
-                    }
-                } else {
-                    formattedX = xValue;
-                }
+                const formattedX = xAxisField.fieldType === FIELD_TYPES.DATE 
+                    ? formatDate(xValue) 
+                    : xValue;
 
                 return {
                     [xAxisField.name]: formattedX,
                     [yAxisField.name]: yValue,
                     // Keep original for sorting
-                    _xValue: xValue,
-                    _xType: xAxisField.fieldType,
+                    _sortKey: xValue,
                 };
-            })
-            .sort((a, b) => {
-                // Sort by X-axis value
-                if (xAxisField.fieldType === 'Date') {
-                    return new Date(a._xValue).getTime() - new Date(b._xValue).getTime();
-                } else if (xAxisField.fieldType === 'Number') {
-                    return parseFloat(a._xValue) - parseFloat(b._xValue);
-                } else {
-                    return a._xValue.localeCompare(b._xValue);
-                }
             });
+
+        return sortByFieldType(validItems, xAxisField.fieldType);
 
         return validItems;
     }, [config, xAxisField, yAxisField, recordItems]);

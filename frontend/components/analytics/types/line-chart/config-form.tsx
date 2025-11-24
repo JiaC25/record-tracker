@@ -5,6 +5,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AnalyticConfigFormProps } from '../../registry';
 import { LineChartConfig } from '@/lib/types/analytics';
+import { filterFieldsByTypes, parseConfig } from '@/lib/utils/analytics';
+import { X_AXIS_FIELD_TYPES, Y_AXIS_FIELD_TYPES } from '@/lib/utils/analytics';
 
 export const LineChartConfigForm = ({
     recordFields,
@@ -15,18 +17,14 @@ export const LineChartConfigForm = ({
     const [xAxisFieldId, setXAxisFieldId] = useState<string>('');
     const [yAxisFieldId, setYAxisFieldId] = useState<string>('');
 
-    const xAxisFields = recordFields.filter(f => ['Date', 'Text', 'Number'].includes(f.fieldType));
-    const yAxisFields = recordFields.filter(f => f.fieldType === 'Number');
+    const xAxisFields = filterFieldsByTypes(recordFields, X_AXIS_FIELD_TYPES);
+    const yAxisFields = filterFieldsByTypes(recordFields, Y_AXIS_FIELD_TYPES);
 
     useEffect(() => {
         if (initialConfig) {
-            try {
-                const config: LineChartConfig = JSON.parse(initialConfig);
-                setXAxisFieldId(config.xAxisFieldId || '');
-                setYAxisFieldId(config.yAxisFieldId || '');
-            } catch {
-                // Invalid config, use defaults
-            }
+            const config = parseConfig<LineChartConfig>(initialConfig, { configVersion: 1, xAxisFieldId: '', yAxisFieldId: '' });
+            setXAxisFieldId(config.xAxisFieldId || '');
+            setYAxisFieldId(config.yAxisFieldId || '');
         }
     }, [initialConfig]);
 

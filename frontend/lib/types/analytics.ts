@@ -48,12 +48,13 @@ export type BarChartConfig = {
     configVersion: number
     xAxisFieldId: string
     xAxisGroupByPeriod?: GroupByPeriod | null // Only if X-axis is Date
-    yAxisAggregation: 'count' | 'sum' | 'average' | 'max' | 'min'
+    yAxisAggregation: AggregationType
     yAxisFieldId?: string // Required if aggregation is not 'count'
     chartOrientation?: 'vertical' | 'horizontal' // Chart variant
 }
 
 export type AggregateFunction = 'average' | 'max' | 'min' | 'sum';
+export type AggregationType = AggregateFunction | 'count';
 
 export type GroupByPeriod = 'day' | 'week' | 'month' | 'year';
 
