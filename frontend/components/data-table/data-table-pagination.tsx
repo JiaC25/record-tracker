@@ -37,23 +37,21 @@ export function DataTablePagination<TData>({
         <div className="flex items-center gap-2 lg:gap-4">
           {/* Rows per page option */}
           { showRowPerPageOption && (
-            <div className="flex items-center gap-2">
-              <Select
-                value={`${pageSize}`}
-                onValueChange={(value) => { table.setPageSize(Number(value)); }}
-              >
-                <SelectTrigger size="sm">
-                  <SelectValue placeholder={pageSize} />
-                </SelectTrigger>
-                <SelectContent side="top">
-                  {[10, 20, 30, 50].map((size) => (
-                    <SelectItem key={size} value={`${size}`}>
-                      <span className="text-xs">{size} per page</span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <Select
+              value={`${pageSize}`}
+              onValueChange={(value) => { table.setPageSize(Number(value)); }}
+            >
+              <SelectTrigger size="sm" className="w-fit">
+                <SelectValue placeholder={pageSize} />
+              </SelectTrigger>
+              <SelectContent side="top">
+                {[10, 15, 20, 30, 50].map((size) => (
+                  <SelectItem key={size} value={`${size}`}>
+                    <span className="text-xs">{size} per page</span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           )}
           {/* Page controls */}
           <div className="flex items-center gap-2 min-w-[60%]">

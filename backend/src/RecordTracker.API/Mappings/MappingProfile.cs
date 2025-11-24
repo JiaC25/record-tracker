@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using RecordTracker.API.Features.Analytics.Models;
 using RecordTracker.API.Features.Records.Models;
 using RecordTracker.Infrastructure.Entities;
 
@@ -15,7 +16,10 @@ public class MappingProfile : Profile
         CreateMap<Record, RecordSummaryDto>()
             .ForMember(dest => dest.RecordFields, opt => opt.MapFrom(src => src.RecordFields.OrderBy(rf => rf.Order)));
 
-        CreateMap<RecordField, RecordFieldDto>();        
+        CreateMap<RecordField, RecordFieldDto>();
+
+        CreateMap<Analytic, AnalyticDto>()
+            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()));
         #endregion
 
         #region Input to EF

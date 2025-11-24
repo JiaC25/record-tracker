@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RecordTracker.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using RecordTracker.Infrastructure.Persistence;
 namespace RecordTracker.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(RecordTrackerDbContext))]
-    partial class RecordTrackerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251123013211_AddAnalyticsTable")]
+    partial class AddAnalyticsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

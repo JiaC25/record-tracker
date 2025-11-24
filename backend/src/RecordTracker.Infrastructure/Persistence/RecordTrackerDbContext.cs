@@ -12,6 +12,7 @@ public class RecordTrackerDbContext : DbContext
     public DbSet<RecordField> RecordField => Set<RecordField>();
     public DbSet<RecordItem> RecordItem => Set<RecordItem>();
     public DbSet<RecordValue> RecordValue => Set<RecordValue>();
+    public DbSet<Analytic> Analytic => Set<Analytic>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

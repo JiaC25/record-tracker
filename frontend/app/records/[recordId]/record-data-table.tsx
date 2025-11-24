@@ -182,7 +182,7 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
 
   return (
     <>
-      <Card className="text-sm rounded-sm gap-3 pt-4 max-h-[85vh] overflow-y-auto">
+      <Card className="text-sm rounded-sm gap-3 py-4 max-h-screen overflow-y-auto scrollbar-styled">
         <CardContent className="px-3">
           <DataTable 
             columns={columns} 
