@@ -2,7 +2,10 @@ import { useAuthStore } from '../store/authStore';
 import { ApiError } from './apiError';
 
 
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+// In production with Next.js rewrites, use relative path
+// In development, use full backend URL
+const isProduction = process.env.NODE_ENV === 'production';
+export const API_BASE = isProduction ? '/api' : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api');
 
 // Handles HTTP errors and session expiry
 const handleHttpErrors = async (response: Response, requestUrl?: string): Promise<void> => {
