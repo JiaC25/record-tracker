@@ -15,8 +15,9 @@ public class JwtOptions
 
 public class AuthCookieOptions
 {
-    public string Name {  get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
     public bool Secure { get; set; }
-    public string SameSite { get; set; } = string.Empty ;
+    public string SameSite { get; set; } = string.Empty;
     public int ExpiryDays { get; set; }
+    public string? Domain { get; set; }
 }

@@ -65,17 +65,13 @@ public class AuthService : IAuthService
     #region Cookie
     public void SetAuthCookie(string token)
     {
+        var cookieOptions = BuildCookieOptions();
+        cookieOptions.Expires = DateTimeOffset.UtcNow.AddDays(_cookieConfig.ExpiryDays);
+
         _httpContextAccessor.HttpContext?.Response.Cookies.Append(
             _cookieConfig.Name,
             token,
-            new CookieOptions
-            {
-                Path = "/",
-                HttpOnly = true,
-                Secure = _cookieConfig.Secure,
-                SameSite = Enum.Parse<SameSiteMode>(_cookieConfig.SameSite, ignoreCase: true),
-                Expires = DateTimeOffset.UtcNow.AddDays(_cookieConfig.ExpiryDays),
-            }
+            cookieOptions
         );
     }
 
@@ -83,14 +79,25 @@ public class AuthService : IAuthService
     {
         _httpContextAccessor.HttpContext?.Response.Cookies.Delete(
             _cookieConfig.Name,
-            new CookieOptions
-            {
-                Path = "/",
-                HttpOnly = true,
-                Secure = _cookieConfig.Secure,
-                SameSite = Enum.Parse<SameSiteMode>(_cookieConfig.SameSite, ignoreCase: true),
-            }
-        );
+            BuildCookieOptions());
     }
     #endregion
+
+    private CookieOptions BuildCookieOptions()
+    {
+        var options = new CookieOptions
+        {
+            Path = "/",
+            HttpOnly = true,
+            Secure = _cookieConfig.Secure,
+            SameSite = Enum.Parse<SameSiteMode>(_cookieConfig.SameSite, ignoreCase: true),
+        };
+
+        if (!string.IsNullOrWhiteSpace(_cookieConfig.Domain))
+        {
+            options.Domain = _cookieConfig.Domain;
+        }
+
+        return options;
+    }
 }
