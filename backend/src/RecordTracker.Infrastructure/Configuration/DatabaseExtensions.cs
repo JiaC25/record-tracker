@@ -12,5 +12,12 @@ namespace RecordTracker.Infrastructure.Configuration
             var dbContext = scope.ServiceProvider.GetRequiredService<RecordTrackerDbContext>();
             dbContext.Database.Migrate();
         }
+
+        public static void ApplyProductionMigrations(this IServiceProvider services)
+        {
+            using var scope = services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<RecordTrackerDbContext>();
+            dbContext.Database.Migrate();
+        }
     }
 }
