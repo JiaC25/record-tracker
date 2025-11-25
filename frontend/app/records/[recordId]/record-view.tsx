@@ -1,10 +1,10 @@
 'use client';
 
-import { useRecordStore } from '@/lib/store/recordStore';
-import { RecordDataTable } from './record-data-table';
 import { AnalyticsPanel } from '@/components/analytics/analytics-panel';
 import { LayoutType } from '@/components/records/record-layout-config-popover';
+import { useRecordStore } from '@/lib/store/recordStore';
 import { cn } from '@/lib/utils';
+import { RecordDataTable } from './record-data-table';
 
 type RecordViewProps = {
   recordId: string;

@@ -17,12 +17,20 @@ builder.Services
 
 var app = builder.Build();
 
+// Apply database migrations
 if (app.Environment.IsDevelopment())
 {
-    // Apply any pending migration
     app.Services.ApplyDevelopmentMigrations();
+}
+else if (app.Environment.IsProduction())
+{
+    // Apply migrations in production (Railway will handle this on startup)
+    app.Services.ApplyProductionMigrations();
+}
 
-    // Enable Swagger
+if (app.Environment.IsDevelopment())
+{
+    // Enable Swagger only in development
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
@@ -36,5 +44,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapAllFeatureEndpoints();
+
+// Configure port from Railway's PORT environment variable, or default to 5000
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+app.Urls.Add($"http://+:{port}");
 
 app.Run();
