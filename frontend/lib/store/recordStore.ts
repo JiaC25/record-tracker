@@ -1,5 +1,5 @@
 import { groupRecordSummariesByLetter, toRecordItemInput } from '@/lib/helpers/recordHelpers';
-import { GroupedRecordSummaries, RecordEntity, RecordItemInput, RecordSummary } from '@/lib/types/records';
+import { GroupedRecordSummaries, RecordEntity, RecordItemInput, RecordSummary, UpdateRecordRequest } from '@/lib/types/records';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { recordApi } from '../api/recordApi';
@@ -24,6 +24,7 @@ type RecordStore = {
     fetchRecord: (recordId: string) => Promise<RecordEntity | undefined>
     deleteRecord: (recordId: string) => Promise<void>
     deleteRecordItem: (recordId: string, itemId: string) => Promise<void>
+    updateRecord: (recordId: string, requestBody: UpdateRecordRequest) => Promise<void>
     updateRecordItem: (recordId: string, itemId: string, updatedItem: RecordEntity['recordItems'][number]) => Promise<RecordEntity['recordItems'][number]>
     createRecordItems: (recordId: string, items: RecordEntity['recordItems'][number][]) => Promise<RecordEntity['recordItems'][number][]>
     clearAll: () => void
@@ -128,6 +129,23 @@ export const useRecordStore = create<RecordStore>()(
           });
         } catch (error) {
           console.error('Failed to delete record item', error);
+          throw error;
+        }
+      },
+
+      updateRecord: async (recordId: string, requestBody: UpdateRecordRequest) => {
+        try {
+          await recordApi.updateRecord(recordId, requestBody);
+          // Refresh the record to get updated fields
+          const updatedRecord = await recordApi.getRecord(recordId);
+          set((state) => ({
+            records: {
+              ...state.records,
+              [recordId]: updatedRecord,
+            },
+          }));
+        } catch (error) {
+          console.error('Failed to update record', error);
           throw error;
         }
       },

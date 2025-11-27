@@ -1,17 +1,29 @@
 'use client';
 
 import { DataTable } from '@/components/data-table/data-table';
+import { CreateRecordItemPopover } from '@/components/records/create-record-item-popover';
 import { DeleteRecordItemDialog } from '@/components/records/delete-record-item-dialog';
 import { EditRecordItemPopover } from '@/components/records/edit-record-item-popover';
 import { Button } from '@/components/ui/button';
+import { ButtonGroup } from '@/components/ui/button-group';
 import { Card, CardContent } from '@/components/ui/card';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { downloadCSV, exportRecordItemsToCSV, importRecordItemsFromCSV } from '@/lib/helpers/csvHelpers';
+import {
+  createFieldIdMap,
+  createFieldIdMapByName,
+  createUpdateRecordRequest,
+  downloadJSON,
+  exportRecordToJSON,
+  mapItemsToCurrentFieldIds,
+  parseRecordImportJSON,
+  validateFieldMatches
+} from '@/lib/helpers/jsonHelpers';
 import { useRecordStore } from '@/lib/store/recordStore';
 import { RecordEntity, RecordItem } from '@/lib/types/records';
 import { ColumnDef, Row } from '@tanstack/react-table';
-import { MoreVertical, Plus } from 'lucide-react';
-import { useState } from 'react';
-import { CreateRecordItemPopover } from '@/components/records/create-record-item-popover';
+import { Columns3Cog, Download, MoreHorizontal, MoreVertical, Plus, Upload } from 'lucide-react';
+import { useRef, useState } from 'react';
 
 type RecordDataTableProps = {
     record: RecordEntity;
@@ -25,10 +37,12 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
     const fieldKeys = Object.keys(item).filter(key => key !== 'id' && key !== 'createdAt');
     return fieldKeys.some(key => item[key] && item[key].trim() !== '');
   });
-  const { deleteRecordItem } = useRecordStore();
+  const { deleteRecordItem, createRecordItems, updateRecord, fetchRecord } = useRecordStore();
   const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [editItem, setEditItem] = useState<RecordItem | null>(null);
+  const [isImporting, setIsImporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const buildRecordValueCell = (value: any, fieldType: string) => {
     if (!value || value.trim() === '') {
@@ -180,6 +194,114 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
     return '';
   };
 
+  const handleExportCSV = () => {
+    try {
+      const csvContent = exportRecordItemsToCSV(record);
+      const filename = `${record.name.replace(/[^a-z0-9]/gi, '_')}_export_${new Date().toISOString().split('T')[0]}.csv`;
+      downloadCSV(csvContent, filename);
+    } catch (error) {
+      console.error('Failed to export records', error);
+      alert('Failed to export records. Please try again.');
+    }
+  };
+
+  const handleExportJSON = () => {
+    try {
+      const jsonContent = exportRecordToJSON(record);
+      const filename = `${record.name.replace(/[^a-z0-9]/gi, '_')}_export_${new Date().toISOString().split('T')[0]}.json`;
+      downloadJSON(jsonContent, filename);
+    } catch (error) {
+      console.error('Failed to export records', error);
+      alert('Failed to export records. Please try again.');
+    }
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsImporting(true);
+    try {
+      const fileText = await file.text();
+      const fileName = file.name.toLowerCase();
+      
+      // Determine file type by extension
+      if (fileName.endsWith('.json')) {
+        await handleJSONImport(fileText);
+      } else {
+        await handleCSVImport(fileText);
+      }
+      
+      // Notify parent
+      onItemCreated?.();
+      
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    } catch (error) {
+      console.error('Failed to import records', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to import records. Please check the file format.';
+      alert(`Import failed: ${errorMessage}`);
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
+  const handleJSONImport = async (fileText: string) => {
+    const importData = parseRecordImportJSON(fileText);
+    
+    // Check if record has no fields
+    if (record.recordFields.length === 0) {
+      // Record has no fields - create fields and items
+      const updateRequest = createUpdateRecordRequest(
+        record.id,
+        record.name,
+        record.description,
+        importData.recordFields
+      );
+      
+      await updateRecord(record.id, updateRequest);
+      
+      // Refresh record to get new field IDs
+      const updatedRecord = await fetchRecord(record.id);
+      if (!updatedRecord) {
+        throw new Error('Failed to refresh record after field creation');
+      }
+      
+      // Map imported field IDs to new field IDs
+      const fieldIdMap = createFieldIdMap(importData.recordFields, updatedRecord.recordFields);
+      
+      // Convert items to use new field IDs
+      const itemsWithNewFieldIds = mapItemsToCurrentFieldIds(importData.recordItems, fieldIdMap);
+      
+      await createRecordItems(record.id, itemsWithNewFieldIds);
+      alert(`Successfully imported ${itemsWithNewFieldIds.length} record item(s) and created ${importData.recordFields.length} field(s)`);
+    } else {
+      // Record has fields - treat like CSV: match fields by name and add items only
+      const fieldIdMap = createFieldIdMapByName(importData.recordFields, record.recordFields);
+      
+      // Validate all imported fields have matches
+      validateFieldMatches(importData.recordFields, fieldIdMap);
+      
+      // Convert items to use current field IDs
+      const itemsWithCurrentFieldIds = mapItemsToCurrentFieldIds(importData.recordItems, fieldIdMap);
+      
+      await createRecordItems(record.id, itemsWithCurrentFieldIds);
+      alert(`Successfully imported ${itemsWithCurrentFieldIds.length} record item(s)`);
+    }
+  };
+
+  const handleCSVImport = async (fileText: string) => {
+    const importedItems = importRecordItemsFromCSV(fileText, record);
+    await createRecordItems(record.id, importedItems);
+    alert(`Successfully imported ${importedItems.length} record item(s)`);
+  };
+
   return (
     <>
       <Card className="text-sm rounded-sm gap-3 py-4 max-h-screen overflow-y-auto scrollbar-styled">
@@ -191,9 +313,85 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
             getFirstCellClassName={getFirstCellClassName}
             title={record.name}
             description={record.description}
+            renderCustomizeButton={(table) => {
+              const getColumnDisplayName = (column: any): string => {
+                const header = column.columnDef.header;
+                if (typeof header === 'string') return header;
+                if (column.columnDef.meta?.displayName) return column.columnDef.meta.displayName;
+                return column.id;
+              };
+
+              const hasHideableColumns = table.getAllColumns().some(col => col.getCanHide());
+
+              return (
+                <ButtonGroup>
+                  {hasHideableColumns && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="sm">
+                          <Columns3Cog className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-[150px]">
+                        <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {table
+                          .getAllColumns()
+                          .filter((column) => column.getCanHide())
+                          .map((column) => {
+                            const columnName = getColumnDisplayName(column);
+                            return (
+                              <DropdownMenuCheckboxItem
+                                key={column.id}
+                                className="capitalize"
+                                checked={column.getIsVisible()}
+                                onCheckedChange={(value) =>
+                                  column.toggleVisibility(!!value)
+                                }
+                              >
+                                {columnName}
+                              </DropdownMenuCheckboxItem>
+                            );
+                          })}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button size="sm" variant="outline">
+                        <Download className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={handleExportCSV}>
+                        Export as CSV
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleExportJSON}>
+                        Export as JSON
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button size="sm" variant="outline" className="px-2">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={handleImportClick} disabled={isImporting}>
+                        <Upload className="mr-2 h-4 w-4" />
+                        Import
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </ButtonGroup>
+              );
+            }}
             headerActions={
               <CreateRecordItemPopover record={record} onCreated={handleItemCreated}>
-                <Button size="sm" className="w-12" variant="default"><Plus /></Button>
+                <Button size="sm" variant="default" className="px-3">
+                  <Plus className="h-4 w-4" />
+                </Button>
               </CreateRecordItemPopover>
             }
           />
@@ -220,6 +418,13 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
           anchorId={`actions-button-${editItem.id}`}
         />
       )}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".csv,.json"
+        onChange={handleFileChange}
+        className="hidden"
+      />
     </>
   );
 };

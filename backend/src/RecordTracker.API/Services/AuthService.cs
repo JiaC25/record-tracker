@@ -85,19 +85,12 @@ public class AuthService : IAuthService
 
     private CookieOptions BuildCookieOptions()
     {
-        var options = new CookieOptions
+        return new CookieOptions
         {
             Path = "/",
             HttpOnly = true,
             Secure = _cookieConfig.Secure,
             SameSite = Enum.Parse<SameSiteMode>(_cookieConfig.SameSite, ignoreCase: true),
         };
-
-        if (!string.IsNullOrWhiteSpace(_cookieConfig.Domain))
-        {
-            options.Domain = _cookieConfig.Domain;
-        }
-
-        return options;
     }
 }

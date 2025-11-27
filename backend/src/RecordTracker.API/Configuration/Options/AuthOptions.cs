@@ -19,5 +19,4 @@ public class AuthCookieOptions
     public bool Secure { get; set; }
     public string SameSite { get; set; } = string.Empty;
     public int ExpiryDays { get; set; }
-    public string? Domain { get; set; }
 }
