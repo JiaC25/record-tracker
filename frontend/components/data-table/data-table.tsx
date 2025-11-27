@@ -34,6 +34,8 @@ type DataTableProps<TData, TValue> = {
   headerActions?: React.ReactNode;
   title?: string;
   description?: string;
+  hideCustomizeButton?: boolean;
+  renderCustomizeButton?: (table: ReturnType<typeof useReactTable<TData>>) => React.ReactNode;
 };
 
 declare module '@tanstack/react-table' {
@@ -43,7 +45,7 @@ declare module '@tanstack/react-table' {
   }
 }
 
-export const DataTable = <TData, TValue>({ columns, data, getRowClassName, getFirstCellClassName, headerActions, title, description }: DataTableProps<TData, TValue>) => {
+export const DataTable = <TData, TValue>({ columns, data, getRowClassName, getFirstCellClassName, headerActions, title, description, hideCustomizeButton = false, renderCustomizeButton }: DataTableProps<TData, TValue>) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
 
@@ -99,36 +101,40 @@ export const DataTable = <TData, TValue>({ columns, data, getRowClassName, getFi
           
           {/* Right side: Actions */}
           <div className="flex items-center gap-2">
-            {table.getAllColumns().some(col => col.getCanHide()) && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <Columns3Cog className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-[150px]">
-                  <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {table
-                    .getAllColumns()
-                    .filter((column) => column.getCanHide())
-                    .map((column) => {
-                      const columnName = getColumnDisplayName(column);
-                      return (
-                        <DropdownMenuCheckboxItem
-                          key={column.id}
-                          className="capitalize"
-                          checked={column.getIsVisible()}
-                          onCheckedChange={(value) =>
-                            column.toggleVisibility(!!value)
-                          }
-                        >
-                          {columnName}
-                        </DropdownMenuCheckboxItem>
-                      );
-                    })}
-                </DropdownMenuContent>
-              </DropdownMenu>
+            {renderCustomizeButton ? (
+              renderCustomizeButton(table)
+            ) : (
+              !hideCustomizeButton && table.getAllColumns().some(col => col.getCanHide()) && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      <Columns3Cog className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-[150px]">
+                    <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {table
+                      .getAllColumns()
+                      .filter((column) => column.getCanHide())
+                      .map((column) => {
+                        const columnName = getColumnDisplayName(column);
+                        return (
+                          <DropdownMenuCheckboxItem
+                            key={column.id}
+                            className="capitalize"
+                            checked={column.getIsVisible()}
+                            onCheckedChange={(value) =>
+                              column.toggleVisibility(!!value)
+                            }
+                          >
+                            {columnName}
+                          </DropdownMenuCheckboxItem>
+                        );
+                      })}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )
             )}
             {headerActions}
           </div>
