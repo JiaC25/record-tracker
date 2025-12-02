@@ -9,6 +9,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { Skeleton } from '../../../components/ui/skeleton';
 import { useSidebarHeader } from '../../../contexts/sidebar-header-context';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { RecordView } from './record-view';
 
 const RecordPage = () => {
@@ -23,6 +24,7 @@ const RecordPage = () => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [layout, setLayout] = useRecordLayout();
+  const isLg = useMediaQuery('(min-width: 1024px)');
 
   useEffect(() => {
     if (!record) fetchRecord(recordId);
@@ -54,9 +56,11 @@ const RecordPage = () => {
       setHeader(
         <div className="flex items-center justify-between w-full pr-2 overflow-x-hidden">
           <span className="max-w-[calc(100%-3rem)] truncate">{record.name}</span>
-          <div>
-            <RecordLayoutConfigPopover layout={layout} onLayoutChange={setLayout} />
-          </div>
+          {isLg && (
+            <div>
+              <RecordLayoutConfigPopover layout={layout} onLayoutChange={setLayout} />
+            </div>
+          )}
         </div>
       );
     } else {
@@ -64,7 +68,7 @@ const RecordPage = () => {
     }
     // setHeader is stable from useState, so we can omit it from dependencies
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [record?.name, isLoadingRecord, layout]);
+  }, [record?.name, isLoadingRecord, layout, isLg]);
 
   return (
     <>
