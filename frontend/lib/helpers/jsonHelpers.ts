@@ -158,9 +158,16 @@ export const createFieldIdMap = (
 ): Map<string, string> => {
   const fieldIdMap = new Map<string, string>();
   importedFields.forEach(importField => {
-    const matchingField = currentFields.find(
-      f => f.name === importField.name && f.order === importField.order
-    );
+    // Prefer strict match (name + type + required), fallback to name only
+    const matchingField =
+      currentFields.find(
+        f =>
+          f.name === importField.name &&
+          f.fieldType === importField.fieldType &&
+          f.isRequired === importField.isRequired
+      ) ||
+      currentFields.find(f => f.name === importField.name);
+
     if (matchingField) {
       fieldIdMap.set(importField.id, matchingField.id);
     }
@@ -178,9 +185,14 @@ export const createFieldIdMapByName = (
 ): Map<string, string> => {
   const fieldIdMap = new Map<string, string>();
   importedFields.forEach(importField => {
-    const matchingField = currentFields.find(
-      f => f.name === importField.name
-    );
+    const matchingField =
+      currentFields.find(
+        f =>
+          f.name === importField.name &&
+          f.fieldType === importField.fieldType
+      ) ||
+      currentFields.find(f => f.name === importField.name);
+
     if (matchingField) {
       fieldIdMap.set(importField.id, matchingField.id);
     }
@@ -227,6 +239,16 @@ export const mapItemsToCurrentFieldIds = (
         }
       }
     });
+
+    // Ensure each item has at least one mapped value
+    const hasValues = Object.keys(newItem).some(
+      key => key !== 'id' && key !== 'createdAt'
+    );
+    if (!hasValues) {
+      throw new Error(
+        `Cannot import item ${item.id}: No matching fields found for its values.`
+      );
+    }
     
     return newItem;
   });

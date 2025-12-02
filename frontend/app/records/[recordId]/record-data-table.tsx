@@ -3,6 +3,7 @@
 import { DataTable } from '@/components/data-table/data-table';
 import { CreateRecordItemPopover } from '@/components/records/create-record-item-popover';
 import { DeleteRecordItemDialog } from '@/components/records/delete-record-item-dialog';
+import { EditRecordDialog } from '@/components/records/edit-record-dialog';
 import { EditRecordItemPopover } from '@/components/records/edit-record-item-popover';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
@@ -22,7 +23,7 @@ import {
 import { useRecordStore } from '@/lib/store/recordStore';
 import { RecordEntity, RecordItem } from '@/lib/types/records';
 import { ColumnDef, Row } from '@tanstack/react-table';
-import { Columns3Cog, Download, MoreHorizontal, MoreVertical, Plus, Upload } from 'lucide-react';
+import { Columns3Cog, FileBracesIcon, FileSpreadsheet, MoreHorizontal, MoreVertical, Pencil, Plus, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 type RecordDataTableProps = {
@@ -42,6 +43,7 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
   const [isDeleting, setIsDeleting] = useState(false);
   const [editItem, setEditItem] = useState<RecordItem | null>(null);
   const [isImporting, setIsImporting] = useState(false);
+  const [isEditRecordDialogOpen, setIsEditRecordDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const buildRecordValueCell = (value: any, fieldType: string) => {
@@ -216,6 +218,7 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
     }
   };
 
+
   const handleImportClick = () => {
     fileInputRef.current?.click();
   };
@@ -356,21 +359,13 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
                       </DropdownMenuContent>
                     </DropdownMenu>
                   )}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button size="sm" variant="outline">
-                        <Download className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={handleExportCSV}>
-                        Export as CSV
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handleExportJSON}>
-                        Export as JSON
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => setIsEditRecordDialogOpen(true)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button size="sm" variant="outline" className="px-2">
@@ -378,6 +373,14 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={handleExportCSV}>
+                        <FileSpreadsheet className="mr-2 h-4 w-4" />
+                        Export CSV
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleExportJSON}>
+                        <FileBracesIcon className="mr-2 h-4 w-4" />
+                        Export JSON
+                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={handleImportClick} disabled={isImporting}>
                         <Upload className="mr-2 h-4 w-4" />
                         Import
@@ -402,6 +405,17 @@ export const RecordDataTable = ({ record, onItemCreated }: RecordDataTableProps)
         onClose={() => setDeleteItemId(null)}
         onConfirm={handleDeleteConfirm}
         isDeleting={isDeleting}
+      />
+      {/* Edit Record Dialog */}
+      <EditRecordDialog
+        open={isEditRecordDialogOpen}
+        record={record}
+        onDialogClose={() => setIsEditRecordDialogOpen(false)}
+        onUpdated={() => {
+          // Refresh the record after update
+          fetchRecord(record.id);
+          onItemCreated?.();
+        }}
       />
       {/* Edit RecordItem Popover - will be positioned to the corresponding table row using anchorId */}
       {editItem && (
