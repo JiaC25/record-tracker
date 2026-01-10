@@ -1,7 +1,15 @@
 # Record Tracker
 
-A personal highly customizable record tracking app built with **ASP.NET Core** and **Next.js**, using **PostgreSQL** for data storage.
+RecordTracker is a personal full-stack project (**ASP.NET Core 8** and **Next.js** SPA with **PostgreSQL** database)
+that allows users to create custom Record schemas with dynamic fields, log entries with it, and visualize the data with graph and charts etc.
 
+---
+
+**Live Demo:** [https://recordtracker.up.railway.app](https://recordtracker.up.railway.app)
+
+Demo login: `demo@recordtracker.com` / `Demo123!`
+
+---
 
 This monorepo contains:
 
