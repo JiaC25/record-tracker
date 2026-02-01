@@ -6,8 +6,8 @@ import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
 const ThemeToggleInline = () => {
-  const { theme, setTheme } = useTheme();
-  const isDark = theme === 'dark';
+  const { setTheme, resolvedTheme } = useTheme();
+  const isDark = (resolvedTheme ?? 'light') === 'dark';
   const [mounted, setMounted] = useState(false);
 
   // Avoid hydration mismatch
