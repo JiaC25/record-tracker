@@ -6,9 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "lint:typecheck": "tsc --noEmit",
-    "lint:fix": "next lint --fix",
+    "lint:fix": "eslint . --fix",
     "test": "jest",
     "test:watch": "jest --watch"
   },
