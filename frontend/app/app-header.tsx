@@ -25,12 +25,12 @@ const AppHeader = () => {
   // Show skeleton loading state during hydration
   if (!authIsHydrated) {
     return (
-      <header className="flex h-[var(--header-height)] shrink-0 items-center gap-2 border-b px-4 justify-between">
+      <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b px-4 justify-between">
         <div className="flex items-center gap-5">
           {/* Logo and App name */}
-          <Link href="/" className='flex items-center md:ml-2'>
+          <Link href="/" className="flex items-center md:ml-2">
             <NotebookPen className="text-primary w-5 h-5" />
-            <div className='font-semibold text-lg md:text-xl'>
+            <div className="font-semibold text-lg md:text-xl">
               <span className="text-primary">Gen</span>
               <span>Tracker</span>
             </div>
@@ -45,13 +45,13 @@ const AppHeader = () => {
   }
 
   return (
-    <header className="flex h-[var(--header-height)] shrink-0 items-center gap-2 border-b border-secondary-foreground/20 px-4">
-      <div className="flex w-full h-[var(--header-height)] items-center justify-between z-50">
+    <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b border-secondary-foreground/20 px-4">
+      <div className="flex w-full h-(--header-height) items-center justify-between z-50">
         <div className="flex items-center gap-2">
           {/* Logo and App name */}
-          <Link href={isLoggedIn ? ROUTES.RECORDS : ROUTES.LOGIN} className='flex items-center md:ml-2'>
+          <Link href={isLoggedIn ? ROUTES.RECORDS : ROUTES.LOGIN} className="flex items-center md:ml-2">
             <NotebookPen className="text-primary w-5 h-5" />
-            <div className='font-semibold text-lg md:text-xl'>
+            <div className="font-semibold text-lg md:text-xl">
               <span className="text-primary">Gen</span>
               <span>Tracker</span>
             </div>

@@ -1,4 +1,4 @@
-import { RecordEntity, RecordField, RecordItem } from '@/lib/types/records';
+import { RecordEntity, RecordItem } from '@/lib/types/records';
 
 /**
  * Exports record items to CSV format

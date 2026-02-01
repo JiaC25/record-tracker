@@ -31,16 +31,16 @@ const ThemeToggleInline = () => {
         {/* Toggle Circle */}
         <span
           className={cn(
-            'inline-block bg-background h-4 w-4 rounded-full !transition-transform duration-300',
-            isDark ? 'translate-x-4 ml-[1px]' : 'translate-x-0.5 -ml-[1px]',
+            'inline-block bg-background h-4 w-4 rounded-full transition-transform! duration-300',
+            isDark ? 'translate-x-4 ml-px' : 'translate-x-0.5 -ml-px',
           )}
         >
           {/* Icon Container */}
           <span className="flex h-full w-full items-center justify-center">
             {isDark ? (
-              <Moon className="!h-2.5 !w-2.5" />
+              <Moon className="h-2.5! w-2.5!" />
             ) : (
-              <Sun className="!h-2.5 !w-2.5" />
+              <Sun className="h-2.5! w-2.5!" />
             )}
           </span>
         </span>

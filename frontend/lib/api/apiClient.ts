@@ -63,7 +63,6 @@ const handleHttpErrors = async (response: Response, requestUrl?: string): Promis
 
   // Log rich error details for debugging now; UI handling can be added later
   try {
-    // eslint-disable-next-line no-console
     console.error('API request failed', {
       url: requestUrl || response.url,
       status: response.status,

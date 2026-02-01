@@ -2,6 +2,7 @@
 
 import { DeleteRecordDialog } from '@/components/records/delete-record-dialog';
 import { RecordLayoutConfigPopover } from '@/components/records/record-layout-config-popover';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { useRecordLayout } from '@/hooks/use-record-layout';
 import { ROUTES } from '@/lib/routes.config';
 import { useRecordStore } from '@/lib/store/recordStore';
@@ -9,7 +10,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { Skeleton } from '../../../components/ui/skeleton';
 import { useSidebarHeader } from '../../../contexts/sidebar-header-context';
-import { useMediaQuery } from '@/hooks/use-media-query';
 import { RecordView } from './record-view';
 
 const RecordPage = () => {
