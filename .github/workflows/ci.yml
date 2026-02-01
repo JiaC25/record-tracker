@@ -31,6 +31,7 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm run lint
+      - run: npm run lint:typecheck
       - run: npm test
 
   run_dotnet_unit_tests:
