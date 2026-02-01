@@ -6,8 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint && npx tsc --noEmit",
-    "lint:fix": "npx eslint ./app --ext .ts,.tsx --fix",
+    "lint": "eslint .",
+    "lint:typecheck": "tsc --noEmit",
+    "lint:fix": "eslint . --fix",
     "test": "jest",
     "test:watch": "jest --watch"
   },
@@ -46,7 +47,6 @@
     "zustand": "^5.0.5"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
@@ -56,17 +56,13 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@typescript-eslint/eslint-plugin": "^8.34.1",
-    "@typescript-eslint/parser": "^8.34.1",
     "eslint": "^9.29.0",
     "eslint-config-next": "^16.0.10",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^5.2.0",
     "jest": "^30.0.4",
     "jest-environment-jsdom": "^30.0.4",
     "tailwindcss": "^4",
-    "ts-jest": "^29.4.0",
     "tw-animate-css": "^1.3.4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "typescript-eslint": "^8.54.0"
   }
 }

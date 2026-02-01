@@ -67,7 +67,7 @@ const SignupPage = () => {
 
   return (
     <div className="max-w-sm mx-auto mt-20">
-      <Card className='mx-2'>
+      <Card className="mx-2">
         <CardHeader>
           <CardTitle>Signup</CardTitle>
         </CardHeader>
@@ -75,28 +75,28 @@ const SignupPage = () => {
           <form onSubmit={handleSubmit}>
             <fieldset className="space-y-4" disabled={isLoading}>
               <Input
-                type='email'
-                placeholder='User@example.com'
-                name='email'
+                type="email"
+                placeholder="User@example.com"
+                name="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
               <Input
-                type='password'
-                placeholder='Password'
-                name='password'
+                type="password"
+                placeholder="Password"
+                name="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
               <Input
-                type='password'
-                placeholder='Confirm Password'
-                name='confirmPassword'
+                type="password"
+                placeholder="Confirm Password"
+                name="confirmPassword"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
-              <Button type='submit' className='w-full' disabled={isLoading}>
+              <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? (
                   <span className="flex items-center gap-2">
                     <Loader2 className="animate-spin" />
@@ -105,7 +105,7 @@ const SignupPage = () => {
                 ) : 'Sign Up'}
               </Button>
               <Button type="button" variant="link" className="w-full" onClick={() => router.push(ROUTES.LOGIN)}>
-                <span className='text-sm'>Already signed up? Log In</span>
+                <span className="text-sm">Already signed up? Log In</span>
               </Button>
             </fieldset>
           </form>

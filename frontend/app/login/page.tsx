@@ -92,33 +92,33 @@ const LoginPage = () => {
   }
 
   return (
-    <div className='max-w-sm mx-auto mt-20'>
+    <div className="max-w-sm mx-auto mt-20">
       <Card className="mx-2">
         <CardHeader>
           <CardTitle>Login</CardTitle>
           <CardDescription>Enter your email below to login to your account</CardDescription>
           <CardAction>
             <Button variant="link" onClick={() => router.push(ROUTES.SIGNUP)}>
-              <span className='text-sm'>Sign Up</span>
+              <span className="text-sm">Sign Up</span>
             </Button>
           </CardAction>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <fieldset className='space-y-4' disabled={isLoading}>
+              <fieldset className="space-y-4" disabled={isLoading}>
                 <Input
                   {...register('email', { required: 'Email is required.' })}
-                  type='email' autoFocus
-                  placeholder='User@example.com'
+                  type="email" autoFocus
+                  placeholder="User@example.com"
                   aria-invalid={!!errors.email}
                 />
                 <FormMessage>{errors?.email?.message ?? ''}</FormMessage>
     
                 <Input
                   {...register('password', { required: 'Password is required.' })}
-                  type='password'
-                  placeholder='Password'
+                  type="password"
+                  placeholder="Password"
                   aria-invalid={!!errors.password}
                 />
                 <FormMessage>{errors?.password?.message ?? ''}</FormMessage>
