@@ -6,6 +6,8 @@ name: CI
 on:
   push:
     branches: [ "*" ]
+  pull_request:
+    branches: [ "*" ]
 
 jobs:
   run_ui_unit_tests:
@@ -14,22 +16,18 @@ jobs:
     defaults:
       run: 
         working-directory: frontend
-    strategy:
-      matrix:
-        node-version: [24.2.0]
+    # # Not needed for now because only one node version is used
+    # strategy:
+    #   matrix:
+    #     node-version: [24.2.0]
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - name: Use Node.js 24.2.0
+        uses: actions/setup-node@v5
         with:
-          node-version: ${{ matrix.node-version }}
-      - name: Cache npm
-        uses: actions/cache@v4
-        with:
-          path: frontend/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          node-version: 24.2.0
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
       - run: npm ci
       - run: npm run build
       - run: npm run lint
@@ -44,7 +42,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 8.0.411
       - name: Restore dependencies
