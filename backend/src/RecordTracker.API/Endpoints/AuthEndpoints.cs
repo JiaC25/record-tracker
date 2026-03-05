@@ -24,6 +24,11 @@ public class AuthEndpoints : IEndpointDefinition
             return await handler.HandleAsync(request);
         }).ProduceLoginUserApiDocumentation();
 
+        group.MapPost("/demo-login", async (DemoLoginUserHandler handler) =>
+        {
+            return await handler.HandleAsync();
+        });
+
         group.MapPost("/logout", (LogoutUserHandler handler) =>
         {
             return handler.Handle();

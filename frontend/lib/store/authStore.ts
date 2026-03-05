@@ -14,6 +14,7 @@ type AuthStore = {
     setHydrated: () => void;
     setUserInfo: (userInfo: UserInfo | null) => void;
     loginUser: (email: string, password: string) => Promise<void>;
+    loginDemoUser: () => Promise<void>;
     clearSession: () => void;
     logoutUser: () => Promise<void>;
     checkAuth: () => Promise<void>;
@@ -54,6 +55,16 @@ export const useAuthStore = create<AuthStore>()(
 
         try {
           const userInfo = await authApi.loginUser(email, password);
+          setUserInfo(userInfo);
+        } catch (error) {
+          throw error;
+        }
+      },
+      loginDemoUser: async () => {
+        const { setUserInfo } = get();
+
+        try {
+          const userInfo = await authApi.demoLogin();
           setUserInfo(userInfo);
         } catch (error) {
           throw error;

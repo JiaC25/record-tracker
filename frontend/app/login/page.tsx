@@ -25,7 +25,7 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const isAuthHydrated = useAuthStore((state) => state.isHydrated);
-  const { loginUser } = useAuthStore();
+  const { loginUser, loginDemoUser } = useAuthStore();
 
   const router = useRouter();
 
@@ -46,6 +46,18 @@ const LoginPage = () => {
     try {
       await loginUser(email, password);
       router.push(ROUTES.RECORDS); // Redirect to records page after successful login
+    } catch (error) {
+      handleLoginResponseError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDemoLogin = async () => {
+    setIsLoading(true);
+    try {
+      await loginDemoUser();
+      router.push(ROUTES.RECORDS);
     } catch (error) {
       handleLoginResponseError(error);
     } finally {
@@ -122,13 +134,20 @@ const LoginPage = () => {
                   aria-invalid={!!errors.password}
                 />
                 <FormMessage>{errors?.password?.message ?? ''}</FormMessage>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                                Login {isLoading && (
-                    <span className="flex items-center gap-2">
-                      <Loader2Icon className="animate-spin" />
-                    </span>
-                  )}
-                </Button>
+                <div>
+                  <Button type="submit" className="w-full mb-2" disabled={isLoading}>
+                    Login
+                    {isLoading && (
+                      <span className="flex items-center gap-2">
+                        <Loader2Icon className="animate-spin" />
+                      </span>
+                    )}
+                  </Button>
+                  <div className="text-center text-xs text-muted-foreground">- or -</div>
+                  <Button type="button" variant="link" className="w-full text-xs" disabled={isLoading} onClick={handleDemoLogin}>
+                    Login as Demo User
+                  </Button>
+                </div>
                 {/* General error message */}
                 <Alert variant="destructive" title={errors.root?.message} />
               </fieldset>

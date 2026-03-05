@@ -18,6 +18,7 @@ const SignupPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const isAuthHydrated = useAuthStore((state) => state.isHydrated);
+  const { loginUser } = useAuthStore();
   const router = useRouter();
 
   // Show loading state while checking auth status
@@ -56,8 +57,15 @@ const SignupPage = () => {
 
     try {
       await authApi.signupUser(email, password);
-      console.log('Signup successful'); // Todo: show alert or notification on UI
-      router.push(ROUTES.LOGIN);
+      
+      // Auto login after sucessful signup
+      try {
+        await loginUser(email, password);
+        router.push(ROUTES.RECORDS);
+      } catch (error) {
+        console.error('Auto login failed:', error);
+        router.push(ROUTES.LOGIN);
+      }
     } catch (error) {
       console.error('Signup failed:', error);
     } finally {

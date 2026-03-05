@@ -9,6 +9,9 @@ export const authApi = {
   loginUser: (email: string, password: string) =>
     apiClient.post<UserInfo>('/auth/login', { email, password }),
 
+  demoLogin: async (): Promise<UserInfo> =>
+    apiClient.post<UserInfo>('/auth/demo-login', {}),
+
   logoutUser: async (): Promise<void> => {
     try {
       // Using raw fetch to avoid recursive logout calls
