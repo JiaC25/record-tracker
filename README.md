@@ -5,9 +5,7 @@ that allows users to create custom Record schemas with dynamic fields, log entri
 
 ---
 
-**Live Demo:** [https://recordtracker.up.railway.app](https://recordtracker.up.railway.app)
-
-Demo login: `demo@recordtracker.com` / `Demo123!`
+[https://recordtracker.up.railway.app](https://recordtracker.up.railway.app)
 
 ---
 
@@ -18,19 +16,19 @@ This monorepo contains:
 
 ---
 
-## Features (Planned)
+## Features
 - Custom record types (e.g. grocery spending, meals spending, etc.)
 - Dynamic fields per record type
 - Record entry and data visualization
 - User accounts and authentication
-- More...
+- More Planned...
 
 ---
 
 ## Tech Stack
 - ASP.NET Core 8 with EF Core + PostgreSQL
 - React (Next.js) frontend
-- Docker + CI/CD [planned]
+- Docker + CI/CD
 
 ## Getting Started
 
