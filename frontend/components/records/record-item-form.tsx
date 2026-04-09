@@ -1,8 +1,9 @@
 'use client';
 
+import { DatePicker } from '@/components/ui/date-picker';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { DatePicker } from '@/components/ui/date-picker';
+import { formatDateLocal, parseDateLocal } from '@/lib/helpers/dateHelper';
 import { RecordEntity, RecordItem } from '@/lib/types/records';
 import { useEffect, useRef } from 'react';
 import { RegisterOptions, useForm } from 'react-hook-form';
@@ -93,11 +94,8 @@ export const RecordItemForm = ({
                 <FormControl>
                   {field.fieldType === 'Date' ? (
                     <DatePicker
-                      value={fieldProps.value ? new Date(fieldProps.value) : undefined}
-                      onChange={(date) => {
-                        // Convert Date to ISO string format for form storage
-                        fieldProps.onChange(date ? date.toISOString() : '');
-                      }}
+                      value={fieldProps.value ? parseDateLocal(fieldProps.value) : undefined}
+                      onChange={(date) => fieldProps.onChange(date ? formatDateLocal(date) : '')}
                       placeholder={`Select ${field.name.toLowerCase()}`}
                       className="w-full justify-between font-normal"
                       id={`${field.id}-datepicker`}
