@@ -24,7 +24,7 @@ export const RecordView = ({ recordId, layout }: RecordViewProps) => {
   return (record &&
     <div
       className={cn(
-        'grid p-2 gap-4 md:gap-2',
+        'grid p-2 gap-4 md:gap-2 max-w-[2000px] mx-auto',
         isLeftRight
           ? 'grid-cols-1 lg:grid-cols-2'
           : 'grid-cols-1 lg:grid-rows-[auto_auto]'
